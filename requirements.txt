@@ -1,0 +1,4 @@
+BeautifulSoup==3.2.1
+lxml==3.1beta1
+ConfigObj==4.7.2
+pyenchant==1.6.5

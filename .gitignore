@@ -1,0 +1,15 @@
+persist
+config
+channelconfig
+gitflow
+*.db
+*.log
+.*.swp
+*.pyc
+*.orig
+.project
+.pydevproject
+.geany
+*.sublime-project
+*.sublime-workspace
+.DS_Store
