@@ -6,6 +6,28 @@ import time
 import subprocess
 from configobj import ConfigObj
 
+
+#Database conversion commands
+#Update Uguu's default databases
+@hook.command(adminonly=True)
+def migrate_old_db(inp, notice=None, bot=None, db=None, config=None):
+    db.execute("ALTER TABLE weather RENAME TO locations")
+    db.commit()
+    #Migrate old CloudBot DBs
+    #LastFM
+    #db.execute("create table if not exists usernames (ircname primary key, lastfmname)")
+    #db.execute("INSERT INTO usernames (ircname, lastfmname) SELECT nick, acc FROM lastfm")	
+    #db.execute("DROP TABLE lastfm")
+    #db.commit()    
+    #Weather
+    #db.execute("create table if not exists locationsCopy (ircname primary key, location)")
+    #db.execute("INSERT INTO locationsCopy (ircname, location) SELECT nick, loc FROM locations")
+    #db.execute("ALTER TABLE locations RENAME TO locationsOrig")
+    #db.execute("ALTER TABLE locationsCopy RENAME TO locations")	
+    #db.execute("DROP TABLE locationsOrig")
+    #db.commit()
+
+    
 @hook.command(adminonly=True)
 def gadmin(inp, notice=None, bot=None, config=None):
     "gadmin <add|del> <nick|host> -- Make <nick|host> an global admin." \
@@ -284,8 +306,10 @@ def admins(inp, chan=None, notice=None, bot=None):
 
 @hook.command(adminonly=True)
 def set(inp, conn=None, chan=None, db=None, notice=None):
-    "set <action> <item> <value> -- Sets admin settings. " \
-    "Example: set location infinity Denver, CO"
+    "set <action> <item> <value> -- Admin override for setting database values. " \
+    "Example: set location infinity Denver, CO" \
+    "set lastfm infinity spookieboogie"
+
     inp = inp.split()
     try:
         action = inp[0]
@@ -300,7 +324,11 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
 
     if action and item and value:
         if 'location' in action:
-            db.execute("insert or replace into locations(nick, loc) values (?,?)", (item.lower(), value))
+            db.execute("insert or replace into locations(ircname, location) values (?,?)", (item.lower(), value))
+            db.commit() 
+            out = "PRIVMSG %s :Set %s for %s to %s." % (chan, action, item, value)
+        if 'lastfm' in action:
+            db.execute("insert or replace into usernames(ircname, lastfmname) values (?,?)", (item.lower(), value))
             db.commit() 
             out = "PRIVMSG %s :Set %s for %s to %s." % (chan, action, item, value)
         else: out = "PRIVMSG %s :Could not set %s." % (chan, action)

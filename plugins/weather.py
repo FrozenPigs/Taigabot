@@ -62,6 +62,7 @@ def get_weather(location):
 
     return data
 
+
 @hook.command('w', autohelp=False)
 @hook.command('we', autohelp=False)
 @hook.command(autohelp=False)
@@ -69,10 +70,10 @@ def weather(inp, nick="", reply=None, db=None, notice=None):
     "weather <location|@user> [save] -- Gets weather data for <location>."
 
     # initalise weather DB
-    db.execute("create table if not exists locations(nick primary key, loc)")
+    db.execute("create table if not exists locations(ircname primary key, location)")
 
     if not inp: # if there is no input, try getting the users last location from the DB
-        location = db.execute("select loc from locations where nick=lower(?)", [nick]).fetchone()
+        location = db.execute("select location from locations where ircname=lower(?)", [nick]).fetchone()
         if not location: # no location saved in the database, send the user help text
             notice(weather.__doc__)
             return "No location stored for %s." % nick
@@ -83,25 +84,27 @@ def weather(inp, nick="", reply=None, db=None, notice=None):
         save = True
     elif '@' in inp:
         nick = inp.replace('@','')
-        location = db.execute("select loc from locations where nick=lower(?)", [nick]).fetchone()
+        location = db.execute("select location from locations where ircname=lower(?)", [nick]).fetchone()
         if not location: # no location saved in the database
             return "No location stored for %s." % nick
         location = location[0]
         save = False # no need to save a location, we already have it
     else: 
-        location = db.execute("select loc from locations where nick=lower(?)", [nick]).fetchone() # check if user already has a location
+        location = db.execute("select location from locations where ircname=lower(?)", [nick]).fetchone() # check if user already has a location
         if not location: save = True # If theres no location in the db, save it
         else: save = False 
         location = inp.strip().lower()
 
+    location = location.replace(',','').replace(' ','-')
+
     # now, to get the actual weather
     try:
-        data = get_weather('%s'%location)
+        data = get_weather('%s' % location)
     except KeyError:
         return "Could not get weather for that location."
 
     if location and save:
-        db.execute("insert or replace into locations(nick, loc) values (?,?)", (nick.lower(), location))
+        db.execute("insert or replace into locations(ircname, location) values (?,?)", (nick.lower(), location))
         db.commit()
 
     # put all the stuff we want to use in a dictionary for easy formatting of the output

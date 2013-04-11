@@ -7,42 +7,41 @@ api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 @hook.command('l', autohelp=False)
 @hook.command(autohelp=False)
 def lastfm(inp, nick='', say=None, db=None, bot=None, notice=None):
-    "lastfm [user] [save] -- Displays the now playing (or last played)" \
+    "lastfm [user|@nick] [save] -- Displays the now playing (or last played)" \
     " track of LastFM user [user]."
     api_key = bot.config.get("api_keys", {}).get("lastfm")
     if not api_key:
         return "error: no api key set"
 
-    # check if the user asked us not to save his details
-    dontsave = inp.endswith(" save")
-    if dontsave:
-        user = inp[:-5].strip().lower()
-    else:
-        user = inp
+    db.execute("create table if not exists usernames(ircname primary key, lastfmname)")
 
-    db.execute("create table if not exists lastfm(nick primary key, acc)")
-
-    if '@' in inp:
+    if not inp: # if there is no input, try getting the users lastfm name from db
+        user = db.execute("select lastfmname from usernames where ircname=lower(?)", (nick,)).fetchone()
+        if not user: # no lastfm saved in the database, send the user help text
+            notice(lastfm.__doc__)
+            return "No lastfm username stored for %s." % nick
+        user = user[0]
+        save = False # no need to save a lastfm, we already have it
+    elif inp.endswith(" save"):
+        user = inp[:-5].strip().lower() # remove "save" from the input string after checking for it
+        save = True
+    elif '@' in inp:
         nick = inp.replace('@','')
-        user = db.execute("select acc from lastfm where nick=lower(?)", (nick,)).fetchone()
-        if not user:
-            notice(lastfm.__doc__)
-            return
+        user = db.execute("select lastfmname from usernames where ircname=lower(?)", (nick,)).fetchone()
+        if not user: # no lastfm saved in the database
+            return "No lastfm username stored for %s." % nick
         user = user[0]
-        # no need to save a location, we already have it
-        dontsave = True 
+        save = False # no need to save a lastfm, we already have it
+    else: 
+        user = db.execute("select lastfmname from usernames where ircname=lower(?)", (nick,)).fetchone() # check if user already has a lastfm
+        if not user: save = True # If theres no lastfm in the db, save it
+        else: save = False 
+        user = inp.strip().lower()
 
-    if not user:
-        user = db.execute("select acc from lastfm where nick=lower(?)",
-                          (nick,)).fetchone()
-        if not user:
-            notice(lastfm.__doc__)
-            return
-        user = user[0]
 
     response = http.get_json(api_url, method="user.getrecenttracks",
                              api_key=api_key, user=user, limit=1)
-    print response
+
     if 'error' in response:
         return "Error: %s." % response["message"]
 
@@ -83,8 +82,8 @@ def lastfm(inp, nick='', say=None, db=None, bot=None, notice=None):
     # append ending based on what type it was
     out += ending
 
-    if inp and not dontsave:
-        db.execute("insert or replace into lastfm(nick, acc) values (?,?)",
+    if user and save:
+        db.execute("insert or replace into usernames(ircname, lastfmname) values (?,?)",
                      (nick.lower(), user))
         db.commit()
 

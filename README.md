@@ -45,6 +45,8 @@ Once you have installed the required dependencies, there are two ways you can ru
 
 **Note:** Due to some issues with the launcher we recommend you run the bot manually as detailed below.
 
+**Note:** If migrating from an older version please look in the modules/Admin.py at the migrate_old_db command. MAKE SURE TO USE A COPY OF THE ORIGINAL DB.
+
 The launcher will start the bot as a background process, and allow the bot to close and restart itself. This is only supported on unix-like machines (not Windows).
 
 For the launcher to work properly, install `screen`, or `daemon` (daemon is recommended):
@@ -61,7 +63,7 @@ It will generate a default config for you.  Once you have edited the config, run
 
 `./uguubot start`
 
-This will start up your bot as a background process. To stop it, use `./uguubot stop`. (Config docs at the [wiki](http://git.io/uguubotircconfig))
+This will start up your bot as a background process. To stop it, use `./uguubot stop`.)
 
 #### Manually
 
