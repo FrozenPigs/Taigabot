@@ -17,7 +17,7 @@ def google_translate(to_translate, to_language="auto", from_language="auto"):
     page = urllib2.urlopen(request).read().decode('utf-8')
     result = page[page.find(before_trans)+len(before_trans):]
     result = result.split("<")[0]
-    return '[%s to %s]: %s' %  (from_language, to_language, result)
+    return '%s' % (result)
 	
 @hook.command(autohelp=False)
 def translate(inp, chan=None, notice=None):
@@ -138,5 +138,28 @@ def translate(inp, chan=None, notice=None):
         to_translate = inp
 
     to_translate = to_translate.replace(" ", "+").encode('utf-8')
-    return google_translate(to_translate, to_language, from_language)
+    result = google_translate(to_translate, to_language, from_language)
+    return '[%s to %s]: %s' %  (from_language, to_language, result)
 
+
+
+@hook.command
+def wapanese(inp):
+    "wapanese <text> -- Translate english text into japanese romanji"
+    jp_result = google_translate(inp.replace(" ", "+").encode('utf-8'), 'ja', 'en')
+    rj_result = romaji(jp_result)
+    return '%s' %  (rj_result)
+
+
+
+@hook.command
+def romaji(inp):
+    "romaji <text> -- Translates japanese text (Kanji,Hiragana,Katakana) into Romaji"
+    agents = {'Content-Type':"application/x-www-form-urlencoded"}
+    before_trans = 'font color="red">'
+    link = "http://www.romaji.org/?text=%s" % inp.encode('cp932')
+    request = urllib2.Request(link, headers=agents)
+    page = urllib2.urlopen(request).read()
+    result = page[page.find(before_trans):]
+    result = result.split(">")[1].split("<")[0]
+    return '[%s]: %s' %  (inp, result)

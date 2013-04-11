@@ -101,6 +101,8 @@ def to_utf8(s):
     else:
         return str(s)
 
+def quote(s):
+    return urllib.quote(s)
 
 def quote_plus(s):
     return _quote_plus(to_utf8(s))
