@@ -47,7 +47,7 @@ def time(inp, nick="", reply=None, db=None, notice=None):
         return "Could not get time for that location."
 
     if location and save:
-        db.execute("insert or replace into locations(ircname, locations) values (?,?)", (nick.lower(), location))
+        db.execute("insert or replace into locations(ircname, location) values (?,?)", (nick.lower(), location))
         db.commit()
 
     return '%s is \x02%s\x02 [%s %s]' % (prefix, time, day, date)
