@@ -60,7 +60,7 @@ if not os.path.exists('config'):
             "mypass",
             "mysecret"
           ],
-          "admins": ["myname@myhost"]
+          "admins": ["myname@myhost","myname@*some.host","mynick"]
         }''') + '\n')
     print "Config generated!"
     print "Please edit the config now!"

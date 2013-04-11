@@ -13,12 +13,14 @@ from configobj import ConfigObj
 def migrate_old_db(inp, notice=None, bot=None, db=None, config=None):
     db.execute("ALTER TABLE weather RENAME TO locations")
     db.commit()
+
     #Migrate old CloudBot DBs
     #LastFM
     #db.execute("create table if not exists usernames (ircname primary key, lastfmname)")
     #db.execute("INSERT INTO usernames (ircname, lastfmname) SELECT nick, acc FROM lastfm")	
     #db.execute("DROP TABLE lastfm")
-    #db.commit()    
+    #db.commit()   
+ 
     #Weather
     #db.execute("create table if not exists locationsCopy (ircname primary key, location)")
     #db.execute("INSERT INTO locationsCopy (ircname, location) SELECT nick, loc FROM locations")
@@ -60,12 +62,64 @@ def gadmin(inp, notice=None, bot=None, config=None):
 
 @hook.command(autohelp=False)
 def gadmins(inp, notice=None, bot=None):
-    "admins -- Lists bot's admins."
+    "admins -- Lists bot's global admins."
     if bot.config["admins"]:
         notice("Admins are: %s." % ", ".join(bot.config["admins"]))
     else:
         notice("There are no users with admin powers.")
     return
+
+
+@hook.command(adminonly=True)
+def admin(inp, chan=None, notice=None, bot=None, config=None):
+    "admin [channel] <add|del> <nick|host> -- Make <nick|host> a channel admin." \
+    "(you can add/delete multiple admins at once)"
+    inp = inp.lower()
+    if inp[0][0] == "#": 
+        chan = inp.split(" ")[0]
+        inp = inp.replace(chan,'').strip()
+    channel = chan.lower()
+    command = inp.split()[0]
+    targets = inp.split()[1:]
+    
+    try: bot.channelconfig[channel]
+    except: bot.channelconfig[channel] = {}
+
+    try: 
+        channel_admins = bot.channelconfig[channel]['admins']
+    except: 
+        channel_admins = []
+        bot.channelconfig[channel]['admins'] = channel_admins
+
+    if 'add' in command:
+        for target in targets:
+            if target in channel_admins:
+                notice("%s is already a channel admin." % target)
+            else:
+                notice("%s is now a channel admin." % target)
+                bot.channelconfig[channel]['admins'].append(target)
+    elif 'del' in command:
+        for target in targets:
+            if target in channel_admins:
+                notice("%s is no longer an admin on %s." % (target,chan))
+                bot.channelconfig[channel]['admins'].remove(target)
+                bot.channelconfig.write()
+            else:
+                notice("%s is not an admin." % target)
+    bot.channelconfig.write()
+    return
+
+
+@hook.command(autohelp=False)
+def admins(inp, chan=None, notice=None, bot=None):
+    "admins -- Lists channel's admins."
+    channel = chan.lower()
+    if bot.channelconfig[channel]['admins']:
+        notice("Admins on %s are: %s." % (chan, ", ".join(bot.channelconfig[channel]['admins'])))
+    else:
+        notice("There are no users with admin powers on %s.",chan)
+    return
+
 
 @hook.command("quit", autohelp=False, adminonly=True)
 @hook.command(autohelp=False, adminonly=True)
@@ -225,6 +279,7 @@ def ignore(inp, notice=None, bot=None, config=None):
     if inp.lower() in admins: return "%s is an admin and cannot be ignored." % inp
     target = inp.lower()
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
+    print ignorelist
     if target in ignorelist:
         notice("%s is already ignored." % target)
     else:
@@ -242,65 +297,12 @@ def unignore(inp, notice=None, bot=None, config=None):
     target = inp.lower()
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if target in ignorelist:
-        notice("%s has been unignored." % target)
         ignorelist.remove(target)
         ignorelist.sort()
         json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+        notice("%s has been unignored." % target)
     else:
         notice("%s is not ignored." % target)
-    return
-
-
-###### Channel specific admin commands
-
-@hook.command(adminonly=True)
-def admin(inp, chan=None, notice=None, bot=None, config=None):
-    "admin [channel] <add|del> <nick|host> -- Make <nick|host> a channel admin." \
-    "(you can add/delete multiple admins at once)"
-    inp = inp.lower()
-    if inp[0][0] == "#": 
-        chan = inp.split(" ")[0]
-        inp = inp.replace(chan,'').strip()
-    channel = chan.lower()
-    command = inp.split()[0]
-    targets = inp.split()[1:]
-    
-    try: bot.channelconfig[channel]
-    except: bot.channelconfig[channel] = {}
-
-    try: 
-        channel_admins = bot.channelconfig[channel]['admins']
-    except: 
-        channel_admins = []
-        bot.channelconfig[channel]['admins'] = channel_admins
-
-    if 'add' in command:
-        for target in targets:
-            if target in channel_admins:
-                notice("%s is already a channel admin." % target)
-            else:
-                notice("%s is now a channel admin." % target)
-                bot.channelconfig[channel]['admins'].append(target)
-    elif 'del' in command:
-        for target in targets:
-            if target in channel_admins:
-                notice("%s is no longer an admin on %s." % (target,chan))
-                bot.channelconfig[channel]['admins'].remove(target)
-                bot.channelconfig.write()
-            else:
-                notice("%s is not an admin." % target)
-    bot.channelconfig.write()
-    return
-
-
-@hook.command(autohelp=False)
-def admins(inp, chan=None, notice=None, bot=None):
-    "admins -- Lists bot's admins."
-    channel = chan.lower()
-    if bot.channelconfig[channel]['admins']:
-        notice("Admins on %s are: %s." % (chan, ", ".join(bot.channelconfig[channel]['admins'])))
-    else:
-        notice("There are no users with admin powers on %s.",chan)
     return
 
 

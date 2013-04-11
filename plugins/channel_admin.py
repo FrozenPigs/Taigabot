@@ -12,6 +12,7 @@ def topic(inp, conn=None, chan=None, notice=None):
         out = "TOPIC %s :%s" % (chan, message)
     conn.send(out)
 
+
 @hook.command('k',channeladminonly=True)
 @hook.command(channeladminonly=True)
 def kick(inp, chan=None, conn=None, notice=None):
@@ -75,6 +76,7 @@ def deop(inp, conn=None, chan=None, notice=None):
         out = "MODE %s -o %s" % (chan, user)
     notice("Attempting to deop %s from %s..." % (user, chan))
     conn.send(out)
+
 
 @hook.command(channeladminonly=True,autohelp=False)
 def up(inp, conn=None, chan=None, notice=None, user=None):
@@ -224,6 +226,7 @@ def disable(inp, conn=None, chan=None, notice=None, bot=None):
             bot.channelconfig[channel]['disabled_commands'].append(target)
     bot.channelconfig.write()
     return
+
 
 @hook.command(autohelp=False,channeladminonly=True)
 def disabled(inp, chan=None, notice=None, bot=None):
