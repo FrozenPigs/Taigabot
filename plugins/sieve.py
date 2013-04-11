@@ -16,7 +16,6 @@ def is_admin(input,bot):
 def is_channel_admin(input,bot):
     try: channel_admins = bot.channelconfig[input.chan.lower()]['admins']
     except: channel_admins = " "
-    channel_admins = channel_admins
     if input.nick.lower().replace('~','') in channel_admins or check_hostmask(input,channel_admins): return True
 
 

@@ -115,7 +115,7 @@ def admins(inp, chan=None, notice=None, bot=None):
     "admins -- Lists channel's admins."
     channel = chan.lower()
     if bot.channelconfig[channel]['admins']:
-        notice("Admins on %s are: %s." % (chan, ", ".join(bot.channelconfig[channel]['admins'])))
+        notice("Admins on %s are: %s." % (chan, ', '.join(bot.channelconfig[channel]['admins'])))
     else:
         notice("There are no users with admin powers on %s.",chan)
     return
@@ -333,7 +333,6 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
             db.execute("insert or replace into usernames(ircname, lastfmname) values (?,?)", (item.lower(), value))
             db.commit() 
             out = "PRIVMSG %s :Set %s for %s to %s." % (chan, action, item, value)
-        else: out = "PRIVMSG %s :Could not set %s." % (chan, action)
     else:
         print "FAIL"
         out = "PRIVMSG %s :Could not set %s." % (chan, action)
