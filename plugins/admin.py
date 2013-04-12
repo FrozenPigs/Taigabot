@@ -197,7 +197,7 @@ def cycle(inp, conn=None, chan=None, notice=None):
 @hook.command(adminonly=True)
 def nick(inp, input=None, notice=None, conn=None):
     "nick <nick> -- Changes the bots nickname to <nick>."
-    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):
+    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", inp.lower()):
         notice("Invalid username!")
         return
     notice("Attempting to change nick to \"%s\"..." % inp)

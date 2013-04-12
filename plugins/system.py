@@ -14,7 +14,7 @@ def convert_kilobytes(kilobytes):
         size = '%.2f KB' % kilobytes
     return size
 
-
+@hook.command('hwinfo',autohelp=False)
 @hook.command(autohelp=False)
 def system(inp):
     "system -- Retrieves information about the host system."

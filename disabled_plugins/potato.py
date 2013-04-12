@@ -10,7 +10,7 @@ def potato(inp, me=None, input=None):
     "potato <user> - Makes <user> a tasty little potato."
     inp = inp.strip()
 
-    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):
+    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", inp.lower()):
         return "I cant make a tasty potato for that user!"
 
     potato_type = random.choice(potatoes)

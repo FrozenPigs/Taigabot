@@ -25,6 +25,7 @@ def process_url(match):
     elif 'reddit.com/r'     in url: return reddit_url(url)         #Reddit
     elif 'craigslist.org'   in url: return craigslist_url(url)     #Craigslist
     elif 'boards.4chan.org' in url:                                #4chan
+        if '4chan.org/b/'   in url: return '\x033>/b/\x03'
         if '#p'             in url: return fourchanquote_url(url)  #4chan Quoted Post
         else:                       return fourchan_url(url)       #4chan OP
     else:                           return unmatched_url(url)      #process other url
