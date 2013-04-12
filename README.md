@@ -80,7 +80,7 @@ On Windows you can usually just double-click the `bot.py` file to start the bot,
 UguuBot is **licensed** under the **GPL v3** license. The terms are as follows.
 
     UguuBot/DEV
-    Copyright © 2013-2013 Infinity - <[cloudev.github.com](http://cloudev.github.com)>
+    Copyright © 2013-2013 Infinity - <https://github.com/infinitylabs/UguuBot>
     Copyright © 2011-2012 Luke Rogers / ClouDev - <[cloudev.github.com](http://cloudev.github.com)>
 
     UguuBot is free software: you can redistribute it and/or modify
