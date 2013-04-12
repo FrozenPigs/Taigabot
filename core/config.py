@@ -6,10 +6,6 @@ from configobj import ConfigObj
 def save(conf):
     json.dump(conf, open('config', 'w'), sort_keys=True, indent=2)
 
-if not os.path.exists('channelconfig'): 
-    ConfigObj('channelconfig',indent_type='\t', write_empty_values=False,create_empty=True)
-    print "channelconfig generated!"
-
 if not os.path.exists('config'):
     open('config', 'w').write(inspect.cleandoc(
         r'''
@@ -23,7 +19,7 @@ if not os.path.exists('config'):
               "user": "user",
               "realname": "newbot",
               "nickserv_password": "",
-              "channels": ["#/g/bots"],
+              "channels": ["#devbot"],
               "invite_join": true,
               "auto_rejoin": false,
               "command_prefix": "."
@@ -67,6 +63,9 @@ if not os.path.exists('config'):
     print "Dont forget to pip -r requirements.txt!"
     sys.exit()
 
+if not os.path.exists('channelconfig'): 
+    ConfigObj('channelconfig',indent_type='\t', write_empty_values=False,create_empty=True)
+    print "channelconfig generated!"
 
 def config():
     # reload config from file if file has changed

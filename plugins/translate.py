@@ -7,12 +7,13 @@ hiraLetters = range(0x3040, 0x309F)
 kataPunctuation = range(0x31F0,0x31FF)
 all_letters = kataLetters+kataPunctuation+hiraLetters
 japanese_characters = u''.join([unichr(aLetter) for aLetter in all_letters])
-japanese_characters = (r'.*['+japanese_characters+'].*', re.UNICODE)	
+japanese_characters = (r'.*((['+japanese_characters+'])).*', re.UNICODE)	
 
 @hook.regex(*japanese_characters)	
 def autotranslate(inp):
     "Automatically translates any japanese text detected."
     result = translate(inp.group(0))
+    if inp.group(0) in result.split(':')[1].strip(): return None
     return '[%s]: %s' % (inp.group(0), result.split(':')[1].strip())
 
 
@@ -32,6 +33,7 @@ def google_translate(to_translate, to_language="auto", from_language="auto"):
     result = page[page.find(before_trans)+len(before_trans):]
     result = result.split("<")[0]
     return '%s' % (result)
+
 
 @hook.command(autohelp=False)
 def translate(inp, chan=None, notice=None):
@@ -177,6 +179,7 @@ def wapanese(inp): #googletranslate
     jp_result = google_translate(inp.replace(" ", "+").encode('utf-8'), 'ja', 'en')
     rj_result = romaji(jp_result)
     return '%s' %  (rj_result)
+
 
 @hook.command('romanji')
 @hook.command

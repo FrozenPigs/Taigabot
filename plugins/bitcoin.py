@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 @hook.command(autohelp=False)
 def bc(inp, say=None):
     "bitcoin -- gets current exchange rate for bitcoins from mtgox"
-    data = http.get_json("https://data.mtgox.com/api/2/BTCUSD/money/ticker")
+    data = http.get_json("http://data.mtgox.com/api/2/BTCUSD/money/ticker")
     data = data['data']
     ticker = {
         'buy': data['buy']['display_short'],
@@ -18,7 +18,7 @@ def bc(inp, say=None):
         'vol': data['vol']['display_short'],
     }
 
-    data = http.get_json("https://data.mtgox.com/api/1/generic/order/lag")
+    data = http.get_json("http://data.mtgox.com/api/1/generic/order/lag")
     data = data['return']
     lag = {
         'lag': data['lag_text']

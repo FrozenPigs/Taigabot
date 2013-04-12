@@ -24,10 +24,13 @@ def implying(inp):
     url = "https://www.google.com/search?q=%s&hl=en&sa=G&gbv=2&tbm=isch&sout=1" % inp.group(1).replace(' ','_').replace("'",'')
     html = http.get_html(url)
 
-    while not is_active and num < 6: #check if link is dead, if so get the next image
-        image = get_image_result(html,num)
-        is_active = http.is_active(image)
-        num = num + 1
+    try:
+        while not is_active and num < 6: #check if link is dead, if so get the next image
+            image = get_image_result(html,num)
+            is_active = http.is_active(image)
+            num = num + 1
+    except IndexError:
+        return 'No image found.'
 
     return '\x02%s\x02 %s' % (inp.group(1), image)
 
