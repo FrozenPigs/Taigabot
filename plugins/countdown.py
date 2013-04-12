@@ -104,4 +104,3 @@ def ready(inp, bot=None, nick=None,chan=None,conn=None):
     if nicks_size_start > len(countdown_nicks):
         if len(countdown_nicks) > 0:
             send(conn,chan,u'Waiting for: %s' % ', '.join(countdown_nicks))
-        

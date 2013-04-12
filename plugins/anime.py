@@ -87,4 +87,3 @@ def railgun(inp):
     days_remaining = (jp_lt-jt).days
     seconds_remaining = (jp_lt-jt).seconds
     return '%s days %s remaining.' % (days_remaining, GetInHMS(seconds_remaining))
-  

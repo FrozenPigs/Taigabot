@@ -104,12 +104,3 @@ def unmatched_url(match):
       result += ('%s' % (title)) 
 
     return ('%s' % (http.process_text(result)))
-
-
-
-    #page = http.get_html(url)
-    #title = page.xpath('//title/text()')[0]
-
-    #for url in urls:
-        #title = http.parse_url(url)
-        #print url
