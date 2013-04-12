@@ -7,7 +7,7 @@ from util import hook
 # CTCP responses
 @hook.regex(r'^\x01VERSION\x01$')
 def ctcp_version(inp, notice=None):
-    notice('\x01VERSION: CloudBot - http://git.io/cloudbotirc')
+    notice('\x01VERSION: UguuBot')
 
 
 @hook.regex(r'^\x01PING\x01$')

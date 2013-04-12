@@ -1,7 +1,6 @@
 import inspect
 import json
 import os
-from configobj import ConfigObj
 
 def save(conf):
     json.dump(conf, open('config', 'w'), sort_keys=True, indent=2)
@@ -38,7 +37,8 @@ if not os.path.exists('config'):
             "lastfm": "INSERT API KEY FROM lastfm HERE",
             "rottentomatoes": "INSERT API KEY FROM rottentomatoes HERE",
             "mc_user": "INSERT minecraft USERNAME HERE",
-            "mc_pass": "INSERT minecraft PASSWORD HERE"
+            "mc_pass": "INSERT minecraft PASSWORD HERE",
+            "yahoo" : "INSERT yahoo API KEY HERE"
           },
           "plugins":
           {
@@ -63,9 +63,13 @@ if not os.path.exists('config'):
     print "Dont forget to pip -r requirements.txt!"
     sys.exit()
 
+
+#Moved here to allow config file creation if not installed
+import ConfigObj
 if not os.path.exists('channelconfig'): 
     ConfigObj('channelconfig',indent_type='\t', write_empty_values=False,create_empty=True)
     print "channelconfig generated!"
+
 
 def config():
     # reload config from file if file has changed
@@ -89,5 +93,3 @@ def channelconfig():
 
 bot._config_mtime = 0
 bot._channelconfig_mtime = 0
-
-

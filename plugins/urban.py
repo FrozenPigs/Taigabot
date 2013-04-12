@@ -4,8 +4,7 @@ base_url = 'http://www.urbandictionary.com/iphone/search/define'
 
 @hook.command('u')
 @hook.command('nig')
-@hook.command('niggernary')
-@hook.command('niggerary')
+@hook.command('ebonics')
 @hook.command
 def urban(inp):
     "urban <phrase> [id] -- Looks up <phrase> on urbandictionary.com."

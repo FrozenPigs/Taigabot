@@ -35,8 +35,7 @@ def get_memory(db, word):
 @hook.command("r", adminonly=False)
 @hook.command(adminonly=False)
 def remember(inp, nick='', db=None, say=None, input=None, notice=None):
-    "remember <word> [+]<data> -- Remembers <data> with <word>. Add +"
-    " to <data> to append."
+    "remember <word> <data> -- Remembers <data> with <word>. Add"
     db_init(db)
 
     append = False
