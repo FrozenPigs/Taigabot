@@ -65,7 +65,7 @@ if not os.path.exists('config'):
 
 
 #Moved here to allow config file creation if not installed
-import ConfigObj
+from configobj import ConfigObj
 if not os.path.exists('channelconfig'): 
     ConfigObj('channelconfig',indent_type='\t', write_empty_values=False,create_empty=True)
     print "channelconfig generated!"
