@@ -2,6 +2,20 @@ from util import hook, http
 import re
 import urllib2
 
+kataLetters = range(0x30A0, 0x30FF)
+hiraLetters = range(0x3040, 0x309F)
+kataPunctuation = range(0x31F0,0x31FF)
+all_letters = kataLetters+kataPunctuation+hiraLetters
+japanese_characters = u''.join([unichr(aLetter) for aLetter in all_letters])
+japanese_characters = (r'.*['+japanese_characters+'].*', re.UNICODE)	
+
+@hook.regex(*japanese_characters)	
+def autotranslate(inp):
+    "Automatically translates any japanese text detected."
+    result = translate(inp.group(0))
+    return '[%s]: %s' % (inp.group(0), result.split(':')[1].strip())
+
+
 def google_translate(to_translate, to_language="auto", from_language="auto"):
     '''Return the translation using google translate
     you must shortcut the langage you define (French = fr, English = en, Spanish = es, etc...)
@@ -18,10 +32,11 @@ def google_translate(to_translate, to_language="auto", from_language="auto"):
     result = page[page.find(before_trans)+len(before_trans):]
     result = result.split("<")[0]
     return '%s' % (result)
-	
+
 @hook.command(autohelp=False)
 def translate(inp, chan=None, notice=None):
     "translate [from lang] [to lang] <text> -- Lists bot's admins."
+
     langs = {'auto': '',
              'afrikaans': 'af',
              'albanian': 'sq',
@@ -142,16 +157,28 @@ def translate(inp, chan=None, notice=None):
     return '[%s to %s]: %s' %  (from_language, to_language, result)
 
 
+### This uses the mygengo_translate plugin located in the disabled_plugins folder. It is sometimes more accurate than google translate
+# @hook.command
+# def gwapanese(inp):
+#     "wapanese <text> -- Translate english text into japanese romanji"
+#     import mygengo_translate
+#     print inp.strip()
+#     jp_result = unicode(mygengo_translate.gengo_translate(inp.strip(), 'en', 'ja'))
+#     
+#     jp_result = jp_result.split(')')[1].strip()
+#     print jp_result
+#     rj_result = romaji(jp_result)
+#     return '%s' %  (rj_result)
+
 
 @hook.command
-def wapanese(inp):
+def wapanese(inp): #googletranslate
     "wapanese <text> -- Translate english text into japanese romanji"
     jp_result = google_translate(inp.replace(" ", "+").encode('utf-8'), 'ja', 'en')
     rj_result = romaji(jp_result)
     return '%s' %  (rj_result)
 
-
-
+@hook.command('romanji')
 @hook.command
 def romaji(inp):
     "romaji <text> -- Translates japanese text (Kanji,Hiragana,Katakana) into Romaji"
