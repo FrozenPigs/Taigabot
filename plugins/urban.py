@@ -31,10 +31,11 @@ def urban(inp):
 
     # try getting the requested definition
     try:
-        output = u"[%i/%i] %s: \x02%s\x02 - %s" % \
+        output = u"[%i/%i] %s: %s - %s" % \
               (id, len(defs), defs[id - 1]['word'],
               defs[id - 1]['definition'].replace('\r\n', ' '),defs[id - 1]['example'].replace('\r\n', ' '))
     except IndexError:
         return 'Not found.'
 
-    return text.truncate_str(output, 250)
+    #return text.truncate_str(output, 250)
+    return output

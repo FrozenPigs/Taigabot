@@ -1,7 +1,5 @@
 from util import http, hook
 #import lxml
-import urllib, urllib2
-from bs4 import BeautifulSoup
 #from lxml.html import parse 
 
 @hook.command('bitcoin',autohelp=False)

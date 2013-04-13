@@ -5,9 +5,11 @@ from util import hook
 @hook.command(channeladminonly=True)
 def topic(inp, conn=None, chan=None, notice=None):
     "topic [channel] <topic> -- Change the topic of a channel."
+    message = inp
     inp = inp.split(" ")
     if inp[0][0] == "#":
-        out = "PRIVMSG %s :%s" % (inp[0], message)
+        message = message.replace(inp[0],'').strip()
+        out = "TOPIC %s :%s" % (inp[0], message)
     else:
         out = "TOPIC %s :%s" % (chan, message)
     conn.send(out)
@@ -232,7 +234,7 @@ def disable(inp, conn=None, chan=None, notice=None, bot=None):
 def disabled(inp, chan=None, notice=None, bot=None):
     "disabled -- Lists channels's disabled commands."
     if bot.channelconfig[chan.lower()]['disabled_commands']:
-        return("Disabled on %s: %s." % (chan, ", ".join(bot.channelconfig[chan]['disabled_commands'])))
+        notice("Disabled on %s: %s." % (chan, ", ".join(bot.channelconfig[chan]['disabled_commands'])))
     else:
-        return("There is nothing disabled on %s." % chan)
+        notice("There is nothing disabled on %s." % chan)
     return
