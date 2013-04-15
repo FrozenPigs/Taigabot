@@ -45,7 +45,7 @@ def animetake(inp):
 @hook.command
 def nyaa(inp):
     "nyaa <query> - NYAA Search"
-    search_url = 'http://nyaa.eu/?term=%s' % (inp.replace(' ','+'))
+    search_url = 'http://www.nyaa.eu/?page=search&cats=1_37&term=%s' % (inp.replace(' ','+'))
     return u'%s' % (search_url)
 
 @hook.command
