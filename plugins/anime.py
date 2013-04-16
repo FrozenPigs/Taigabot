@@ -3,8 +3,8 @@ from util import hook, http
 #import re
 #from bs4 import BeautifulSoup
 
-@hook.command
 @hook.command('anime')
+@hook.command
 def animetake(inp):
     "anime [list|get] <anime name> - Searches Animetake for the latest updates"
     error = u'not so lucky today..'
@@ -41,12 +41,19 @@ def animetake(inp):
     return response
 
 
-
 @hook.command
 def nyaa(inp):
     "nyaa <query> - NYAA Search"
-    search_url = 'http://www.nyaa.eu/?page=search&cats=1_37&term=%s' % (inp.replace(' ','+'))
+    search_url = 'http://nyaa.eu/?term=%s' % (inp.replace(' ','+'))
     return u'%s' % (search_url)
+
+
+@hook.command
+def vndb(inp):
+    "vndb <query> - Visual Novel Search"
+    search_url = 'http://vndb.org/v/all?sq=%s' % (inp.replace(' ','+'))
+    return u'%s' % (search_url)
+
 
 @hook.command
 def manga(inp):
@@ -71,7 +78,7 @@ def GetInHMS(seconds):
 
 
 @hook.command(autohelp=False)
-def railgun(inp):
+def yahari(inp):
     from datetime import datetime, timedelta
     from pytz import timezone
     import pytz
@@ -82,7 +89,7 @@ def railgun(inp):
     jt = datetime.now(timezone('Asia/Tokyo'))
     now_jst = jt.strftime(fmt)
 
-    jp_lt = jp.localize(datetime(2013, 04, 12, 23, 30, 0))
+    jp_lt = jp.localize(datetime(2013, 04, 20, 01, 30, 0))
     #future_jst = jp_lt.strftime(fmt)    
     days_remaining = (jp_lt-jt).days
     seconds_remaining = (jp_lt-jt).seconds

@@ -156,7 +156,7 @@ def translate(inp, chan=None, notice=None):
 
     to_translate = to_translate.replace(" ", "+").encode('utf-8')
     result = google_translate(to_translate, to_language, from_language)
-    return '[%s to %s]: %s' %  (from_language, to_language, result)
+    return '[%s to %s]: %s' %  (from_language, to_language, http.decode_html(result))
 
 
 ### This uses the mygengo_translate plugin located in the disabled_plugins folder. It is sometimes more accurate than google translate

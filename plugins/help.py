@@ -1,7 +1,7 @@
 import re
 from util import hook
 
-
+@hook.command('commands', autohelp=False)
 @hook.command(autohelp=False)
 def help(inp, say=None, notice=None, input=None, conn=None, bot=None):
     "help  -- Gives a list of commands/help for a command."

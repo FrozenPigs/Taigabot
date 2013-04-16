@@ -238,3 +238,17 @@ def disabled(inp, chan=None, notice=None, bot=None):
     else:
         notice("There is nothing disabled on %s." % chan)
     return
+
+
+
+
+# @hook.command(autohelp=False,channeladminonly=True)
+# def touhouradio(inp, chan=None, notice=None, bot=None):
+#     "disabled -- Lists channels's disabled commands."
+#     url = "http://booru.touhouradio.com/post/list/%7Bchannel%7C%23pantsumen%7D/1"
+#     html = http.get_html(url)
+# 
+#     link = html.xpath("//div[@id='main']//a/@href")[0]
+#     #COMPARE TO DB
+#     image = http.unquote(re.search('.+?imgurl=(.+)&imgrefurl.+', link).group(1))
+#     return image
