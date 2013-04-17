@@ -321,7 +321,7 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
         value = value[:-1]
     except IndexError: 
         out = "PRIVMSG %s :Could not set %s." % (chan, action)
-        conn.send(out)
+        notice/me aba(out)
         return
 
     if action and item and value:
@@ -337,4 +337,4 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
         print "FAIL"
         out = "PRIVMSG %s :Could not set %s." % (chan, action)
 
-    conn.send(out)
+    notice(out)

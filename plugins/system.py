@@ -14,8 +14,8 @@ def convert_kilobytes(kilobytes):
         size = '%.2f KB' % kilobytes
     return size
 
-@hook.command('hwinfo',autohelp=False)
-@hook.command(autohelp=False)
+@hook.command('hwinfo',autohelp=False,adminonly=True)
+@hook.command(autohelp=False,adminonly=True)
 def system(inp):
     "system -- Retrieves information about the host system."
     hostname = platform.node()
@@ -29,7 +29,7 @@ def system(inp):
            "\x02" % (hostname, os, python_imp, python_ver, architecture, cpu)
 
 
-@hook.command(autohelp=False)
+@hook.command(autohelp=False,adminonly=True)
 def memory(inp):
     "memory -- Displays the bot's current memory usage."
     if os.name == "posix":
@@ -61,7 +61,7 @@ def memory(inp):
         return "Sorry, this command is not supported on your OS."
 
 
-@hook.command(autohelp=False)
+@hook.command(autohelp=False,adminonly=True)
 def uptime(inp, bot=None):
     "uptime -- Shows the bot's uptime."
     uptime_raw = round(time.time() - bot.start_time)
@@ -69,7 +69,7 @@ def uptime(inp, bot=None):
     return "Uptime: \x02%s\x02" % uptime
 
 
-@hook.command(autohelp=False)
+@hook.command(autohelp=False,adminonly=True)
 def pid(inp):
     "pid -- Prints the bot's PID."
     return "PID: \x02%s\x02" % os.getpid()

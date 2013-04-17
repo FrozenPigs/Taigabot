@@ -41,7 +41,7 @@ def sieve_suite(bot, input, func, kind, args):
     if input.command == 'PRIVMSG' and\
        input.nick.endswith('bot') and args.get('ignorebots', True):
             return None
-    
+
     try: disabled_channel_commands = bot.channelconfig[input.chan.lower()]['disabled_commands']
     except: disabled_channel_commands = " "
 
