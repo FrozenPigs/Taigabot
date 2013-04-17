@@ -9,11 +9,11 @@ all_letters = kataLetters+kataPunctuation+hiraLetters
 japanese_characters = u''.join([unichr(aLetter) for aLetter in all_letters])
 japanese_characters = (r'.*((['+japanese_characters+'])).*', re.UNICODE)	
 
-@hook.regex(*japanese_characters)	
+@hook.regex(*(japanese_characters))	
 def autotranslate(inp):
     "Automatically translates any japanese text detected."
     result = translate(inp.group(0))
-    if inp.group(0) in result.split(':')[1].strip(): return None
+    if inp.group(0).strip() in result.split(':')[1].strip(): return None
     return '[%s]: %s' % (inp.group(0), result.split(':')[1].strip())
 
 

@@ -32,5 +32,4 @@ def implying(inp):
     except IndexError:
         return 'No image found.'
 
-    return '\x02%s\x02 %s' % (inp.group(1), image)
-
+    return '\x02%s\x02 %s' % (inp.group(1), image.decode('utf-8'))
