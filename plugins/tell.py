@@ -115,4 +115,4 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
         notice("Message has already been queued.")
         return
 
-    notice("Your message has been sent!")
+    notice("Your message will be sent!")
