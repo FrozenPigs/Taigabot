@@ -7,7 +7,7 @@ def same(inp):
 
 @hook.regex(r'^(HUEHUEHUE)$')
 @hook.regex(r'^(huehuehue)$')
-def same(inp):
+def hue(inp):
     "<word>? -- Shows what data is associated with <word>."
     return inp.group(0)
 

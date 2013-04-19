@@ -12,18 +12,19 @@ def refresh_cache():
 
     while num < len(quotes):
         quote_info = quote_infos[num].text
-        print quote_info
         quote = quotes[num].text.replace('\n', ' ').replace('\r', ' |')
-        print quote.strip()
         bash_cache.append((quote_info.split()[0].replace('#',''),quote_info.split()[1].split('(')[1].split(')')[0].strip(), quote))
         num += 1
 
 
 def get_bash_quote(inp):
-    soup = http.get_soup('http://bash.org/?%s' % inp)
-    quote_info = soup.find('p', {'class': 'quote'}).text
-    quote = soup.find('p', {'class': 'qt'}).text
-    return ('\x02#%s\x02 (%s): %s' % (quote_info.split()[0].replace('#',''), quote_info.split()[1].split('(')[1].split(')')[0].strip(), quote.replace('\n', ' ').replace('\r', ' |')))
+    try:
+        soup = http.get_soup('http://bash.org/?%s' % inp)
+        quote_info = soup.find('p', {'class': 'quote'}).text
+        quote = soup.find('p', {'class': 'qt'}).text
+        return ('\x02#%s\x02 (%s): %s' % (quote_info.split()[0].replace('#',''), quote_info.split()[1].split('(')[1].split(')')[0].strip(), quote.replace('\n', ' ').replace('\r', ' |')))
+    except:
+        return "No quote found."
 
 
 #do an initial refresh of the cache

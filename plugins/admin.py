@@ -271,7 +271,7 @@ def ignored(inp, notice=None, bot=None):
         notice("No channels/nicks/hosts are currently ignored.")
     return
 
-
+@hook.command('block',adminonly=True)
 @hook.command(adminonly=True)
 def ignore(inp, notice=None, bot=None, config=None):
     "ignore <channel|nick|host> -- Makes the bot ignore <channel|nick|host>."
@@ -321,7 +321,7 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
         value = value[:-1]
     except IndexError: 
         out = "PRIVMSG %s :Could not set %s." % (chan, action)
-        notice/me aba(out)
+        notice(out)
         return
 
     if action and item and value:
