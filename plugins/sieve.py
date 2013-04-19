@@ -1,5 +1,4 @@
 import re
-
 from util import hook
 
 def check_hostmask(input, matchlist):

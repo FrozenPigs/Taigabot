@@ -11,13 +11,18 @@ from bs4 import BeautifulSoup
 processed = False
 
 link_re = (r'((https?://([-\w\.]+)+(:\d+)?(/([\S/_\.]*(\?\S+)?)?)?))', re.I)
+fourchan_quote_re = (r'>>(\D\/\d+)', re.I)
 #reddit_re = (r'.*((www\.)?reddit\.com/r[^ ]+)', re.I)
 #fourchan_re = (r'.*((boards\.)?4chan\.org/[a-z]/res/[^ ]+)', re.I)
 #fourchanquote_re = (r'.*((boards\.)?4chan\.org/[a-z]/res/(\d+)#p(\d+))', re.I)
 
 @hook.regex(*link_re)
-def process_url(match):
+def process_url(match,bot=None):
     url = match.group(1)
+    try: disabled_channel_commands = bot.channelconfig[input.chan.lower()]['disabled_commands']
+    except: disabled_channel_commands = " "
+    if 'parsers' in bot.config.get('disabled_commands', []): return None
+
     if   'youtube.com'      in url: return                         #handled by youtube plugin: exiting
     elif 'youtu.be'         in url: return                         #handled by youtube plugin: exiting
     elif 'yooouuutuuube'    in url: return                         #handled by youtube plugin: exiting
@@ -29,6 +34,16 @@ def process_url(match):
         if '#p'             in url: return fourchanquote_url(url)  #4chan Quoted Post
         else:                       return fourchan_url(url)       #4chan OP
     else:                           return unmatched_url(url)      #process other url
+
+
+@hook.regex(*fourchan_quote_re)
+def process_fourchan_quote(inp):
+    #>>g/33128368
+    url = 'http://boards.4chan.org/%s/res/%s' % (inp.group(0).split('/')[0].replace('>>',''),inp.group(0).split('/')[1])
+    print url
+    if '#p' in url: return fourchanquote_url(url)  #4chan Quoted Post
+    else: return fourchan_url(url)
+    
 
 #@hook.regex(*reddit_re)
 def reddit_url(match):
@@ -43,7 +58,6 @@ def reddit_url(match):
 
     return '\x02%s\x02 - posted by \x02%s\x02 %s ago - %s upvotes, %s downvotes - %s' % (
             title, author, timeago, upvotes, downvotes, comments)
-
 
 #@hook.regex(*fourchan_re)
 def fourchan_url(match):

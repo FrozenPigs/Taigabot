@@ -92,10 +92,12 @@ def release(inp, notice=None):
 
     if inp.lower() in daynames \
     or inp == 'today' \
-    or inp == 'tomorrow':
+    or inp == 'tomorrow' \
+    or inp == 'yesterday':
         if inp.lower() in daynames: curday = curday + parse_dayname(inp)
         elif inp == 'today': curday = curday 
         elif inp == 'tomorrow': curday = curday + 1
+        elif inp == 'yesterday': curday = curday - 1
         show_date = days[curday].thead.h2.a['href'].replace('/','',1)
         result = ''
         shows = days[curday].table.tbody.findAll('div', {'class': 'tooltip'})
@@ -158,7 +160,7 @@ def get_time_until(inp):
         diff=datetime.strptime('23:59:59','%H:%M:%S')-datetime.strptime(GetInHMS(seconds_remaining),'%H:%M:%S')
         return 'Aired %s ago' % (diff)
     else:
-        return ('%s days %s' % (days_remaining, GetInHMS(seconds_remaining))).replace('0 days ','')
+        return ('%s days %s' % (days_remaining, GetInHMS(seconds_remaining))).replace('1 days','1 day').replace('0 days ','')
 
 
 @hook.command(autohelp=False)
