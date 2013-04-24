@@ -40,9 +40,9 @@ def google_translate(to_translate, to_language="auto", from_language="auto"):
     return '%s' % (result)
 
 
-@hook.command(autohelp=False)
+@hook.command
 def translate(inp, chan=None, notice=None):
-    "translate [from lang] [to lang] <text> -- Lists bot's admins."
+    "translate [from language] [to language] <text> -- Will usually autotranslate from other languages to english."
 
     langs = {'auto': '',
              'afrikaans': 'af',

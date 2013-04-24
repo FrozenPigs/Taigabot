@@ -7,7 +7,6 @@ yandere_cache = []
 def refresh_cache():
     "gets a page of random MLIAs and puts them into a dictionary "
     url = 'https://yande.re/post?page=%s' % random.randint(1,11000)
-    print url
     soup = http.get_soup(url)
 
     for result in soup.findAll('li'):
@@ -16,12 +15,19 @@ def refresh_cache():
         if img and title:
             yandere_cache.append((result['id'].replace('p','') ,title['title'].split(' User')[0], img['href']))
 
-# do an initial refresh of the cache
+def get_yandere_tags(inp):
+    return 'https://yande.re/post?tags=%s' % inp.replace(' ','_')
+
+
+#do an initial refresh of the cache
 refresh_cache()
+
 
 @hook.command(autohelp=False)
 def yandere(inp, reply=None):
     "Yande.re -- Gets a random image from Yande.re."
+
+    if inp: return get_yandere_tags(inp)
 
     id, title, image = yandere_cache.pop()
     reply('\x034NSFW\x03: \x02(%s)\x02 %s: %s' % (id, title, web.isgd(image)))

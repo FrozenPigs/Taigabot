@@ -31,6 +31,8 @@ def get_memory(db, word):
     else:
         return None
 
+#@hook.regex(r'(.*) is (.*)')
+#@hook.regex(r'(.*) are (.*)')
 @hook.command("learn", adminonly=False)
 @hook.command("r", adminonly=False)
 @hook.command(adminonly=False)
@@ -42,6 +44,8 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
 
     try:
         word, data = inp.split(None, 1)
+        #word = inp.group(1)
+        #data = inp.group(2)
     except ValueError:
         return remember.__doc__
 

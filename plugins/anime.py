@@ -157,7 +157,7 @@ def get_time_until(inp):
     jp_lt = jp.localize(datetime.strptime(inp,'%Y-%m-%d %H:%M:%S')) 
     days_remaining = (jp_lt-jt).days
     seconds_remaining = (jp_lt-jt).seconds
-    if days_remaining < 0: 
+    if days_remaining < 0 or days_remaining == 6: 
         diff=datetime.strptime('23:59:59','%H:%M:%S')-datetime.strptime(GetInHMS(seconds_remaining),'%H:%M:%S')
         return 'Aired %s ago' % (diff)
     else:
