@@ -1,7 +1,6 @@
 persist
 config
 channelconfig
-flood
 gitflow
 *.db
 *.log
