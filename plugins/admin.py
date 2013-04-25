@@ -117,7 +117,7 @@ def admins(inp, chan=None, notice=None, bot=None):
     if bot.channelconfig[channel]['admins']:
         notice("Admins on %s are: %s." % (chan, ', '.join(bot.channelconfig[channel]['admins'])))
     else:
-        notice("There are no users with admin powers on %s.",chan)
+        notice("There are no users with admin powers on %s." % chan)
     return
 
 
@@ -270,6 +270,7 @@ def ignored(inp, notice=None, bot=None):
     else:
         notice("No channels/nicks/hosts are currently ignored.")
     return
+
 
 @hook.command('block',adminonly=True)
 @hook.command(adminonly=True)

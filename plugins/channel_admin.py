@@ -241,6 +241,29 @@ def disabled(inp, chan=None, notice=None, bot=None):
 
 
 
+@hook.command(channeladminonly=True)
+def flood(inp, conn=None, chan=None, notice=None, bot=None):
+    "flood [channel] <number> <duration> -- Enables flood protection for a channel. " \
+    "ex: .flood 3 30 -- Allows 3 commands in 30 seconds, set to 0 to disable"
+    inp = inp.lower()
+    if inp[0][0] == "#": 
+        chan = inp.split()[0]
+        inp = inp.replace(chan,'').strip()
+    channel = chan.lower()
+    try: bot.channelconfig[channel]
+    except: bot.channelconfig[channel] = {}
+
+    if "0 " in inp:
+        bot.channelconfig[channel]['flood_protection'] = []
+        notice("Flood Protection Disabled.")
+    else:
+        flood_num = inp.split()[0]
+        flood_duration = inp.split()[1]
+        bot.channelconfig[channel]['flood_protection'] = [flood_num,flood_duration]
+        notice("Flood Protection limited to %s commands in %s seconds." % (flood_num,flood_duration))
+    bot.channelconfig.write()
+    return
+
 
 # @hook.command(autohelp=False,channeladminonly=True)
 # def touhouradio(inp, chan=None, notice=None, bot=None):

@@ -1,11 +1,19 @@
 import re
 from util import hook
+import os
+import time
+import inspect
+import json
+
+filename = 'flood'
+if not os.path.exists(filename): open(filename, 'w').write(inspect.cleandoc(r'''{}'''))
 
 def check_hostmask(input, matchlist):
      user_mask = input.mask.lower().replace('~','').lower()
      for match in matchlist:
          match_mask = match.replace('*','.+').lower()
          if bool(re.search(match_mask,user_mask)): return True
+
 
 def is_admin(input,bot):
     admins = bot.config.get('admins', [])
@@ -43,6 +51,9 @@ def sieve_suite(bot, input, func, kind, args):
 
     try: disabled_channel_commands = bot.channelconfig[input.chan.lower()]['disabled_commands']
     except: disabled_channel_commands = " "
+    
+    try: flood_protection = bot.channelconfig[input.chan.lower()]['flood_protection']
+    except: flood_protection = None
 
     if kind == "command":
         if input.trigger in bot.config.get('disabled_commands', []):
@@ -78,6 +89,30 @@ def sieve_suite(bot, input, func, kind, args):
         if not is_admin(input,bot) and not is_channel_admin(input,bot):
             input.notice("Sorry, you are not allowed to use this command.")
             return None
+    else:
+        #flood protection
+        if kind == "command" and flood_protection:
+            flood_num = flood_protection[0]
+            flood_duration = flood_protection[1]
+            now = time.time()
+            flood = json.load(open(filename))
+            try: 
+                user = flood[input.nick]
+            except: 
+                user = []
+                flood[input.nick] = user
+
+            flood[input.nick].append(now)
+
+            for x in flood[input.nick]:
+                if now - x > int(flood_duration):
+                    flood[input.nick].remove(x)
+
+            json.dump(flood, open(filename, 'w'), sort_keys=True, indent=2)
+
+            if len(flood[input.nick]) > (int(flood_num) + 1):
+                input.notice("Flood detected. Please wait 30 seconds.")
+                return None
 
     return input
 

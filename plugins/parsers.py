@@ -38,16 +38,14 @@ def process_url(match,bot=None):
 
 @hook.regex(*fourchan_quote_re)
 def process_fourchan_quote(inp):
-    #>>g/33128368
     url = 'http://boards.4chan.org/%s/res/%s' % (inp.group(0).split('/')[0].replace('>>',''),inp.group(0).split('/')[1])
-    print url
     if '#p' in url: return fourchanquote_url(url)  #4chan Quoted Post
     else: return fourchan_url(url)
     
 
 #@hook.regex(*reddit_re)
 def reddit_url(match):
-# match.group(0)
+    # match.group(0)
     thread = http.get_html(match)
     title = thread.xpath('//title/text()')[0]
     upvotes = thread.xpath("//span[@class='upvotes']/span[@class='number']/text()")[0]
