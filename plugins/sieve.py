@@ -110,7 +110,7 @@ def sieve_suite(bot, input, func, kind, args):
 
             json.dump(flood, open(filename, 'w'), sort_keys=True, indent=2)
 
-            if len(flood[input.nick]) > (int(flood_num) + 1):
+            if len(flood[input.nick]) > (int(flood_num)):
                 input.notice("Flood detected. Please wait 30 seconds.")
                 return None
 
