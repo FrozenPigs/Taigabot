@@ -89,8 +89,9 @@ def sieve_suite(bot, input, func, kind, args):
         if not is_admin(input,bot) and not is_channel_admin(input,bot):
             input.notice("Sorry, you are not allowed to use this command.")
             return None
-    else:
-        #flood protection
+
+    #flood protection
+    if not is_admin(input,bot) and not is_channel_admin(input,bot):
         if kind == "command" and flood_protection:
             flood_num = flood_protection[0]
             flood_duration = flood_protection[1]
@@ -111,8 +112,9 @@ def sieve_suite(bot, input, func, kind, args):
             json.dump(flood, open(filename, 'w'), sort_keys=True, indent=2)
 
             if len(flood[input.nick]) > (int(flood_num)):
-                input.notice("Flood detected. Please wait 30 seconds.")
+                input.notice("Flood detected. Please wait %s seconds." % flood_duration)
                 return None
+
 
     return input
 
