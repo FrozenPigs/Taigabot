@@ -5,8 +5,8 @@ import lxml.html
 @hook.command(autohelp=False)
 def eden(inp, say=False):
     "eden [url]-- Returns current eden song"
-    url = 'http://www.edenofthewest.com/edennew/'
-    if 'url' in inp: return url
+    url = 'http://www.edenofthewest.com/'
+    if 'url' in inp: return url+'edennew/'
     tree = lxml.html.parse(url)
     dj = tree.xpath("//td[@id='status-dj']/text()")[0]
     song = tree.xpath("//td[@id='status-current-song']/text()")[0]

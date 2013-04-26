@@ -3,7 +3,7 @@ import re
 from util import hook, http
 from util.execute import eval_py
 
-@hook.command
+@hook.command(adminonly=True)
 def python(inp):
     "python <prog> -- Executes <prog> as Python code."
 
