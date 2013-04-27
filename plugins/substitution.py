@@ -6,7 +6,11 @@ lastmessage = {}
 message_re = (r'.*', re.I)
 
 @hook.regex(*message_re)
-def substitution(inp,chan=None,say=None):
+def substitution(inp,chan=None,say=None,bot=None):
+	try: disabled_channel_commands = bot.channelconfig[chan.lower()]['disabled_commands']
+    except: disabled_channel_commands = " "
+    if 'substitution' in disabled_channel_commands: return None
+    
     curmessage=inp.group(0)
     regex = re.compile(r's/(.*)/(.*)', re.I)
     result = regex.match(curmessage)
