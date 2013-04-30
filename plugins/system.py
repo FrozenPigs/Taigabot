@@ -73,3 +73,10 @@ def uptime(inp, bot=None):
 def pid(inp):
     "pid -- Prints the bot's PID."
     return "PID: \x02%s\x02" % os.getpid()
+
+# import subprocess
+# @hook.command(autohelp=False)
+# def host(inp):
+#     result = subprocess.Popen("host", "animetake.com")
+#     print result
+#     return result

@@ -86,7 +86,7 @@ def sieve_suite(bot, input, func, kind, args):
             input.notice("Sorry, you are not allowed to use this command.")
             return None
     elif args.get('adminonly', False):
-        if not is_admin(input,bot) and not is_channel_admin(input,bot):
+        if not is_admin(input,bot):
             input.notice("Sorry, you are not allowed to use this command.")
             return None
 
