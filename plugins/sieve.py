@@ -117,4 +117,3 @@ def sieve_suite(bot, input, func, kind, args):
 
 
     return input
-    

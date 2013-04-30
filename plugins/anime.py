@@ -82,14 +82,28 @@ def mal(inp):
 def release(inp, notice=None):
     "release <input> - Returns the next airdate & time for an anime -- "\
     "Input can be: today, tomorrow, monday-sunday, or show name"
-    url = "http://www.animecalendar.net/"
+
     days = []
     daynames = 'sunday monday tuesday wednesday thursday friday saturday'
 
-    curday = datetime.now(timezone('Asia/Tokyo')).day - 1
+    now = datetime.now(timezone('Asia/Tokyo'))
+    curday = now.day - 1
+    month = now.strftime("%m")
+    year = now.year
+
+    url = "http://www.animecalendar.net/%s/%s" % (year,month)
+
     try: soup = http.get_soup(url)
     except: return 'Website is down.'
     days = soup.findAll('div', {"class":re.compile(r'^da.+')})
+
+    if 29 - int(curday) < 7:
+        days_nextmonth = []
+        url = "http://www.animecalendar.net/%s/%i" % (year, int(month) + 1)
+        try: soup = http.get_soup(url)
+        except: return 'Website is down.'
+        days_nextmonth = soup.findAll('div', {"class":re.compile(r'^da.+')})
+        days = days + days_nextmonth
 
     if inp.lower() in daynames \
     or inp == 'today' \

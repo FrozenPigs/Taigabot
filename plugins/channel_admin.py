@@ -81,22 +81,22 @@ def deop(inp, conn=None, chan=None, notice=None):
 
 
 @hook.command(channeladminonly=True,autohelp=False)
-def up(inp, conn=None, chan=None, notice=None, user=None):
+def up(inp, conn=None, chan=None, notice=None, nick=None):
     "up -- Makes the bot op you in [channel]. "\
     "If [channel] is blank the bot will op you in "\
     "the channel the command was used in."
-    out = u"MODE %s +o %s" % (chan, user.replace('~',''))
-    notice("Attempting to op %s from %s..." % (user,chan))
+    out = u"MODE %s +o %s" % (chan, nick)
+    notice("Attempting to op %s from %s..." % (nick,chan))
     conn.send(out)
 
 
 @hook.command(channeladminonly=True,autohelp=False)
-def down(inp, conn=None, chan=None, notice=None, user=None):
+def down(inp, conn=None, chan=None, notice=None, nick=None):
     "down -- Makes the bot deop you in [channel]. "\
     "If [channel] is blank the bot will op you in "\
     "the channel the command was used in."
-    out = "MODE %s -o %s" % (chan, user.replace('~',''))
-    notice("Attempting to deop %s from %s..." % (user,chan))
+    out = "MODE %s -o %s" % (chan, nick)
+    notice("Attempting to deop %s from %s..." % (nick,chan))
     conn.send(out)
 
 

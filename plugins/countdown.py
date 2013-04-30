@@ -47,7 +47,7 @@ def countdown(inp, bot=None, nick=None, conn=None, chan=None, notice=None):
         while countdown_nicks:
             time.sleep(1)
             wait_count = int(wait_count) + 1
-            if wait_count == 60:
+            if wait_count == 90:
                 set_countdown_to_false()
                 return "Countdown has expired."
                 break
