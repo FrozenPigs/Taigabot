@@ -12,13 +12,18 @@ japanese_characters = (r'.*((['+japanese_characters+'])).*', re.UNICODE)
 @hook.regex(*(japanese_characters))	
 def autotranslate(inp,bot=None,chan=None):
     "Automatically translates any japanese text detected."
+
     try: 
         if 'autotrans' in bot.channelconfig[chan.lower()]['disabled_commands']: return None
     except: 
         pass
 
+    if 'translate' in inp.group(0): return None
+    if ']:' in inp.group(0).strip(): return None
+
     result = translate(inp.group(0))
-    if inp.group(0).strip() in result.split(':')[1].strip(): return None
+    if result.split(':')[1].strip() in inp.group(0).strip(): return None
+
     return '[%s]: %s' % (inp.group(0), result.split(':')[1].strip())
 
 
