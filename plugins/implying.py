@@ -16,12 +16,14 @@ def get_image_result(html,num):
 @hook.regex(r'^\> ?(.+.JPEG)')
 @hook.regex(r'^\> ?(.+.gif)')
 @hook.regex(r'^\> ?(.+.GIF)')
-@hook.command
+@hook.command('mfw')
 def implying(inp):
     ">imagename.gif -- Returns first Image result."
     num = 0
     is_active = False
-    url = "https://www.google.com/search?q=%s&hl=en&sa=G&gbv=2&tbm=isch&sout=1" % inp.group(1).replace(' ','_').replace("'",'')
+    try: search = inp.group(1)
+    except: search = inp
+    url = "https://www.google.com/search?q=%s&hl=en&sa=G&gbv=2&tbm=isch&sout=1" % search.replace(' ','_').replace("'",'')
     html = http.get_html(url)
 
     try:
@@ -32,4 +34,4 @@ def implying(inp):
     except IndexError:
         return 'No image found.'
 
-    return '\x033\x02>%s\x02\x03 %s' % (inp.group(1), image.decode('utf-8'))
+    return '\x033\x02>%s\x02\x03 %s' % (search, image.decode('utf-8'))

@@ -16,5 +16,8 @@ def substitution(inp,chan=None,say=None,bot=None):
     curmessage=inp.group(0)
     regex = re.compile(r's/(.*)/(.*)', re.I)
     result = regex.match(curmessage)
-    try: say(re.sub(result.group(1),result.group(2),lastmessage[chan]))
-    except: lastmessage[chan]=curmessage
+
+    try: 
+        if result.group(1) in lastmessage[chan]: say(re.sub(result.group(1),result.group(2),lastmessage[chan]))
+    except: 
+        lastmessage[chan]=curmessage

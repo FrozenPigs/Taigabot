@@ -41,9 +41,9 @@ def gadmin(inp, notice=None, bot=None, config=None):
     if 'add' in command:
         for target in targets:
             if target in bot.config["admins"]:
-                notice("%s is already an admin." % target)
+                notice("%s is already a global admin." % target)
             else:
-                notice("%s is now an admin." % target)
+                notice("%s is now a global admin." % target)
                 bot.config["admins"].append(target)
                 bot.config["admins"].sort()
                 json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
@@ -51,12 +51,12 @@ def gadmin(inp, notice=None, bot=None, config=None):
     elif 'del' in command:
         for target in targets:
             if target in bot.config["admins"]:
-                notice("%s is no longer an admin." % target)
+                notice("%s is no longer a global admin." % target)
                 bot.config["admins"].remove(target)
                 bot.config["admins"].sort()
                 json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
             else:
-                notice("%s is not an admin." % target)
+                notice("%s is not a global admin." % target)
         return
 
 
@@ -66,7 +66,7 @@ def gadmins(inp, notice=None, bot=None):
     if bot.config["admins"]:
         notice("Admins are: %s." % ", ".join(bot.config["admins"]))
     else:
-        notice("There are no users with admin powers.")
+        notice("There are no users with global admin powers.")
     return
 
 
@@ -101,11 +101,11 @@ def admin(inp, chan=None, notice=None, bot=None, config=None):
     elif 'del' in command:
         for target in targets:
             if target in channel_admins:
-                notice("%s is no longer an admin on %s." % (target,chan))
+                notice("%s is no longer a channel admin on %s." % (target,chan))
                 bot.channelconfig[channel]['admins'].remove(target)
                 bot.channelconfig.write()
             else:
-                notice("%s is not an admin." % target)
+                notice("%s is not a channel admin." % target)
     bot.channelconfig.write()
     return
 
