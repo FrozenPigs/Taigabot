@@ -26,3 +26,13 @@ def tetete(inp, nick=None,bot=None,chan=None):
     except: disabled_channel_commands = " "
     if 'tetete' in disabled_channel_commands: return None
     return 'tetete %s%s%s' % (nick, nick, nick)
+
+
+@hook.command(autohelp=False)
+def honk(inp, nick=None, conn=None, chan=None):
+    "honk <person} -- Honks at someone."
+    if len(inp) == 0:
+        out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, nick)
+    else:
+        out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, inp.strip())
+    conn.send(out)
