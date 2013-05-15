@@ -36,3 +36,14 @@ def honk(inp, nick=None, conn=None, chan=None):
     else:
         out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, inp.strip())
     conn.send(out)
+
+@hook.command(autohelp=False)
+def lewd(inp):
+    "lewd -- LEWD"
+    return 'ヽ(◔ ◡ ◔)ノ.･ﾟ*｡･+☆LEWD☆'.decode('UTF-8')
+
+@hook.command(autohelp=False)
+def pantsumap(inp, chan=None, notice=None):
+    "lewd -- LEWD"
+    if chan == "#pantsumen":
+        notice(("Pantsumen Map: http://tinyurl.com/clx2qeg\r\n").encode('utf-8', 'ignore'))
