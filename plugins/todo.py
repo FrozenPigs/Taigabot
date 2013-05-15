@@ -21,7 +21,7 @@ def db_init(db):
 
     if not exists:
         db.execute(cleanSQL("""
-           create virtual table todos using fts3(
+           create virtual table todos using fts4(
                 user,
                 text,
                 added,
