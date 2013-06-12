@@ -91,8 +91,9 @@ def weather(inp, nick="", reply=None, db=None, notice=None):
         save = False # no need to save a location, we already have it
     else: 
         location = db.execute("select location from locations where ircname=lower(?)", [nick]).fetchone() # check if user already has a location
-        if not location: save = True # If theres no location in the db, save it
-        else: save = False 
+        # if not location: save = True # If theres no location in the db, save it
+        # else: save = False 
+        save = True
         location = inp.strip().lower()
 
     location = location.replace(',','').replace(' ','-')

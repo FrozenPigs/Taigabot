@@ -277,17 +277,18 @@ def ignored(inp, notice=None, bot=None):
 def ignore(inp, notice=None, bot=None, config=None):
     "ignore <channel|nick|host> -- Makes the bot ignore <channel|nick|host>."
     admins = bot.config.get('admins', [])
-    if inp.lower() in admins: return "%s is an admin and cannot be ignored." % inp
-    target = inp.lower()
-    ignorelist = bot.config["plugins"]["ignore"]["ignored"]
-    print ignorelist
-    if target in ignorelist:
-        notice("%s is already ignored." % target)
-    else:
-        notice("%s has been ignored." % target)
-        ignorelist.append(target)
-        ignorelist.sort()
-        json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+    targets = inp.split()
+    for target in targets:  
+        target = target.lower()   
+        if target in admins: return "%s is an admin and cannot be ignored." % inp
+        ignorelist = bot.config["plugins"]["ignore"]["ignored"]
+        if target in ignorelist:
+            notice("%s is already ignored." % target)
+        else:
+            notice("%s has been ignored." % target)
+            ignorelist.append(target)
+            ignorelist.sort()
+            json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
     return
 
 
@@ -295,15 +296,17 @@ def ignore(inp, notice=None, bot=None, config=None):
 def unignore(inp, notice=None, bot=None, config=None):
     "unignore <channel|nick|host> -- Makes the bot listen to"\
     " <channel|nick|host>."
-    target = inp.lower()
-    ignorelist = bot.config["plugins"]["ignore"]["ignored"]
-    if target in ignorelist:
-        ignorelist.remove(target)
-        ignorelist.sort()
-        json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
-        notice("%s has been unignored." % target)
-    else:
-        notice("%s is not ignored." % target)
+    targets = inp.split()
+    for target in targets:  
+        target = target.lower() 
+        ignorelist = bot.config["plugins"]["ignore"]["ignored"]
+        if target in ignorelist:
+            ignorelist.remove(target)
+            ignorelist.sort()
+            json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+            notice("%s has been unignored." % target)
+        else:
+            notice("%s is not ignored." % target)
     return
 
 
