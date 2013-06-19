@@ -1,4 +1,5 @@
 from util import hook
+import random
 
 @hook.regex(r'^(same)$')
 def same(inp,bot=None,chan=None):
@@ -6,10 +7,10 @@ def same(inp,bot=None,chan=None):
     try: disabled_channel_commands = bot.channelconfig[chan.lower()]['disabled_commands']
     except: disabled_channel_commands = " "
     if 'same' in disabled_channel_commands: return None
-        if random.randint(1, 5) = 3: 
-            return 'butts'
-        else:
-            return 'same'
+    if random.randint(1, 5) == 3: 
+        return 'butts'
+    else:
+        return 'same'
     
 
 @hook.regex(r'^(HUEHUEHUE)$')
