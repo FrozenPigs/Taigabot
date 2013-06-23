@@ -60,7 +60,7 @@ def memory(inp):
     else:
         return "Sorry, this command is not supported on your OS."
 
-
+@hook.command('honktime',autohelp=False,adminonly=True)
 @hook.command(autohelp=False,adminonly=True)
 def uptime(inp, bot=None):
     "uptime -- Shows the bot's uptime."
