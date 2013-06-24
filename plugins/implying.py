@@ -6,16 +6,16 @@ def get_image_result(html,num):
     image = http.unquote(re.search('.+?imgurl=(.+)&imgrefurl.+', link).group(1))
     return image
 
-@hook.regex(r'^\> ?(.+\.tiff)')
-@hook.regex(r'^\> ?(.+\.TIFF)')
-@hook.regex(r'^\> ?(.+\.png)')
-@hook.regex(r'^\> ?(.+\.PNG)')
-@hook.regex(r'^\> ?(.+\.jpg)')
-@hook.regex(r'^\> ?(.+\.JPG)')
-@hook.regex(r'^\> ?(.+\.jpeg)')
-@hook.regex(r'^\> ?(.+\.JPEG)')
-@hook.regex(r'^\> ?(.+\.gif)')
-@hook.regex(r'^\> ?(.+\.GIF)')
+@hook.regex(r'^\> ?(.+\.tiff$)')
+@hook.regex(r'^\> ?(.+\.TIFF$)')
+@hook.regex(r'^\> ?(.+\.png$)')
+@hook.regex(r'^\> ?(.+\.PNG$)')
+@hook.regex(r'^\> ?(.+\.jpg$)')
+@hook.regex(r'^\> ?(.+\.JPG$)')
+@hook.regex(r'^\> ?(.+\.jpeg$)')
+@hook.regex(r'^\> ?(.+\.JPEG$)')
+@hook.regex(r'^\> ?(.+\.gif$)')
+@hook.regex(r'^\> ?(.+\.GIF$)')
 @hook.command('mfw')
 def implying(inp):
     ">imagename.gif -- Returns first Image result."
