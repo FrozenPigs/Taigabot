@@ -42,7 +42,7 @@ def honk(inp, nick=None, conn=None, chan=None):
             out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, nick)
     else:
         if random.randint(1, 2) == 2: 
-            out = "PRIVMSG %s :\x01ACTION fines %s $%i for being so lewd to get honked at.\x01" % (chan, inp.strip(), random.randint(1, 10000))
+            out = "PRIVMSG %s :\x01ACTION fines %s $%i for being too lewd and getting honked at.\x01" % (chan, inp.strip(), random.randint(1, 10000))
         else:
             out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, inp.strip())
         
