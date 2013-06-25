@@ -36,12 +36,12 @@ def tetete(inp, nick=None,bot=None,chan=None):
 def honk(inp, nick=None, conn=None, chan=None):
     "honk <person} -- Honks at someone."
     if len(inp) == 0:
-        out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, nick)
-    else:
         if random.randint(1, 3) == 3: 
-            out = "PRIVMSG %s :\x01ACTION fines %s $%i for Honking.\x01" % (chan, inp.strip(),random.randint(1, 10000))
+            out = "PRIVMSG %s :\x01ACTION fines %s $%i for Honking.\x01" % (chan, nick, random.randint(1, 10000))
         else:
-            out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, inp.strip())
+            out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, nick)
+    else:
+        out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, inp.strip())
     conn.send(out)
 
 @hook.command(autohelp=False)
