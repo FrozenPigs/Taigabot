@@ -1,6 +1,7 @@
 from util import hook, web, http
 
 @hook.command('nym')
+@hook.command('littleanon')
 @hook.command('gfy')
 @hook.command
 def lmgtfy(inp, bot=None):
