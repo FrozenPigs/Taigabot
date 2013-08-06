@@ -19,7 +19,7 @@ UguuBot runs on **Python** *2.7.x*. It is developed on **Ubuntu** *12.04* with *
 
 It **requires the Python module** `lXML`, and `Enchant` is needed for the spellcheck plugin.
 
-The programs `daemon` or `screen` are recomended for the launcher to run optimaly.
+The programs `daemon` or `screen` are recomended for the launcher to run optimally.
 
 **Windows** users: Windows compatibility with the launcher and some plugins is **broken** (such as ping), but we do intend to add it.³
 
