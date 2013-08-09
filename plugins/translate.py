@@ -197,7 +197,7 @@ def romaji(inp):
     "romaji <text> -- Translates japanese text (Kanji,Hiragana,Katakana) into Romaji"
     agents = {'Content-Type':"application/x-www-form-urlencoded"}
     before_trans = 'font color="red">'
-    link = "http://www.romaji.org/?text=%s" % inp.encode('cp932')
+    link = "http://romaji.me/romaji.cgi?mode=2&text=%s" % inp.encode('cp932')
     request = urllib2.Request(link, headers=agents)
     page = urllib2.urlopen(request).read()
     result = page[page.find(before_trans):]

@@ -16,6 +16,7 @@ def topic(inp, conn=None, chan=None, notice=None):
 
 
 @hook.command('k',channeladminonly=True)
+@hook.command('kal',channeladminonly=True)
 @hook.command(channeladminonly=True)
 def kick(inp, chan=None, conn=None, notice=None):
     "kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel] "\
