@@ -34,8 +34,9 @@ def lastfm(inp, nick='', say=None, db=None, bot=None, notice=None):
         save = False # no need to save a lastfm, we already have it
     else: 
         user = db.execute("select lastfmname from usernames where ircname=lower(?)", (nick,)).fetchone() # check if user already has a lastfm
-        if not user: save = True # If theres no lastfm in the db, save it
-        else: save = False 
+        # if not user: save = True # If theres no lastfm in the db, save it
+        # else: 
+        save = True 
         user = inp.strip().lower()
 
 
