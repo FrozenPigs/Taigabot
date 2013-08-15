@@ -33,7 +33,7 @@ def lastfm(inp, nick='', say=None, db=None, bot=None, notice=None):
         user = user[0]
         save = False # no need to save a lastfm, we already have it
     else: 
-        user = db.execute("select lastfmname from usernames where ircname=lower(?)", (nick,)).fetchone() # check if user already has a lastfm
+        #user = db.execute("select lastfmname from usernames where ircname=lower(?)", (nick,)).fetchone() # check if user already has a lastfm
         # if not user: save = True # If theres no lastfm in the db, save it
         # else: 
         save = True 
@@ -84,8 +84,6 @@ def lastfm(inp, nick='', say=None, db=None, bot=None, notice=None):
     out += ending
 
     if user and save:
-        db.execute("insert or replace into usernames(ircname, lastfmname) values (?,?)",
-                     (nick.lower(), user))
+        db.execute("insert or replace into usernames(ircname, lastfmname) values (?,?)", (nick.lower(), user))
         db.commit()
-
     return out
