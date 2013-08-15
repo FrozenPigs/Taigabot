@@ -81,4 +81,4 @@ def pantsumap(inp, chan=None, notice=None):
 @hook.command(autohelp=False)
 def lcs(inp, chan=None, notice=None):
     "Some LoL shit..."
-    return 'http://www.twitch.tv/riotgames?utm_campaign=live_embed_click&utm_source=na.lolesports.com'
+    return 'http://na.lolesports.com/#tabs=2'
