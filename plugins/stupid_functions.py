@@ -76,3 +76,9 @@ def pantsumap(inp, chan=None, notice=None):
     "lewd -- LEWD"
     if chan == "#pantsumen":
         notice(("Pantsumen Map: http://tinyurl.com/clx2qeg\r\n").encode('utf-8', 'ignore'))
+
+
+@hook.command(autohelp=False)
+def lcs(inp, chan=None, notice=None):
+    "Some LoL shit..."
+    return 'http://www.twitch.tv/riotgames?utm_campaign=live_embed_click&utm_source=na.lolesports.com'
