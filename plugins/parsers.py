@@ -17,10 +17,15 @@ fourchan_quote_re = (r'>>(\D\/\d+)', re.I)
 #fourchanquote_re = (r'.*((boards\.)?4chan\.org/[a-z]/res/(\d+)#p(\d+))', re.I)
 
 @hook.regex(*link_re)
-def process_url(match,bot=None):
+def process_url(match,bot=None,input=None):
+    global trim_length
     url = match.group(1)
     try: disabled_channel_commands = bot.channelconfig[input.chan.lower()]['disabled_commands']
     except: disabled_channel_commands = " "
+    try: trim_length = bot.channelconfig[input.chan.lower()]['trim_length'][0]
+    except: trim_length = 0
+    # trim_length = trim_length[0]
+
     if 'parsers' in bot.config.get('disabled_commands', []): return None
 
     if   'youtube.com'      in url: return                         #handled by youtube plugin: exiting
@@ -62,9 +67,10 @@ def fourchan_url(match):
     soup = http.get_soup(match)
     title = soup.title.renderContents().strip()
     post = soup.find('div', {'class': 'opContainer'})
-    comment = post.find('blockquote', {'class': 'postMessage'})
+    comment = http.process_text(post.find('blockquote', {'class': 'postMessage'}).renderContents().strip())
     author = post.find_all('span', {'class': 'nameBlock'})[1]
-    return http.process_text('\x02%s\x02 - posted by \x02%s\x02: %s' % (title, author, comment[:150]))
+    if trim_length > 1: return http.process_text('\x02%s\x02 - posted by \x02%s\x02: %s' % (title, author, comment[:int(trim_length)]))
+    else: return http.process_text('\x02%s\x02 - posted by \x02%s\x02: %s' % (title, author, comment))
 
 
 #@hook.regex(*fourchanquote_re)
@@ -73,20 +79,22 @@ def fourchanquote_url(match):
     soup = http.get_soup(match)
     title = soup.title.renderContents().strip()
     post = soup.find('div', {'id': postid})
-    comment = post.find('blockquote', {'class': 'postMessage'}).renderContents().strip()
+    comment = http.process_text(post.find('blockquote', {'class': 'postMessage'}).renderContents().strip())
     #comment = re.sub('&gt;&gt;\d*[\s]','',comment) #remove quoted posts
     #comment = re.sub('(&gt;&gt;\d*)','',comment)
     #comment = re.sub('[\|\s]{2,50}','',comment) #remove multiple | | | |
     #comment = re.sub('[\s]{3,}','  ',comment) #remove multiple spaces
     author = post.find_all('span', {'class': 'nameBlock'})[1].renderContents().strip()
-    return http.process_text('\x02%s\x02 - posted by \x02%s\x02: %s' % (title, author, comment[:150]))
+    if trim_length > 1: return http.process_text('\x02%s\x02 - posted by \x02%s\x02: %s' % (title, author, comment[:int(trim_length)]))
+    else: return http.process_text('\x02%s\x02 - posted by \x02%s\x02: %s' % (title, author, comment))
 
 
 def craigslist_url(match):
     soup = http.get_soup(match)
     title = soup.find('h2', {'class': 'postingtitle'}).renderContents().strip()
     post = soup.find('section', {'id': 'postingbody'}).renderContents().strip()
-    return http.process_text('\x02Craigslist.org: %s\x02 - %s' % (title, post[:150]))
+    if trim_length > 1: return http.process_text('\x02Craigslist.org: %s\x02 - %s' % (title, post[:int(trim_length)]))
+    else: return http.process_text('\x02Craigslist.org: %s\x02 - %s' % (title, post))
 
 
 def unmatched_url(match):

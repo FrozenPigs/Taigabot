@@ -265,7 +265,28 @@ def flood(inp, conn=None, chan=None, notice=None, bot=None):
     bot.channelconfig.write()
     return
 
+@hook.command(channeladminonly=True)
+def trim(inp, conn=None, chan=None, notice=None, bot=None):
+    "trim [channel] <length> -- Sets trim length for parsers. " \
+    "ex: .trim 150 -- Returns the first 150 characters of a parsed url"
+    inp = inp.lower()
+    if inp[0][0] == "#": 
+        chan = inp.split()[0]
+        inp = inp.replace(chan,'').strip()
+    channel = chan.lower()
+    try: bot.channelconfig[channel]
+    except: bot.channelconfig[channel] = {}
 
+    if "disable" in inp:
+        bot.channelconfig[channel]['flood_protection'] = [0]
+        notice("Parser Trimming Disabled.")
+    else:
+        trim_length = inp
+        bot.channelconfig[channel]['trim_length'] = [trim_length]
+        notice("Parser responses limited to %s." % (trim_length))
+    bot.channelconfig.write()
+    return
+    
 # @hook.command(autohelp=False,channeladminonly=True)
 # def touhouradio(inp, chan=None, notice=None, bot=None):
 #     "disabled -- Lists channels's disabled commands."
