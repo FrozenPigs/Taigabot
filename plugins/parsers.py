@@ -64,7 +64,7 @@ def fourchan_url(match):
     post = soup.find('div', {'class': 'opContainer'})
     comment = post.find('blockquote', {'class': 'postMessage'})
     author = post.find_all('span', {'class': 'nameBlock'})[1]
-    return http.process_text('\x02%s\x02 - posted by \x02%s\x02: %s' % (title, author, comment[:100]))
+    return http.process_text('\x02%s\x02 - posted by \x02%s\x02: %s' % (title, author, comment[:150]))
 
 
 #@hook.regex(*fourchanquote_re)
@@ -79,14 +79,14 @@ def fourchanquote_url(match):
     #comment = re.sub('[\|\s]{2,50}','',comment) #remove multiple | | | |
     #comment = re.sub('[\s]{3,}','  ',comment) #remove multiple spaces
     author = post.find_all('span', {'class': 'nameBlock'})[1].renderContents().strip()
-    return http.process_text('\x02%s\x02 - posted by \x02%s\x02: %s' % (title, author, comment[:100]))
+    return http.process_text('\x02%s\x02 - posted by \x02%s\x02: %s' % (title, author, comment[:150]))
 
 
 def craigslist_url(match):
     soup = http.get_soup(match)
     title = soup.find('h2', {'class': 'postingtitle'}).renderContents().strip()
     post = soup.find('section', {'id': 'postingbody'}).renderContents().strip()
-    return http.process_text('\x02Craigslist.org: %s\x02 - %s' % (title, post[:100]))
+    return http.process_text('\x02Craigslist.org: %s\x02 - %s' % (title, post[:150]))
 
 
 def unmatched_url(match):
