@@ -79,6 +79,6 @@ def pantsumap(inp, chan=None, notice=None):
 
 
 @hook.command(autohelp=False)
-def lcs(inp, chan=None, notice=None):
+def lcs(inp):
     "Some LoL shit..."
     return 'http://na.lolesports.com/#tabs=2'
