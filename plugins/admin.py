@@ -7,6 +7,12 @@ import subprocess
 from configobj import ConfigObj
 
 
+@hook.command
+def url(inp):
+    "url -- Returns Uguubots URL."
+    return 'https://github.com/infinitylabs/UguuBot'
+
+
 #Database conversion commands
 #Update Uguu's default databases
 @hook.command(adminonly=True)
@@ -342,3 +348,34 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
         out = "PRIVMSG %s :Could not set %s." % (chan, action)
 
     notice(out)
+
+
+@hook.command("silence", adminonly=True)
+@hook.command(adminonly=True)
+def shutup(inp, conn=None, chan=None, notice=None):
+    "shutup [channel] <user> -- Shuts the user up. "
+    inp = inp.split(" ")
+    if inp[0][0] == "#":
+        chan = inp[0]
+        user = inp[1]
+        out = "MODE %s +m-v %s" % (chan, user)
+    else:
+        user = inp[0]
+        out = "MODE %s +m-v %s" % (chan, user)
+    notice("Shut up %s from %s..." % (user, chan))
+    conn.send(out)
+
+
+@hook.command(adminonly=True)
+def speak(inp, conn=None, chan=None, notice=None):
+    "speak [channel] <user> -- Shuts the user up. "
+    inp = inp.split(" ")
+    if inp[0][0] == "#":
+        chan = inp[0]
+        user = inp[1]
+        out = "MODE %s -m+v %s" % (chan, user)
+    else:
+        user = inp[0]
+        out = "MODE %s -m+v %s" % (chan, user)
+    notice("Gave %s from %s speech..." % (user, chan))
+    conn.send(out)
