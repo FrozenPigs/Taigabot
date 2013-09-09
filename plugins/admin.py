@@ -349,7 +349,7 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
 
     notice(out)
 
-
+@hook.command("stfu", adminonly=True)
 @hook.command("silence", adminonly=True)
 @hook.command(adminonly=True)
 def shutup(inp, conn=None, chan=None, notice=None):
