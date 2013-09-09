@@ -358,10 +358,10 @@ def shutup(inp, conn=None, chan=None, notice=None):
     if inp[0][0] == "#":
         chan = inp[0]
         user = inp[1]
-        out = "MODE %s +m-o-v %s %s" % (chan, user)
+        out = "MODE %s +m-vo %s %s" % (chan, user)
     else:
         user = inp[0]
-        out = "MODE %s +m-o-v %s %s" % (chan, user)
+        out = "MODE %s +m-vo %s %s" % (chan, user)
     notice("Shut up %s from %s..." % (user, chan))
     conn.send(out)
 
