@@ -287,6 +287,16 @@ def trim(inp, conn=None, chan=None, notice=None, bot=None):
     bot.channelconfig.write()
     return
     
+
+
+@hook.command(autohelp=False)
+def sudoku(inp, conn=None, chan=None, notice=None, nick=None):
+    "up -- Makes the bot kill you in [channel]. "\
+    "If [channel] is blank the bot will op you in "\
+    "the channel the command was used in."
+    out = u"MODE %s +k %s" % (chan, nick)
+    notice("Sayonara bonzai-chan..." % (nick,chan))
+    conn.send(out)    
 # @hook.command(autohelp=False,channeladminonly=True)
 # def touhouradio(inp, chan=None, notice=None, bot=None):
 #     "disabled -- Lists channels's disabled commands."
