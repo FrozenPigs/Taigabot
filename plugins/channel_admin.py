@@ -295,7 +295,7 @@ def sudoku(inp, conn=None, chan=None, notice=None, nick=None):
     "If [channel] is blank the bot will op you in "\
     "the channel the command was used in."
     out = u"MODE %s +k %s" % (chan, nick)
-    notice("Sayonara bonzai-chan..." % (nick,chan))
+    notice("Sayonara bonzai-chan...")
     conn.send(out)    
 # @hook.command(autohelp=False,channeladminonly=True)
 # def touhouradio(inp, chan=None, notice=None, bot=None):
