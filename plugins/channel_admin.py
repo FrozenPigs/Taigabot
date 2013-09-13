@@ -294,7 +294,7 @@ def sudoku(inp, conn=None, chan=None, notice=None, nick=None):
     "up -- Makes the bot kill you in [channel]. "\
     "If [channel] is blank the bot will op you in "\
     "the channel the command was used in."
-    out = u"MODE %s +k %s" % (chan, nick)
+    out = "KICK %s %s" % (chan, user)
     notice("Sayonara bonzai-chan...")
     conn.send(out)    
 # @hook.command(autohelp=False,channeladminonly=True)
