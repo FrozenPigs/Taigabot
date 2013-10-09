@@ -12,6 +12,7 @@ processed = False
 
 link_re = (r'((https?://([-\w\.]+)+(:\d+)?(/([\S/_\.]*(\?\S+)?)?)?))', re.I)
 fourchan_quote_re = (r'>>(\D\/\d+)', re.I)
+
 #reddit_re = (r'.*((www\.)?reddit\.com/r[^ ]+)', re.I)
 #fourchan_re = (r'.*((boards\.)?4chan\.org/[a-z]/res/[^ ]+)', re.I)
 #fourchanquote_re = (r'.*((boards\.)?4chan\.org/[a-z]/res/(\d+)#p(\d+))', re.I)
@@ -37,17 +38,18 @@ def process_url(match,bot=None,input=None):
     elif 'boards.4chan.org' in url:                                #4chan
         if '4chan.org/b/'   in url: return '\x033>/b/\x03'
         if '#p'             in url: return fourchanquote_url(url)  #4chan Quoted Post
-        else:                       return fourchan_url(url)       #4chan OP
+        if '/res/'          in url: return fourchanpost_url(url)   #4chan Post
+        if '/src/'          in url: return unmatched_url(url)      #4chan Image
+        else:                       return fourchanboard_url(url)  #4chan Board
     else:                           return unmatched_url(url)      #process other url
 
 
-@hook.regex(*fourchan_quote_re)
-def process_fourchan_quote(inp):
-    url = 'http://boards.4chan.org/%s/res/%s' % (inp.group(0).split('/')[0].replace('>>',''),inp.group(0).split('/')[1])
-    if '#p' in url: return fourchanquote_url(url)  #4chan Quoted Post
-    else: return fourchan_url(url)
+# @hook.regex(*fourchan_quote_re)
+# def process_fourchan_quote(inp):
+#     url = 'http://boards.4chan.org/%s/res/%s' % (inp.group(0).split('/')[0].replace('>>',''),inp.group(0).split('/')[1])
+#     if '#p' in url: return fourchanquote_url(url)  #4chan Quoted Post
+#     else: return fourchan_url(url)
     
-
 #@hook.regex(*reddit_re)
 def reddit_url(match):
     # match.group(0)
@@ -63,7 +65,14 @@ def reddit_url(match):
             title, author, timeago, upvotes, downvotes, comments)
 
 #@hook.regex(*fourchan_re)
-def fourchan_url(match):
+def fourchanboard_url(match):
+    soup = http.get_soup(match)
+    title = soup.title.renderContents().strip()
+    boardtitle = soup.find('div', {'class': 'boardTitle'})
+    return http.process_text('\x02%s\x02 - \x02%s\x02' % (title, boardtitle))
+
+#@hook.regex(*fourchan_re)
+def fourchanpost_url(match):
     soup = http.get_soup(match)
     title = soup.title.renderContents().strip()
     post = soup.find('div', {'class': 'opContainer'})
