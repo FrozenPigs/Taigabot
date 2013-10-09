@@ -68,8 +68,8 @@ def reddit_url(match):
 def fourchanboard_url(match):
     soup = http.get_soup(match)
     title = soup.title.renderContents().strip()
-    boardtitle = soup.find('div', {'class': 'boardTitle'})
-    return http.process_text('\x02%s\x02 - \x02%s\x02' % (title, boardtitle))
+    # boardtitle = soup.find('div', {'class': 'boardTitle'})
+    return http.process_text('\x02%s\x02' % (title))
 
 #@hook.regex(*fourchan_re)
 def fourchanpost_url(match):
@@ -111,7 +111,6 @@ def unmatched_url(match):
     length = None
     title = None
     result = None
-    test = ''
     page = urllib.urlopen(match)
     content_type = page.info()['Content-Type'].split(';')[0]
     if content_type.find("html") != -1:
@@ -120,17 +119,14 @@ def unmatched_url(match):
       if len(title) > 300: title = soup.find('meta', {'name' : 'description'})['content']
     elif content_type.find("image") != -1:
       if page.info()['Content-Length']:
-        title = "[" + page.info()['Content-Type'] + "] "
         length = int(page.info()['Content-Length'])
-        print length
-        if length > 1048576: length = str(length / 1048576) + ' MiB'
-        elif length > 1024: length = str(length / 1024) + ' KiB'
+        if length > 1048576: length = str(float(length) / 1048576) + ' MiB'
+        elif length > 1024: length = str(float(length) / 1024) + ' KiB'
         elif length < 0: length = 'Unknown size'
         else: length = str(length) + ' B'
-        title += length
       else: length = "Unknown size"
     else: title = "I messed up. Bad."
-    print title
+
     result = ''
     if length != None:
       result += ('[%s] %s ' % (content_type, length))
