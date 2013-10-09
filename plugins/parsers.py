@@ -120,8 +120,8 @@ def unmatched_url(match):
     elif content_type.find("image") != -1:
       if page.info()['Content-Length']:
         length = int(page.info()['Content-Length'])
-        if length > 1048576: length = str(float(length) / 1048576) + ' MiB'
-        elif length > 1024: length = str(float(length) / 1024) + ' KiB'
+        if length > 1048576: length = str("{0:.2f}".format(round((float(length) / 1048576),2))) + ' MiB'
+        elif length > 1024: length = str("{0:.2f}".format(round((float(length) / 1024),2))) + ' KiB'
         elif length < 0: length = 'Unknown size'
         else: length = str(length) + ' B'
       else: length = "Unknown size"
