@@ -119,7 +119,7 @@ def unmatched_url(match):
       if len(title) > 300: title = soup.find('meta', {'name' : 'description'})['content']
     elif content_type.find("image") != -1:
       if page.info()['Content-Length']:
-        length = (page.info()['Content-Length'])
+        length = int(page.info()['Content-Length'])
         print length
         if length > 1048576: length = str(length / 1048576) + ' MiB'
         elif length > 1024: length = str(length / 1024) + ' KiB'
