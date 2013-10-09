@@ -102,6 +102,40 @@ def down(inp, conn=None, chan=None, notice=None, nick=None):
 
 
 @hook.command(channeladminonly=True)
+def voice(inp, conn=None, chan=None, notice=None):
+    "voice [channel] <user> -- Makes the bot voice <user> in [channel]. "\
+    "If [channel] is blank the bot will voice <user> in "\
+    "the channel the command was used in."
+    inp = inp.split(" ")
+    if inp[0][0] == "#":
+        chan = inp[0]
+        user = inp[1]
+        out = "MODE %s +o %s" % (chan, user)
+    else:
+        user = inp[0]
+        out = "MODE %s +o %s" % (chan, user)
+    notice("Attempting to op %s from %s..." % (user, chan))
+    conn.send(out)
+
+
+@hook.command(channeladminonly=True)
+def devoice(inp, conn=None, chan=None, notice=None):
+    "devoice [channel] <user> -- Makes the bot devoice <user> in [channel]. "\
+    "If [channel] is blank the bot will devoice <user> in "\
+    "the channel the command was used in."
+    inp = inp.split(" ")
+    if inp[0][0] == "#":
+        chan = inp[0]
+        user = inp[1]
+        out = "MODE %s -o %s" % (chan, user)
+    else:
+        user = inp[0]
+        out = "MODE %s -o %s" % (chan, user)
+    notice("Attempting to deop %s from %s..." % (user, chan))
+    conn.send(out)
+
+
+@hook.command(channeladminonly=True)
 def ban(inp, conn=None, chan=None, notice=None):
     "ban [channel] <user> -- Makes the bot ban <user> in [channel]. "\
     "If [channel] is blank the bot will ban <user> in "\
