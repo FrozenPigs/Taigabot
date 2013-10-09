@@ -110,11 +110,11 @@ def voice(inp, conn=None, chan=None, notice=None):
     if inp[0][0] == "#":
         chan = inp[0]
         user = inp[1]
-        out = "MODE %s +o %s" % (chan, user)
+        out = "MODE %s +v %s" % (chan, user)
     else:
         user = inp[0]
-        out = "MODE %s +o %s" % (chan, user)
-    notice("Attempting to op %s from %s..." % (user, chan))
+        out = "MODE %s +v %s" % (chan, user)
+    notice("Attempting to voice %s from %s..." % (user, chan))
     conn.send(out)
 
 
@@ -127,11 +127,11 @@ def devoice(inp, conn=None, chan=None, notice=None):
     if inp[0][0] == "#":
         chan = inp[0]
         user = inp[1]
-        out = "MODE %s -o %s" % (chan, user)
+        out = "MODE %s -v %s" % (chan, user)
     else:
         user = inp[0]
-        out = "MODE %s -o %s" % (chan, user)
-    notice("Attempting to deop %s from %s..." % (user, chan))
+        out = "MODE %s -v %s" % (chan, user)
+    notice("Attempting to devoice %s from %s..." % (user, chan))
     conn.send(out)
 
 
