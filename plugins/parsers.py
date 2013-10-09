@@ -122,12 +122,13 @@ def unmatched_url(match):
         length = int(page.info()['Content-Length'])
         print length
         if length > 1048576: length = str(length / 1048576) + ' MiB'
+        print length
         elif length > 1024: length = str(length / 1024) + ' KiB'
         elif length < 0: length = 'Unknown size'
         else: length = str(length) + ' B'
       else: length = "Unknown size"
     else: title = "I messed up. Bad."
-    print length
+
     result = ''
     if length != None:
       result += ('[%s] %s ' % (content_type, length))
