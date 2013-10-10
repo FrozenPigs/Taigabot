@@ -15,9 +15,8 @@ nick_re = re.compile(":(.+?)!")
 def version(inp, conn=None, notice=None):
     "version <user> -- Returns version "
     inp = inp.split(" ")
-    chan = inp[0]
     user = inp[0]
-    out = "ctcp %s VERSION" % (user)
+    out = conn.cmd('VERSION', user)
     conn.send(out)
 
 # Identify to NickServ (or other service)
