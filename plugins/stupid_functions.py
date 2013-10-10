@@ -63,7 +63,24 @@ def honk(inp, nick=None, conn=None, chan=None):
             out = "PRIVMSG %s :\x01ACTION fines %s $%i for being too lewd and getting honked at.\x01" % (chan, inp.strip(), random.randint(1, 500))
         else:
             out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, inp.strip())
-        
+    conn.send(out)
+
+@hook.command(autohelp=False)
+def pet(inp, nick=None, conn=None, chan=None):
+    "pet <person} -- Honks at someone."
+    if len(inp) == 0:
+        if random.randint(1, 3) == 2: 
+            out = "PRIVMSG %s :\x01ACTION fines %s $%i for petting.\x01" % (chan, nick, random.randint(1, 500))
+        else:
+            out = "PRIVMSG %s :\x01ACTION pets %s\x01" % (chan, nick)
+    else:
+        randnum = random.randint(1, 4)
+        if randnum == 1: 
+            out = "PRIVMSG %s :\x01ACTION fines %s $%i for petting.\x01" % (chan, nick, random.randint(1, 500))
+        elif randnum == 2: 
+            out = "PRIVMSG %s :\x01ACTION fines %s $%i for being too lewd and getting pet.\x01" % (chan, inp.strip(), random.randint(1, 500))
+        else:
+            out = "PRIVMSG %s :\x01ACTION pets %s\x01" % (chan, inp.strip())
     conn.send(out)
 
 @hook.command(autohelp=False)

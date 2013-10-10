@@ -10,14 +10,14 @@ nick_re = re.compile(":(.+?)!")
 
 
 
-@hook.command('ver')
-@hook.command()
-def version(inp, conn=None, notice=None):
-    "version <user> -- Returns version "
-    inp = inp.split(" ")
-    user = inp[0]
-    out = conn.cmd('VERSION', user)
-    conn.send(out)
+# @hook.command('ver')
+# @hook.command()
+# def version(inp, conn=None, notice=None):
+#     "version <user> -- Returns version "
+#     inp = inp.split(" ")
+#     user = inp[0]
+#     out = conn.cmd('VERSION', user)
+#     conn.send(out)
 
 # Identify to NickServ (or other service)
 @hook.event('004')
