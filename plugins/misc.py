@@ -9,13 +9,16 @@ socket.setdefaulttimeout(10)
 nick_re = re.compile(":(.+?)!")
 
 
-# Auto-join on Invite (Configurable, defaults to True)
-@hook.event('INVITE')
-def invite(paraml, conn=None):
-    invite_join = conn.conf.get('invite_join', True)
-    if invite_join:
-        conn.join(paraml[-1])
 
+@hook.command('ver')
+@hook.command()
+def version(inp, conn=None, notice=None):
+    "version <user> -- Returns version "
+    inp = inp.split(" ")
+    chan = inp[0]
+    user = inp[0]
+    out = "ctcp %s VERSION" % (user)
+    conn.send(out)
 
 # Identify to NickServ (or other service)
 @hook.event('004')
