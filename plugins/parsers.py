@@ -5,8 +5,15 @@ import lxml
 from lxml.html import parse 
 
 import urllib, urllib2
+from urllib import FancyURLopener
 import HTMLParser
 from bs4 import BeautifulSoup
+
+class urlopener(FancyURLopener):
+    version = "Mozilla/5.0 (X11; Linux x86_64; rv:14.0) Gecko/20100101 Firefox/14.0.1"
+    
+opener = urlopener()
+
 
 processed = False
 
@@ -111,7 +118,7 @@ def unmatched_url(match):
     length = None
     title = None
     result = None
-    page = urllib.urlopen(match)
+    page = opener.open(match) #urllib.urlopen(match)
     content_type = page.info()['Content-Type'].split(';')[0]
     if content_type.find("html") != -1:
       soup = BeautifulSoup(page)
