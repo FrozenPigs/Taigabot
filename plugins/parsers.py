@@ -124,7 +124,7 @@ def unmatched_url(match):
       soup = BeautifulSoup(page)
       title = soup.title.renderContents().strip()
       if len(title) > 300: title = soup.find('meta', {'name' : 'description'})['content']
-    elif content_type.find("image") != -1:
+    else:
       if page.info()['Content-Length']:
         length = int(page.info()['Content-Length'])
         if length > 1048576: length = str("{0:.2f}".format(round((float(length) / 1048576),2))) + ' MiB'
@@ -132,7 +132,8 @@ def unmatched_url(match):
         elif length < 0: length = 'Unknown size'
         else: length = str(length) + ' B'
       else: length = "Unknown size"
-    else: title = ("%s" % (content_type))
+
+      # content_type.find("image") != -1
 
     result = ''
     if length != None:
