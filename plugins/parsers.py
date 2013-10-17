@@ -132,7 +132,7 @@ def unmatched_url(match):
         elif length < 0: length = 'Unknown size'
         else: length = str(length) + ' B'
       else: length = "Unknown size"
-    else: title = "I messed up. Bad."
+    else: title = ("%s" % (content_type))
 
     result = ''
     if length != None:

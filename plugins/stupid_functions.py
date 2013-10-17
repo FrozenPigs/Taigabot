@@ -90,7 +90,7 @@ def lewd(inp):
 
 @hook.command(autohelp=False)
 def pantsumap(inp, chan=None, notice=None):
-    "lewd -- LEWD"
+    "pantsumap -- pantsumap"
     if chan == "#pantsumen":
         notice(("Pantsumen Map: http://tinyurl.com/clx2qeg\r\n").encode('utf-8', 'ignore'))
 
