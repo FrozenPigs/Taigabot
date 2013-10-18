@@ -112,7 +112,7 @@ def info(inp, notice=None, db=None):
     else:
         notice("Unknown Factoid.")
 
-@hook.regex(r'^\#(\b\S+\b)$')
+@hook.regex(r'\#(\b\S+\b)$')
 @hook.regex(r'^(\b\S+\b)\?$')
 @hook.regex(r'^\? ?(.+)')
 def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
