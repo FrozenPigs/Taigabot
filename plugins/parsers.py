@@ -43,7 +43,7 @@ def process_url(match,bot=None,input=None):
     elif 'reddit.com/r'     in url: return reddit_url(url)         #Reddit
     elif 'craigslist.org'   in url: return craigslist_url(url)     #Craigslist
     elif 'boards.4chan.org' in url:                                #4chan
-        if '4chan.org/b/'   in url: return '\x033>/b/\x03'
+        #if '4chan.org/b/'   in url: return '\x033>/b/\x03'
         if '#p'             in url: return fourchanquote_url(url)  #4chan Quoted Post
         if '/res/'          in url: return fourchanpost_url(url)   #4chan Post
         if '/src/'          in url: return unmatched_url(url)      #4chan Image
