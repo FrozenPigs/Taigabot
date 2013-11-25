@@ -46,18 +46,18 @@ def kick(inp, chan=None, conn=None, notice=None):
     notice("Attempting to kick %s from %s..." % (user, chan))
     conn.send(out)
 
-@hook.command('siid')
-@hook.command(autohelp=False)
-def sleepytime(inp, chan=None, conn=None, notice=None):
-    "kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel] "\
-    "If [channel] is blank the bot will kick the <user> in "\
-    "the channel the command was used in."
-    user = 'siid'
-    out = "KICK %s %s" % (chan, user)
-    reason = "sleepytime!"
-    out = out + " :" + reason
-    notice("Attempting to kick %s from %s..." % (user, chan))
-    conn.send(out)
+# @hook.command('siid')
+# @hook.command(autohelp=False)
+# def sleepytime(inp, chan=None, conn=None, notice=None):
+#     "kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel] "\
+#     "If [channel] is blank the bot will kick the <user> in "\
+#     "the channel the command was used in."
+#     user = 'siid'
+#     out = "KICK %s %s" % (chan, user)
+#     reason = "sleepytime!"
+#     out = out + " :" + reason
+#     notice("Attempting to kick %s from %s..." % (user, chan))
+#     conn.send(out)
 
 
 @hook.command(channeladminonly=True)
