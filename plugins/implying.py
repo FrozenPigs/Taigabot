@@ -2,8 +2,8 @@ from util import hook, http
 import re
 
 def get_image_result(html,num):
-    link = html.xpath("//table[@class='images_table']//a/@href")[num]
-    image = http.unquote(re.search('.+?imgurl=(.+)&imgrefurl.+', link).group(1))
+    link = html.xpath("//div[@class='rg_di']//a/@href")[num]
+    image = http.unquote(re.search('.+?imgrefurl=.+&imgurl=(.+)&w.+', link).group(1))
     return image
 
 @hook.regex(r'^\> ?(.+\.tiff$)')
@@ -23,9 +23,10 @@ def implying(inp):
     is_active = False
     try: search = inp.group(1)
     except: search = inp
-    url = "https://www.google.com/search?q=%s&hl=en&sa=G&gbv=2&tbm=isch&sout=1" % search.replace(' ','_').replace("'",'')
-    html = http.get_html(url)
 
+    url = "https://www.google.com/search?site=imghp&tbm=isch&sa=1&q=%s" % search.replace(' ','+').replace("'",'')
+
+    html = http.get_html(url)
     try:
         while not is_active and num < 6: #check if link is dead, if so get the next image
             image = get_image_result(html,num)
