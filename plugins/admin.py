@@ -7,7 +7,7 @@ import subprocess
 from configobj import ConfigObj
 
 
-@hook.command
+@hook.command(autohelp=false)
 def url(inp):
     "url -- Returns Uguubots URL."
     return 'https://github.com/infinitylabs/UguuBot'
