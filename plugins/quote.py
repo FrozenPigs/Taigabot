@@ -33,11 +33,19 @@ def add_quote(db, chan, nick, add_nick, msg):
     return "Quote added."
 
 
-def del_quote(db, chan, nick, add_nick, msg):
+def del_quote(db, nick, num):
     """Deletes a quote from a nick"""
-    db.execute('''UPDATE quote SET deleted = 1 WHERE
-                  chan=? AND lower(nick)=lower(?) AND msg=msg''')
-    db.commit()
+    
+    msg = get_msg_by_nick(db, nick, num)
+    
+    try:
+        db.execute('''UPDATE quote SET deleted = 1 WHERE
+                      lower(nick)=lower(?) AND msg=msg''',
+                    (nick, msg))
+        db.commit()
+    except db.IntegrityError:
+        return "Message doesn't exist. Doing nothing."
+    return "Message removed"
 
 
 def get_quote_num(num, count, name):
@@ -57,6 +65,25 @@ def get_quote_num(num, count, name):
         num = random.randint(1, count)
     return num
 
+def get_msg_by_nick(db, nick, num):
+    """Returns only the quote from a nick selected by number"""
+    count = db.execute('''SELECT COUNT(*) FROM quote WHERE deleted != 1
+                          AND lower(nick) = lower(?)''', [nick]).fetchall()[0][0]
+
+    try:
+        num = get_quote_num(num, count, nick)
+    except Exception as error_message:
+        return error_message
+
+    quote = db.execute('''SELECT msg
+                          FROM quote
+                          WHERE deleted != 1
+                          AND lower(nick) = lower(?)
+                          ORDER BY time
+                          LIMIT ?, 1''', (nick, (num - 1))).fetchall()[0]
+                          
+    msg = quote
+    return msg
 
 def get_quote_by_nick(db, nick, num=False):
     """Returns a formatted quote from a nick, random or selected by number"""
@@ -148,3 +175,18 @@ def quote(inp, nick='', chan='', db=None, notice=None):
         return get_quote_by_nick_chan(db, chan, nick, num)
 
     notice(quote.__doc__)
+
+@hook.command(adminonly=True)
+def rquote(inp, nick='', chan='', db=None, notice=None):
+    "rquote <nick> <#n> -- Removes <#n>th quote by <nick>"
+    create_table_if_not_exists(db)
+    
+    remove = re.match(r"(\S+?)\s+(\d+)", inp)
+    
+    if remove:
+        quoted_nick, num = remove.groups()
+        notice(del_quote(db, quoted_nick, num))
+        return
+    
+    notice(quote.__doc__)
+        
