@@ -40,7 +40,7 @@ def del_quote(db, nick, num):
     
     try:
         db.execute('''UPDATE quote SET deleted = 1 WHERE
-                      lower(nick)=lower(?) AND msg=msg''',
+                      lower(nick)=lower(?) AND msg=?''',
                     (nick, msg))
         db.commit()
     except db.IntegrityError:
@@ -82,7 +82,7 @@ def get_msg_by_nick(db, nick, num):
                           ORDER BY time
                           LIMIT ?, 1''', (nick, (num - 1))).fetchall()[0]
                           
-    msg = quote
+    msg, = quote
     return msg
 
 def get_quote_by_nick(db, nick, num=False):
