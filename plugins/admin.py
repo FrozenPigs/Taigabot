@@ -5,13 +5,21 @@ import json
 import time
 import subprocess
 from configobj import ConfigObj
-
+from git import *
 
 @hook.command(autohelp=false)
 def url(inp):
     "url -- Returns Uguubots URL."
     return 'https://github.com/infinitylabs/UguuBot'
 
+@hook.command(autohelp=False)
+def update(inp):
+    "update -- Updates bot to current github."
+    #p = os.path.abspath('.')
+    #return p
+    #remote_url = "https://github.com/infinitylabs/UguuBot.git"
+    g = git.cmd.Git(p)
+    g.pull()
 
 #Database conversion commands
 #Update Uguu's default databases
