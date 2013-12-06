@@ -19,7 +19,8 @@ def update(inp):
     #return p
     #remote_url = "https://github.com/infinitylabs/UguuBot.git"
     g = git.cmd.Git(p)
-    g.pull()
+    response = g.pull()
+    return response
 
 #Database conversion commands
 #Update Uguu's default databases
