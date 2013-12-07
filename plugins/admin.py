@@ -15,12 +15,8 @@ def url(inp):
 @hook.command(autohelp=False)
 def update(inp):
     "update -- Updates bot to current github."
-    #p = os.path.abspath('.')
-    #return p
-    #remote_url = "https://github.com/infinitylabs/UguuBot.git"
-    g = git.cmd.Git(p)
-    response = g.pull()
-    return response
+    output = subprocess.check_output(["git", "pull"])
+    return output
 
 #Database conversion commands
 #Update Uguu's default databases
