@@ -26,7 +26,6 @@ The programs `daemon` or `screen` are recomended for the launcher to run optimal
 ### Install required Linux packages 
     
     Install python, python-dev, libenchant-dev, libenchant1c2a, libxslt-dev, libxml2-dev
-    sudo easy_install GitPython
     
 Before you can run the bot, you need to install a few Python dependencies. These can be installed with `pip` (The Python package manager):
 
