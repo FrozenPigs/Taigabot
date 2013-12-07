@@ -35,14 +35,12 @@ def ltc(inp, say=None):
     "litecoin -- gets current exchange rate for litecoins from mtgox"
     data = http.get_json("https://btc-e.com/api/2/ltc_usd/ticker")
     data = data['ticker']
-    print data
     ticker = {
         'buy': data['buy'],
         'high': data['high'],
         'low': data['low'],
         'vol': data['vol'],
     }
-    print ticker
 
     result = ("Current: \x0307%(buy)s\x0f - High: \x0307%(high)s\x0f"
         " - Low: \x0307%(low)s\x0f - Volume: %(vol)s" % ticker)
