@@ -17,6 +17,8 @@ def get_image_result(html,num):
 @hook.regex(r'^\> ?(.+\.gif$)')
 @hook.regex(r'^\> ?(.+\.GIF$)')
 @hook.command('mfw')
+@hook.command('image')
+@hook.command('gi')
 def implying(inp):
     ">imagename.gif -- Returns first Image result."
     num = 0
