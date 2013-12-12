@@ -2,7 +2,8 @@
 from util import hook
 
 
-@hook.command(channeladminonly=True)
+# @hook.command(channeladminonly=True)
+@hook.command
 def topic(inp, conn=None, chan=None, notice=None):
     "topic [channel] <topic> -- Change the topic of a channel."
     message = inp
