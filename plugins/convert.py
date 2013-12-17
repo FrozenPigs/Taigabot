@@ -14,6 +14,10 @@ def convert(inp,conn=None,chan=None):
     if 'btc' in inp.lower() or 'bitcoin' in inp.lower():
         convert_btc(inp,conn,chan)
         return None
+    elif 'ltc' in inp.lower() or 'litecoin' in inp.lower():
+        convert_ltc(inp,conn,chan)
+        return None
+    
     conv_left = None
     conv_right = None
     result = None
@@ -49,7 +53,6 @@ def convert(inp,conn=None,chan=None):
         return result
 
 def convert_btc(inp,conn=None,chan=None):
-    print inp
     inp = inp.lower().replace(',','').split()
     inp_amount = inp[0]
     amount = inp_amount
@@ -75,4 +78,29 @@ def convert_btc(inp,conn=None,chan=None):
     out = "PRIVMSG %s :%s" % (chan, message)
     conn.send(out)
 
+def convert_ltc(inp,conn=None,chan=None):
+    inp = inp.lower().replace(',','').split()
+    inp_amount = inp[0]
+    amount = inp_amount
+    #get ltc price
+    data = http.get_json("https://btc-e.com/api/2/ltc_usd/ticker")
+    data = data['ticker']
+    ticker = {'buy': data['buy']}
 
+    ltc_price = ("%(buy)s" % ticker).replace('$','')
+
+    if 'ltc' in inp[3]:
+        currency = inp[1]
+        if not 'usd' in currency: amount = convert('%s %s to usd' % (amount,currency)).split('=')[1].split()[0]
+        result = (float(amount) / float(ltc_price))
+    elif 'ltc' in inp[1]:
+        currency = inp[3]
+        if not 'usd' in currency: 
+            conversion_rate = (float(convert('10000 usd to %s' % currency).split('=')[1].split()[0]) / 10000)
+            result = ((float(conversion_rate) * float(ltc_price)) * float(amount))
+        else: result = (float(amount) * float(ltc_price))
+
+    #result = "%.2f" % result
+    message = '%s %s = %s %s' % ('{:20,.2f}'.format(float(amount)).strip(),inp[1],'{:20,.2f}'.format(float(result)).strip(),inp[3])
+    out = "PRIVMSG %s :%s" % (chan, message)
+    conn.send(out)
