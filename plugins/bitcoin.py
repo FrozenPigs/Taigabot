@@ -48,20 +48,24 @@ def ltc(inp, say=None):
     say("%s" % (result))
 
 
-# import re
+import re
 @hook.command(autohelp=False)
 def doge(inp):
     ".doge -- Returns the value of a dogecoin."
-
-    url = "https://coinedup.com/OrderBook?market=DOGE&base=BTC"
-    html = http.get_html(url)
+    data = http.get_json("http://data.mtgox.com/api/2/BTCUSD/money/ticker")
+    data = data['data']
+    ticker = {
+        'buy': data['buy']['display_short']
+    }
+    bitcoin_price = ("%(buy)s" % ticker).split('$')[1]
 
     try:
-        link = html.xpath("//div[@id='elementDisplayLastPrice']/div")
-        print link
-        # image = http.unquote(re.search('.+?imgrefurl=.+&imgurl=(.+)&w.+', link).group(1))
-        return link
-    except IndexError:
-        return 'Doge is worthless.'
-
-    #return '\x033\x02>%s\x02\x03' % (link)
+        url = "https://coinedup.com/OrderBook?market=DOGE&base=BTC"
+        html = http.get_html(url)
+        div_dogerate = html.xpath("//div[@id='elementDisplayLastPrice']/div/text()")[0]
+        dogerate = http.unquote(re.search('.*last: (.*)\D', div_dogerate).group(1))
+    except:
+        return 'Error: Doge is worthless.'
+        
+    result = float(bitcoin_price) * float(dogerate)
+    return ("Current Value: \x0307%s\x0f - 1 Doge = \x0307%s\x0f BTC" % (result,dogerate))
