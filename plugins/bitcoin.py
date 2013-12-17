@@ -70,4 +70,4 @@ def doge(inp):
     result = float(bitcoin_price) * float(dogerate)
     dollar_result = 1 / float(result)
 
-    return ("Current Value: \x0307%s\x0f - 1 Doge=\x0307%s\x0f BTC - $1=\x0307%s\x0f Doges" % (result,dogerate,dollar_result))
+    return ("Current Value: \x0307%s\x0f - 1 Doge = \x0307%s\x0f BTC - $1 = \x0307%s\x0f Doges" % (result,dogerate,dollar_result))
