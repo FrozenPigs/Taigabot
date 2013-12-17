@@ -46,3 +46,22 @@ def ltc(inp, say=None):
         " - Low: \x0307%(low)s\x0f - Volume: %(vol)s" % ticker)
 
     say("%s" % (result))
+
+
+# import re
+@hook.command(autohelp=False)
+def doge(inp):
+    ".doge -- Returns the value of a dogecoin."
+
+    url = "https://coinedup.com/OrderBook?market=DOGE&base=BTC"
+    html = http.get_html(url)
+
+    try:
+        link = html.xpath("//div[@id='elementDisplayLastPrice']/div")
+        print link
+        # image = http.unquote(re.search('.+?imgrefurl=.+&imgurl=(.+)&w.+', link).group(1))
+    return link
+    except IndexError:
+        return 'Doge is worthless.'
+
+    return '\x033\x02>%s\x02\x03' % (link)
