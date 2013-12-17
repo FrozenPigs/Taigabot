@@ -8,8 +8,8 @@ def api_get(kind, query):
     return http.get_json(url % kind, q=query)
 
 
-@hook.command('image')
-@hook.command('gi')
+# @hook.command('image')
+# @hook.command('gi')
 @hook.command('gis')
 @hook.command
 def googleimage(inp):

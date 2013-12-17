@@ -60,8 +60,8 @@ def doge(inp):
         link = html.xpath("//div[@id='elementDisplayLastPrice']/div")
         print link
         # image = http.unquote(re.search('.+?imgrefurl=.+&imgurl=(.+)&w.+', link).group(1))
-    return link
+        return link
     except IndexError:
         return 'Doge is worthless.'
 
-    return '\x033\x02>%s\x02\x03' % (link)
+    #return '\x033\x02>%s\x02\x03' % (link)
