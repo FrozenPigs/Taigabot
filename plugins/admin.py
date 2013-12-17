@@ -12,7 +12,7 @@ def url(inp):
     "url -- Returns Uguubots URL."
     return 'https://github.com/infinitylabs/UguuBot'
 
-@hook.command(autohelp=False)
+@hook.command(autohelp=False, adminonly=True)
 def update(inp):
     "update -- Updates bot to current github."
     output = subprocess.check_output(["git", "pull"])
