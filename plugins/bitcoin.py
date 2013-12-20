@@ -48,26 +48,37 @@ def ltc(inp, say=None):
     say("%s" % (result))
 
 
-import re
 @hook.command(autohelp=False)
-def doge(inp):
+def doge(inp, say=None):
     ".doge -- Returns the value of a dogecoin."
+    # get btc price
     data = http.get_json("http://data.mtgox.com/api/2/BTCUSD/money/ticker")
     data = data['data']
-    ticker = {
-        'buy': data['buy']['display_short']
-    }
+    ticker = {'buy': data['buy']['display_short']}
     bitcoin_price = ("%(buy)s" % ticker).split('$')[1]
 
+    # get doge->btc price
     try:
-        url = "https://coinedup.com/OrderBook?market=DOGE&base=BTC"
-        html = http.get_html(url)
-        div_dogerate = html.xpath("//div[@id='elementDisplayLastPrice']/div/text()")[0]
-        dogerate = http.unquote(re.search('.*last: (.*)\D', div_dogerate).group(1))
+        url = "https://www.coins-e.com/api/v2/markets/data/"
+        data = http.get_json(url)
+        data = data['markets']
+        data = data['DOGE_BTC']
+        data = data['marketstat']
+        current = {'buy': data['ltp']}
+
+        data = data['24h']
+        average = {
+            'volume': data['volume'],
+            'high': data['h'],
+            'avg': data['avg_rate'],
+            'low': data['l'],
+    }
     except:
         return 'Error: Doge is worthless.'
         
-    result = float(bitcoin_price) * float(dogerate)
+    result = float(bitcoin_price) * float(current['buy'])
     dollar_result = 1 / float(result)
 
-    return ("Current Value: \x0307%s\x0f - 1 Doge = \x0307%s\x0f BTC - $1 = \x0307%s\x0f Doges" % (result,dogerate,dollar_result))
+    result = ("Price: \x0307$%s\x0f - $1=\x0307%s\x0f Doge - BTC Price: \x0307%s\x0f" % (result,dollar_result,current['buy']))
+    result2 = ("Average: \x0307%(avg)s\x0f - High: \x0307%(high)s\x0f - Low: \x0307%(low)s\x0f - Volume: %(volume)s" % average)
+    say("%s - %s" % (result, result2))
