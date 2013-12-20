@@ -78,7 +78,8 @@ def doge(inp, say=None):
         
     result = float(bitcoin_price) * float(current['buy'])
     dollar_result = 1 / float(result)
+    lotsadoge = 10000 * result
 
-    result = ("Price: \x0307$%s\x0f - $1=\x0307%s\x0f Doge - BTC: \x0307%s\x0f" % (result,dollar_result,current['buy']))
-    result2 = ("Average: \x0307%(avg)s\x0f - High: \x0307%(high)s\x0f - Low: \x0307%(low)s\x0f - Volume: %(volume)s" % average)
+    result = ("Price: \x0307$%s\x0f - $1=\x0307%s\x0f Doge - 10,000 DOGE=\x0307$%s\x0f - BTC: \x0307%s\x0f" % (result,dollar_result,lotsadoge,current['buy']))
+    result2 = ("Average: \x0307%(avg)s\x0f - High: \x0307%(high)s\x0f - Low: \x0307%(low)s\x0f" % average)
     say("%s - %s" % (result, result2))
