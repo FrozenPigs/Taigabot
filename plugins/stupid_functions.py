@@ -84,6 +84,24 @@ def pet(inp, nick=None, conn=None, chan=None):
     conn.send(out)
 
 @hook.command(autohelp=False)
+def diddle(inp, nick=None, conn=None, chan=None):
+    "pet <person} -- Honks at someone."
+    if len(inp) == 0:
+        if random.randint(1, 3) == 2: 
+            out = "PRIVMSG %s :\x01ACTION fines %s $%i for diddling.\x01" % (chan, nick, random.randint(1, 500))
+        else:
+            out = "PRIVMSG %s :\x01ACTION diddles %s\x01" % (chan, nick)
+    else:
+        randnum = random.randint(1, 4)
+        if randnum == 1: 
+            out = "PRIVMSG %s :\x01ACTION fines %s $%i for diddling.\x01" % (chan, nick, random.randint(1, 500))
+        elif randnum == 2: 
+            out = "PRIVMSG %s :\x01ACTION fines %s $%i for being too lewd and getting diddled.\x01" % (chan, inp.strip(), random.randint(1, 500))
+        else:
+            out = "PRIVMSG %s :\x01ACTION diddles %s\x01" % (chan, inp.strip())
+    conn.send(out)
+
+@hook.command(autohelp=False)
 def lewd(inp):
     "lewd -- LEWD"
     return 'ヽ(◔ ◡ ◔)ノ.･ﾟ*｡･+☆LEWD☆'.decode('UTF-8')
