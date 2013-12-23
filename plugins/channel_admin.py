@@ -120,16 +120,16 @@ def voice(inp, conn=None, chan=None, notice=None):
     "voice [channel] <user> -- Makes the bot voice <user> in [channel]. "\
     "If [channel] is blank the bot will voice <user> in "\
     "the channel the command was used in."
-    inp = inp.split(" ")
-    if inp[0][0] == "#":
-        chan = inp[0]
-        user = inp[1]
-        out = "MODE %s +v %s" % (chan, user)
+    if inp[0] == "#":
+        chan = inp.split(" ")[0]
     else:
-        user = inp[0]
-        out = "MODE %s +v %s" % (chan, user)
+        users = inp.split(" ")
+        for user in users:
+            out = "MODE %s +v %s" % (chan, user)
+            conn.send(out)
+            
     notice("Attempting to voice %s from %s..." % (user, chan))
-    conn.send(out)
+    
 
 
 @hook.command(channeladminonly=True)
