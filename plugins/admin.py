@@ -359,14 +359,18 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
 @hook.command(adminonly=True)
 def shutup(inp, conn=None, chan=None, notice=None):
     "shutup [channel] <user> -- Shuts the user up. "
-    inp = inp.split(" ")
+    # inp = inp.split(" ")
     if inp[0][0] == "#":
-        chan = inp[0]
-        user = inp[1]
-        out = "MODE %s +m-voh %s %s %s" % (chan, user, user, user)
+        chan = inp.split(" ")[0]
+        users = inp.split(" ")[1:]
     else:
+        users = inp.split(" ")
+
+    for user in users:
         user = inp[0]
         out = "MODE %s +m-voh %s %s %s" % (chan, user, user, user)
+        conn.send(out)
+
     notice("Shut up %s from %s..." % (user, chan))
     conn.send(out)
 
