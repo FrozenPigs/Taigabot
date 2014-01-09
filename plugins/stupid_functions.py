@@ -117,3 +117,10 @@ def pantsumap(inp, chan=None, notice=None):
 def lcs(inp):
     "Some LoL shit..."
     return 'http://na.lolesports.com/#tabs=2'
+
+
+@hook.command('deidle')
+@hook.command(autohelp=False)
+def idle(inp):
+    "idle -- idle"
+    return 'Thats not a command you baka.'.decode('UTF-8')
