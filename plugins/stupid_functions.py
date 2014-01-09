@@ -119,8 +119,8 @@ def lcs(inp):
     return 'http://na.lolesports.com/#tabs=2'
 
 
-@hook.command('deidle')
+@hook.command('deidle', autohelp=False)
 @hook.command(autohelp=False)
 def idle(inp):
     "idle -- idle"
-    return 'Thats not a command you baka.'.decode('UTF-8')
+    return 'Thats not a command you baka.'
