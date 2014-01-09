@@ -127,7 +127,7 @@ def voice(inp, conn=None, chan=None, notice=None):
         for user in users:
             out = "MODE %s +v %s" % (chan, user)
             conn.send(out)
-            
+
     notice("Attempting to voice %s from %s..." % (user, chan))
     
 
@@ -315,6 +315,20 @@ def flood(inp, conn=None, chan=None, notice=None, bot=None):
     bot.channelconfig.write()
     return
 
+@hook.command(channeladminonly=True)
+def invite(inp, conn=None, chan=None, notice=None):
+    "invite [channel] <user> -- Makes the bot invite <user> to [channel]. "\
+    "If [channel] is blank the bot will invite <user> to "\
+    "the channel the command was used in."
+    if inp[0] == "#":
+        chan = inp.split(" ")[0]
+    else:
+        users = inp.split(" ")
+        for user in users:
+            out = "INVITE %s %s" % (user,chan)
+            conn.send(out)
+            
+    notice("Inviting %s to %s..." % (user, chan))
 # @hook.command(channeladminonly=True)
 # def set(inp, conn=None, chan=None, notice=None, bot=None):
 #     "flood [channel] <number> <duration> -- Enables flood protection for a channel. " \
