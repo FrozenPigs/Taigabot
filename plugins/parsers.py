@@ -42,6 +42,7 @@ def process_url(match,bot=None,input=None):
     elif 'vimeo.com'        in url: return                         #handled by vimeo plugin: exiting
     elif 'reddit.com/r'     in url: return reddit_url(url)         #Reddit
     elif 'craigslist.org'   in url: return craigslist_url(url)     #Craigslist
+    elif 'wikipedia.org'    in url: return wikipedia_url(url)      #Wikipedia
     elif 'boards.4chan.org' in url:                                #4chan
         #if '4chan.org/b/'   in url: return '\x033>/b/\x03'
         if '#p'             in url: return fourchanquote_url(url)  #4chan Quoted Post
@@ -111,6 +112,13 @@ def craigslist_url(match):
     post = soup.find('section', {'id': 'postingbody'}).renderContents().strip()
     if trim_length > 1: return http.process_text('\x02Craigslist.org: %s\x02 - %s' % (title, post[:int(trim_length)]))
     else: return http.process_text('\x02Craigslist.org: %s\x02 - %s' % (title, post))
+
+def wikipedia_url(match):
+    soup = http.get_soup(match)
+    title = soup.find('div', {'id': 'mw-content-text'}).renderContents().strip()
+    post = soup.find('p').renderContents().strip()
+    if trim_length > 1: return http.process_text('\x02Wikipedia.org: %s\x02 - %s' % (title, post[:int(trim_length)]))
+    else: return http.process_text('\x02Wikipedia.org: %s\x02 - %s' % (title, post))
 
 
 def unmatched_url(match):
