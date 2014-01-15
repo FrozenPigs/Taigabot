@@ -115,11 +115,10 @@ def craigslist_url(match):
 
 def wikipedia_url(match):
     soup = http.get_soup(match)
-    title = soup.find('div', {'id': 'mw-content-text'}).renderContents().strip()
+    title = soup.find('h1', {'id': 'firstHeading'}).renderContents().strip()
     post = soup.find('p').renderContents().strip()
-    #if trim_length > 1: 
-    return http.process_text('\x02Wikipedia.org: %s\x02 - %s' % (title, post[:int(200)]))
-    #else: return http.process_text('\x02Wikipedia.org: %s\x02 - %s' % (title, post))
+    if trim_length > 1: return http.process_text('\x02Wikipedia.org: %s\x02 - %s' % (title, post[:int(trim_length)]))
+    else: return http.process_text('\x02Wikipedia.org: %s\x02 - %s' % (title, post))
 
 
 def unmatched_url(match):
