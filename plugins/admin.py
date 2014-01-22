@@ -367,24 +367,25 @@ def shutup(inp, conn=None, chan=None, notice=None):
         users = inp.split(" ")
 
     for user in users:
-        user = inp[0]
         out = "MODE %s +m-voh %s %s %s" % (chan, user, user, user)
         conn.send(out)
+        notice("Shut up %s from %s..." % (user, chan))
 
-    notice("Shut up %s from %s..." % (user, chan))
     conn.send(out)
 
 
 @hook.command(adminonly=True)
 def speak(inp, conn=None, chan=None, notice=None):
     "speak [channel] <user> -- Shuts the user up. "
-    inp = inp.split(" ")
     if inp[0][0] == "#":
-        chan = inp[0]
-        user = inp[1]
-        out = "MODE %s -m+v %s" % (chan, user)
+        chan = inp.split(" ")[0]
+        users = inp.split(" ")[1:]
     else:
-        user = inp[0]
-        out = "MODE %s -m+v %s" % (chan, user)
-    notice("Gave %s from %s speech..." % (user, chan))
+        users = inp.split(" ")
+
+    for user in users:
+        out = "MODE %s -m" % (chan)
+        conn.send(out)
+
+    notice("Shut up %s from %s..." % (user, chan))
     conn.send(out)
