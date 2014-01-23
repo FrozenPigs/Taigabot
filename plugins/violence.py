@@ -17,6 +17,10 @@ with open("plugins/data/kills.txt") as f:
     kills = [line.strip() for line in f.readlines()
              if not line.startswith("//")]
 
+with open("plugins/data/yiffs.txt") as f:
+    yiffs = [line.strip() for line in f.readlines()
+             if not line.startswith("//")]
+
 
 @hook.command
 def slap(inp, me=None, nick=None, conn=None, notice=None):
@@ -73,6 +77,25 @@ def kill(inp, me=None, nick=None, conn=None, notice=None):
 
     values = {"user": target}
     phrase = random.choice(kills)
+
+    # act out the message
+    me(phrase.format(**values))
+
+@hook.command
+def yiff(inp, me=None, nick=None, conn=None, notice=None):
+    "yiff <user> -- yiffs <user>."
+    target = inp.strip()
+
+    if " " in target:
+        notice("Invalid username!")
+        return
+
+    # if the user is trying to make the bot slap itself, slap them
+    if target.lower() == conn.nick.lower() or target.lower() == "itself":
+        target = nick
+
+    values = {"user": target}
+    phrase = random.choice(yiffs)
 
     # act out the message
     me(phrase.format(**values))
