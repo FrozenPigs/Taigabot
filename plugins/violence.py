@@ -81,21 +81,25 @@ def kill(inp, me=None, nick=None, conn=None, notice=None):
     # act out the message
     me(phrase.format(**values))
 
-@hook.command
-def yiff(inp, me=None, nick=None, conn=None, notice=None):
+@hook.command("yiff")
+@hook.command(autohelp=False)
+def lewd(inp, me=None, nick=None, conn=None, notice=None):
     "yiff <user> -- yiffs <user>."
-    target = inp.strip()
+    if len(inp) == 0:
+        return 'ヽ(◔ ◡ ◔)ノ.･ﾟ*｡･+☆LEWD☆'.decode('UTF-8')
+    else:    
+        target = inp.strip()
 
-    if " " in target:
-        notice("Invalid username!")
-        return
+        if " " in target:
+            notice("Invalid username!")
+            return
 
-    # if the user is trying to make the bot slap itself, slap them
-    if target.lower() == conn.nick.lower() or target.lower() == "itself":
-        target = nick
+        # if the user is trying to make the bot slap itself, slap them
+        if target.lower() == conn.nick.lower() or target.lower() == "itself":
+            target = nick
 
-    values = {"user": target}
-    phrase = random.choice(yiffs)
+        values = {"user": target}
+        phrase = random.choice(yiffs)
 
-    # act out the message
-    me(phrase.format(**values))
+        # act out the message
+        me(phrase.format(**values))

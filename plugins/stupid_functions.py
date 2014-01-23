@@ -102,11 +102,6 @@ def diddle(inp, nick=None, conn=None, chan=None):
     conn.send(out)
 
 @hook.command(autohelp=False)
-def lewd(inp):
-    "lewd -- LEWD"
-    return 'ヽ(◔ ◡ ◔)ノ.･ﾟ*｡･+☆LEWD☆'.decode('UTF-8')
-
-@hook.command(autohelp=False)
 def pantsumap(inp, chan=None, notice=None):
     "pantsumap -- pantsumap"
     if chan == "#pantsumen":
