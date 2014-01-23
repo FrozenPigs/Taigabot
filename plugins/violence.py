@@ -98,7 +98,7 @@ def lewd(inp, me=None, nick=None, conn=None, notice=None):
         if target.lower() == conn.nick.lower() or target.lower() == "itself":
             target = nick
 
-        values = {"user": target}
+        values = {"user": target,"nick": me}
         phrase = random.choice(yiffs)
 
         # act out the message
