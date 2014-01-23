@@ -19,7 +19,7 @@ def yiff(inp, action=None, nick=None, conn=None, notice=None):
         target = nick
 
     values = {"user": target}
-    phrase = random.choice(larts)
+    phrase = random.choice(yiffs)
 
     # act out the message
     action(phrase.format(**values))
