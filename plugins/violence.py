@@ -93,7 +93,7 @@ def lewd(inp, me=None, nick=None, conn=None, notice=None):
         if " " in target:
             notice("Invalid username!")
             return
-
+        print conn
         # if the user is trying to make the bot slap itself, slap them
         if target.lower() == conn.nick.lower() or target.lower() == "itself":
             target = nick

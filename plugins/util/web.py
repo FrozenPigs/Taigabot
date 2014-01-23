@@ -1,11 +1,13 @@
 """ web.py - handy functions for web services """
 
-import http, urlnorm
-import json, urllib
+import http
+import urlnorm
+import json
+import urllib
 import yql
 
 short_url = "http://is.gd/create.php"
-paste_url = "http://paste.dmptr.com"
+paste_url = "http://hastebin.com"
 yql_env = "http://datatables.org/alltables.env"
 
 YQL = yql.Public()
@@ -21,7 +23,7 @@ class ShortenError(Exception):
 
 
 def isgd(url):
-    """ shortens a URL with the is.gd PAI """
+    """ shortens a URL with the is.gd API """
     url = urlnorm.normalize(url.encode('utf-8'), assume_scheme='http')
     params = urllib.urlencode({'format': 'json', 'url': url})
     request = http.get_json("http://is.gd/create.php?%s" % params)
@@ -32,11 +34,19 @@ def isgd(url):
         return request["shorturl"]
 
 
-def haste(text):
+def try_isgd(url):
+    try:
+        out = isgd(url)
+    except (ShortenError, http.HTTPError):
+        out = url
+    return out
+
+
+def haste(text, ext='txt'):
     """ pastes text to a hastebin server """
     page = http.get(paste_url + "/documents", post_data=text)
     data = json.loads(page)
-    return("%s/%s.txt" % (paste_url, data['key']))
+    return ("%s/%s.%s" % (paste_url, data['key'], ext))
 
 
 def query(query, params={}):
