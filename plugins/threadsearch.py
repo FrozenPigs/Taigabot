@@ -85,7 +85,7 @@ def process_results(board, string, results_deque):
     urllist = []
     if len(results_deque) <= 0:
         message = "No results for {0}".format(string)
-    elif: len(results_deque) > 10:
+    elif len(results_deque) > 10:
         message = "Too many results for {0}".format(string)
     else:
         post_template = "https://boards.4chan.org/{0}/res/{1}"
