@@ -33,13 +33,13 @@ def sanitise(string):
 
 def get_title(url):
     soup = http.get_soup(url)
-    #title = soup.title.renderContents().strip()
-    if not "#" in url:
-        post = soup.find('div', {'class': 'opContainer'})
-    else:
+
+    if '#' in url:
         postid = url.split('#')[1]
         post = soup.find('div', {'id': postid})
-
+    else:
+        post = soup.find('div', {'class': 'opContainer'})
+    
     comment = http.process_text(post.find('blockquote', {'class': 'postMessage'}).renderContents().strip())
     return u"{} - {}".format(url, comment) #[:int(60)]
 
@@ -85,6 +85,8 @@ def process_results(board, string, results_deque):
     urllist = []
     if len(results_deque) <= 0:
         message = "No results for {0}".format(string)
+    elif: len(results_deque) > 10:
+        message = "Too many results for {0}".format(string)
     else:
         post_template = "https://boards.4chan.org/{0}/res/{1}"
         urls = [post_template.format(board, post_num) for post_num in results_deque]
@@ -159,18 +161,14 @@ def board(inp):
     results = process_results(board, string, results_deque)
     return ("%s" % (results))
 
-
 @hook.command(autohelp=False)
 def bs(inp, reply=None):
     "bs -- Returns current battlestation threads on /g/"
     results = catalog("g battlestation")
     return results
 
-
 @hook.command(autohelp=False)
 def desktop(inp, reply=None):
     "desktop -- Returns current desktop threads on /g/"
     results = catalog("g desktop")
     return results
-
-
