@@ -34,7 +34,12 @@ def sanitise(string):
 def get_title(url):
     soup = http.get_soup(url)
     #title = soup.title.renderContents().strip()
-    post = soup.find('div', {'class': 'opContainer'})
+    if not "#" in url:
+        post = soup.find('div', {'class': 'opContainer'})
+    else:
+        postid = url.split('#')[1]
+        post = soup.find('div', {'id': postid})
+
     comment = http.process_text(post.find('blockquote', {'class': 'postMessage'}).renderContents().strip())
     return u"{} - {}".format(url, comment) #[:int(60)]
 
