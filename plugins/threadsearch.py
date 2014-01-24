@@ -36,7 +36,7 @@ def get_title(url):
     #title = soup.title.renderContents().strip()
     post = soup.find('div', {'class': 'opContainer'})
     comment = http.process_text(post.find('blockquote', {'class': 'postMessage'}).renderContents().strip())
-    return u"{} - {}".format(url, comment[:int(60)])
+    return u"{} - {}".format(url, comment) #[:int(60)]
 
 
 def sprunge(data):
@@ -74,7 +74,7 @@ def search_page(results_deque, page, search_specifics):
 
 def process_results(board, string, results_deque):
     """Process the resulting data of a search and present it"""
-    max_num_urls_displayed = 5
+    max_num_urls_displayed = 3
     board = sanitise(board)
     message = ""
     urllist = []

@@ -163,7 +163,6 @@ def process_text(string):
     except: pass
     string = re.sub('&gt;&gt;\d*[\s]','',string) #remove quoted posts
     string = re.sub('(&gt;&gt;\d*)','',string)
-    print string
     try: string = unicode(string, "utf8")
     except: pass
     try: string = strip_html(string)
