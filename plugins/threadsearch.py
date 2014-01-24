@@ -79,7 +79,7 @@ def search_page(results_deque, page, search_specifics):
 
 def process_results(board, string, results_deque):
     """Process the resulting data of a search and present it"""
-    max_num_urls_displayed = 3
+    max_num_urls_displayed = 4
     board = sanitise(board)
     message = ""
     urllist = []
