@@ -1,4 +1,4 @@
-from util import hook
+from util import hook, http
 import re
 import math
 import json
@@ -7,6 +7,7 @@ import requests
 from time import sleep
 from threading import *
 from collections import deque
+from bs4 import BeautifulSoup
 
 def get_json_data(url, sleep_time=0):
     """Returns a json data object from a given url."""
@@ -28,6 +29,14 @@ def get_json_data(url, sleep_time=0):
 def sanitise(string):
     """Strips a string of all non-alphanumeric characters"""
     return re.sub(r"[^a-zA-Z0-9 ]", "", string)
+
+
+def get_title(url):
+    soup = http.get_soup(url)
+    #title = soup.title.renderContents().strip()
+    post = soup.find('div', {'class': 'opContainer'})
+    comment = http.process_text(post.find('blockquote', {'class': 'postMessage'}).renderContents().strip())
+    return u"{} - {}".format(url, comment[:int(60)])
 
 
 def search_thread(results_deque, thread_num, search_specifics):
@@ -61,15 +70,20 @@ def process_results(board, string, results_deque):
     max_num_urls_displayed = 6
     board = sanitise(board)
     message = ""
+    urllist = []
     if len(results_deque) <= 0:
         message = "No results for {0}".format(string)
     else:
         post_template = "https://boards.4chan.org/{0}/res/{1}"
         urls = [post_template.format(board, post_num) for post_num in results_deque]
+        for url in urls:
+            title =  get_title(url)
+            urllist.append(title)
+
         #if len(urls) > max_num_urls_displayed:
         #    do something else?
         #else:
-        message = " ".join(urls[:max_num_urls_displayed])
+        message = " ".join(urllist[:max_num_urls_displayed])
 
     return message
 
@@ -133,11 +147,13 @@ def board(inp):
     results = process_results(board, string, results_deque)
     return ("%s" % (results))
 
+
 @hook.command(autohelp=False)
 def bs(inp, reply=None):
     "bs -- Returns current battlestation threads on /g/"
     results = catalog("g battlestation")
     return results
+
 
 @hook.command(autohelp=False)
 def desktop(inp, reply=None):
