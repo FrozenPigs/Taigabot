@@ -41,7 +41,7 @@ def get_title(url):
         post = soup.find('div', {'class': 'opContainer'})
     
     comment = http.process_text(post.find('blockquote', {'class': 'postMessage'}).renderContents().strip())
-    return u"{} - {}".format(url, comment) #[:int(60)]
+    return u"{} - {}".format(url, comment[:int(60)]) #
 
 
 def sprunge(data):
