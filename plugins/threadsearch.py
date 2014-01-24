@@ -39,6 +39,13 @@ def get_title(url):
     return u"{} - {}".format(url, comment[:int(60)])
 
 
+def sprunge(data):
+    sprunge_data = {"sprunge": data}
+    response = requests.post("http://sprunge.us", data=sprunge_data)
+    message = response.text.encode().strip('\n')
+    return message
+
+
 def search_thread(results_deque, thread_num, search_specifics):
     """
     Searches every post in thread thread_num on board board for the
@@ -67,7 +74,7 @@ def search_page(results_deque, page, search_specifics):
 
 def process_results(board, string, results_deque):
     """Process the resulting data of a search and present it"""
-    max_num_urls_displayed = 6
+    max_num_urls_displayed = 5
     board = sanitise(board)
     message = ""
     urllist = []
@@ -80,10 +87,10 @@ def process_results(board, string, results_deque):
             title =  get_title(url)
             urllist.append(title)
 
-        #if len(urls) > max_num_urls_displayed:
-        #    do something else?
-        #else:
-        message = " ".join(urllist[:max_num_urls_displayed])
+        if len(urls) > max_num_urls_displayed:
+            message = sprunge('\n'.join(urllist))
+        else:
+            message = " ".join(urllist[:max_num_urls_displayed])
 
     return message
 
@@ -160,3 +167,5 @@ def desktop(inp, reply=None):
     "desktop -- Returns current desktop threads on /g/"
     results = catalog("g desktop")
     return results
+
+
