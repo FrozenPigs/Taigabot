@@ -39,10 +39,10 @@ def time(inp, nick="", reply=None, db=None, notice=None):
     try:
         url = "https://www.google.com/search?q=time+in+%s" % location.replace(' ','+')
         html = http.get_html(url)
-        prefix = html.xpath("//div[@class='vk_c vk_gy vk_sh _v']//span[@class='vk_gy vk_sh']/text()")[0].strip()
-        time = html.xpath("//div[@class='vk_c vk_gy vk_sh _v']//div[@class='vk_bk vk_ans']/text()")[0].strip()
-        day = html.xpath("//div[@class='vk_c vk_gy vk_sh _v']//div[@class='vk_gy vk_sh']/text()")[0].strip()
-        date = html.xpath("//div[@class='vk_c vk_gy vk_sh _v']//div[@class='vk_gy vk_sh']/span/text()")[0].strip()
+        prefix = html.xpath("//div[contains(@class,'vk_c vk_gy')]//span[@class='vk_gy vk_sh']/text()")[0].strip()
+        time = html.xpath("//div[contains(@class,'vk_c vk_gy')]//div[@class='vk_bk vk_ans']/text()")[0].strip()
+        day = html.xpath("//div[contains(@class,'vk_c vk_gy')]//div[@class='vk_gy vk_sh']/text()")[0].strip()
+        date = html.xpath("//div[contains(@class,'vk_c vk_gy')]//div[@class='vk_gy vk_sh']/span/text()")[0].strip()
     except IndexError:
         return "Could not get time for that location."
 
