@@ -80,17 +80,19 @@ def search_page(results_deque, page, search_specifics):
 def process_results(board, string, results_deque):
     """Process the resulting data of a search and present it"""
     max_num_urls_displayed = 4
+    max_num_urls_fetch = 12
     board = sanitise(board)
     message = ""
     urllist = []
+    post_template = "https://boards.4chan.org/{0}/res/{1}"
     if len(results_deque) <= 0:
         message = "No results for {0}".format(string)
-    elif len(results_deque) > 15:
-        message = "Too many results for {0}".format(string)
-    else:
-        post_template = "https://boards.4chan.org/{0}/res/{1}"
+    elif len(results_deque) > max_num_urls_fetch:
+        #message = "Too many results for {0}".format(string)
         urls = [post_template.format(board, post_num) for post_num in results_deque]
-        
+        message = " ".join(urllist[:max_num_urls_displayed])
+    else:
+        urls = [post_template.format(board, post_num) for post_num in results_deque]
         if len(urls) > max_num_urls_displayed:
             for url in urls:
                 title =  get_title(url)
