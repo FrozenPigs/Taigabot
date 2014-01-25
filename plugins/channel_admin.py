@@ -291,11 +291,10 @@ def disabled(inp, chan=None, notice=None, bot=None):
     return
 
 
-
 @hook.command(channeladminonly=True)
 def flood(inp, conn=None, chan=None, notice=None, bot=None):
     "flood [channel] <number> <duration> -- Enables flood protection for a channel. " \
-    "ex: .flood 3 30 -- Allows 3 commands in 30 seconds, set to 0 to disable"
+    "ex: .flood 3 30 -- Allows 3 messages in 30 seconds, set to 0 to disable"
     inp = inp.lower()
     if inp[0][0] == "#": 
         chan = inp.split()[0]
@@ -314,6 +313,31 @@ def flood(inp, conn=None, chan=None, notice=None, bot=None):
         notice("Flood Protection limited to %s commands in %s seconds." % (flood_num,flood_duration))
     bot.channelconfig.write()
     return
+
+
+@hook.command(channeladminonly=True)
+def cmdflood(inp, conn=None, chan=None, notice=None, bot=None):
+    "cmdflood [channel] <number> <duration> -- Enables commandflood protection for a channel. " \
+    "ex: .cmdflood 3 30 -- Allows 3 commands in 30 seconds, set to 0 to disable"
+    inp = inp.lower()
+    if inp[0][0] == "#": 
+        chan = inp.split()[0]
+        inp = inp.replace(chan,'').strip()
+    channel = chan.lower()
+    try: bot.channelconfig[channel]
+    except: bot.channelconfig[channel] = {}
+
+    if "0 " in inp:
+        bot.channelconfig[channel]['cmdflood_protection'] = []
+        notice("Command Flood Protection Disabled.")
+    else:
+        flood_num = inp.split()[0]
+        flood_duration = inp.split()[1]
+        bot.channelconfig[channel]['cmdflood_protection'] = [flood_num,flood_duration]
+        notice("Command Flood Protection limited to %s commands in %s seconds." % (flood_num,flood_duration))
+    bot.channelconfig.write()
+    return
+
 
 @hook.command(channeladminonly=True)
 def invite(inp, conn=None, chan=None, notice=None):
