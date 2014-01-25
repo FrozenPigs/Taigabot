@@ -90,7 +90,8 @@ def process_results(board, string, results_deque):
     elif len(results_deque) > max_num_urls_fetch:
         #message = "Too many results for {0}".format(string)
         urls = [post_template.format(board, post_num) for post_num in results_deque]
-        message = " ".join(urllist[:max_num_urls_displayed])
+        #message = " ".join(urllist[:max_num_urls_displayed])
+        message = sprunge('\n'.join(urls))
     else:
         urls = [post_template.format(board, post_num) for post_num in results_deque]
         if len(urls) > max_num_urls_displayed:
