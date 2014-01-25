@@ -5,8 +5,13 @@ import time
 import inspect
 import json
 
-filename = 'flood'
-if not os.path.exists(filename): open(filename, 'w').write(inspect.cleandoc(r'''{}'''))
+count = 0
+
+cmdflood_filename = 'cmdflood'
+if not os.path.exists(cmdflood_filename): open(cmdflood_filename, 'w').write(inspect.cleandoc(r'''{}'''))
+
+flood_filename = 'flood'
+if not os.path.exists(flood_filename): open(flood_filename, 'w').write(inspect.cleandoc(r'''{}'''))
 
 def check_hostmask(input, matchlist):
      user_mask = input.mask.lower().replace('~','').lower()
@@ -51,9 +56,6 @@ def sieve_suite(bot, input, func, kind, args):
 
     try: disabled_channel_commands = bot.channelconfig[input.chan.lower()]['disabled_commands']
     except: disabled_channel_commands = " "
-    
-    try: flood_protection = bot.channelconfig[input.chan.lower()]['flood_protection']
-    except: flood_protection = None
 
     if kind == "command":
         if input.trigger in bot.config.get('disabled_commands', []):
@@ -92,28 +94,64 @@ def sieve_suite(bot, input, func, kind, args):
 
     #flood protection
     if not is_admin(input,bot) and not is_channel_admin(input,bot):
-        if kind == "command" and flood_protection:
-            flood_num = flood_protection[0]
-            flood_duration = flood_protection[1]
-            now = time.time()
-            flood = json.load(open(filename))
-            try: 
-                user = flood[input.nick]
-            except: 
-                user = []
-                flood[input.nick] = user
 
-            flood[input.nick].append(now)
+        if kind == "command":
+            try: cmdflood_protection = bot.channelconfig[input.chan.lower()]['cmdflood_protection']
+            except: cmdflood_protection = None
+            if cmdflood_protection:
+                cmdflood_num = cmdflood_protection[0]
+                cmdflood_duration = cmdflood_protection[1]
+                now = time.time()
+                cmdflood = json.load(open(cmdflood_filename))
+                try: 
+                    user = flood[input.nick]
+                except: 
+                    user = []
+                    cmdflood[input.nick] = user
 
-            for x in flood[input.nick]:
-                if now - x > int(flood_duration):
-                    flood[input.nick].remove(x)
+                cmdflood[input.nick].append(now)
 
-            json.dump(flood, open(filename, 'w'), sort_keys=True, indent=2)
+                for x in cmdflood[input.nick]:
+                    if now - x > int(cmdflood_duration):
+                        cmdflood[input.nick].remove(x)
 
-            if len(flood[input.nick]) > (int(flood_num)):
-                input.notice("Flood detected. Please wait %s seconds." % flood_duration)
-                return None
+                json.dump(cmdflood, open(cmdflood_filename, 'w'), sort_keys=True, indent=2)
 
+                if len(cmdflood[input.nick]) > (int(cmdflood_num)):
+                    input.notice("Flood detected. Please wait %s seconds." % cmdflood_duration)
+                    return None
+
+        elif kind == "event":
+            global count
+            count+=1
+            if count % 3 == 0:
+                try: flood_protection = bot.channelconfig[input.chan.lower()]['flood_protection']
+                except: flood_protection = None
+                if flood_protection:
+                    flood_num = flood_protection[0]
+                    flood_duration = flood_protection[1]
+                    now = time.time()
+                    flood = json.load(open(flood_filename))
+                    try: 
+                        user = flood[input.nick]
+                    except: 
+                        user = []
+                        flood[input.nick] = user
+
+                    for x in flood[input.nick]:
+                        if now - x > int(flood_duration):
+                            flood[input.nick].remove(x)
+
+                    flood[input.nick].append(now)
+
+                    #print "%s / %s" % (flood_num,len(flood[input.nick]))
+
+                    if len(flood[input.nick]) > (int(flood_num)):
+                        out = "KICK %s %s #rekt" % (input.chan, input.nick)
+                        input.conn.send(out)
+                        flood[input.nick] = []
+
+                    json.dump(flood, open(flood_filename, 'w'), sort_keys=True, indent=2)
+                    return None
 
     return input
