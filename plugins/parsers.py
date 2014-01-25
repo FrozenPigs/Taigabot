@@ -59,7 +59,7 @@ def amazon_url(match):
     price = item.xpath("//span[@id='priceblock_ourprice']/text()")[0]
     rating = item.xpath("//div[@id='avgRating']/span/text()")[0].strip()
 
-    star_count = rating.split('.')[0]
+    star_count = round(float(rating.split(' ')[0]),0)
     stars=""
     for x in xrange(0,int(star_count)):
         stars = "%s%s" % (stars,'★')
