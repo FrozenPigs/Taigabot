@@ -41,7 +41,7 @@ def process_url(match,bot=None,input=None):
     elif 'yooouuutuuube'    in url: return                         #handled by youtube plugin: exiting
     elif 'vimeo.com'        in url: return                         #handled by vimeo plugin: exiting
     elif 'newegg.com'       in url: return                         #handled by newegg plugin: exiting
-    elif 'amazon.com'       in url: return amazon_url(url)         #Amazon
+    elif 'amazon.com'       in url: return                         #handled by Amazon plugin: exiting
     elif 'reddit.com/r'     in url: return reddit_url(url)         #Reddit
     elif 'craigslist.org'   in url: return craigslist_url(url)     #Craigslist
     elif 'wikipedia.org'    in url: return wikipedia_url(url)      #Wikipedia
@@ -52,22 +52,6 @@ def process_url(match,bot=None,input=None):
         if '/src/'          in url: return unmatched_url(url)      #4chan Image
         else:                       return fourchanboard_url(url)  #4chan Board
     else:                           return unmatched_url(url)      #process other url
-
-
-def amazon_url(match):
-    item = http.get_html(match)
-    title = item.xpath('//title/text()')[0]
-    price = item.xpath("//span[@id='priceblock_ourprice']/text()")[0]
-    rating = item.xpath("//div[@id='avgRating']/span/text()")[0].strip()
-
-    star_count = round(float(rating.split(' ')[0]),0)
-    stars=""
-    for x in xrange(0,int(star_count)):
-        stars = "%s%s" % (stars,'★')
-    for y in xrange(int(star_count),5):
-        stars = "%s%s" % (stars,'☆')
-
-    return ('\x02%s\x02 - \x02%s\x02 - \x034%s\x034' % (title, stars, price)).decode('utf-8')
 
 
 #@hook.regex(*reddit_re)
