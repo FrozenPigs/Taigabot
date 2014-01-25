@@ -21,8 +21,8 @@ def get_json_data(url, sleep_time=0):
         json_data = json.loads(response.text.encode())
         return json_data
     except Exception as e:
-        log.error("url: {}".format(url))
-        log.error(e)
+        print ("url: {}".format(url))
+        print (e)
         raise
 
 

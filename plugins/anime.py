@@ -65,7 +65,7 @@ def manga(inp):
     search_url = 'http://www.batoto.net/search?name=%s&name_cond=c&dosubmit=Search' % (inp.replace(' ','+'))
     results = http.get_html(search_url)
     try:
-        result = results.xpath("//tbody//a/@href")[0]
+        result = results.xpath("//tbody//strong/a/@href")[0]
         return u'%s' % (result)
     except IndexError:
         return u'No matches found.'
