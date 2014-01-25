@@ -40,6 +40,7 @@ def process_url(match,bot=None,input=None):
     elif 'youtu.be'         in url: return                         #handled by youtube plugin: exiting
     elif 'yooouuutuuube'    in url: return                         #handled by youtube plugin: exiting
     elif 'vimeo.com'        in url: return                         #handled by vimeo plugin: exiting
+    elif 'newegg.com'       in url: return                         #handled by newegg plugin: exiting
     elif 'amazon.com'       in url: return amazon_url(url)         #Amazon
     elif 'reddit.com/r'     in url: return reddit_url(url)         #Reddit
     elif 'craigslist.org'   in url: return craigslist_url(url)     #Craigslist
