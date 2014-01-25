@@ -41,7 +41,7 @@ def get_title(url):
         post = soup.find('div', {'class': 'opContainer'})
     
     comment = http.process_text(post.find('blockquote', {'class': 'postMessage'}).renderContents().strip())
-    return u"{} - {}".format(url, comment[:int(60)]) #
+    return u"{} - {}".format(url, comment) #
 
 
 def sprunge(data):
@@ -85,18 +85,21 @@ def process_results(board, string, results_deque):
     urllist = []
     if len(results_deque) <= 0:
         message = "No results for {0}".format(string)
-    elif len(results_deque) > 10:
+    elif len(results_deque) > 15:
         message = "Too many results for {0}".format(string)
     else:
         post_template = "https://boards.4chan.org/{0}/res/{1}"
         urls = [post_template.format(board, post_num) for post_num in results_deque]
-        for url in urls:
-            title =  get_title(url)
-            urllist.append(title)
-
+        
         if len(urls) > max_num_urls_displayed:
-            message = sprunge('\n'.join(urllist))
+            for url in urls:
+                title =  get_title(url)
+                urllist.append("{}".format(title))
+            message = sprunge('\n\n'.join(urllist))
         else:
+            for url in urls:
+                title =  get_title(url)
+                urllist.append("{}".format(title[:int(120)]))
             message = " ".join(urllist[:max_num_urls_displayed])
 
     return message

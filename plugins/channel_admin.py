@@ -294,7 +294,7 @@ def disabled(inp, chan=None, notice=None, bot=None):
 @hook.command(channeladminonly=True)
 def flood(inp, conn=None, chan=None, notice=None, bot=None):
     "flood [channel] <number> <duration> -- Enables flood protection for a channel. " \
-    "ex: .flood 3 30 -- Allows 3 messages in 30 seconds, set to 0 to disable"
+    "ex: .flood 5 15 -- Allows 5 messages in 15 seconds before kicking, set to 0 to disable"
     inp = inp.lower()
     if inp[0][0] == "#": 
         chan = inp.split()[0]
@@ -310,7 +310,7 @@ def flood(inp, conn=None, chan=None, notice=None, bot=None):
         flood_num = inp.split()[0]
         flood_duration = inp.split()[1]
         bot.channelconfig[channel]['flood_protection'] = [flood_num,flood_duration]
-        notice("Flood Protection limited to %s commands in %s seconds." % (flood_num,flood_duration))
+        notice("Flood Protection limited to %s messages in %s seconds." % (flood_num,flood_duration))
     bot.channelconfig.write()
     return
 
