@@ -40,6 +40,7 @@ def process_url(match,bot=None,input=None):
     elif 'youtu.be'         in url: return                         #handled by youtube plugin: exiting
     elif 'yooouuutuuube'    in url: return                         #handled by youtube plugin: exiting
     elif 'vimeo.com'        in url: return                         #handled by vimeo plugin: exiting
+    elif 'amazon.com'       in url: return amazon_url(url)         #Amazon
     elif 'reddit.com/r'     in url: return reddit_url(url)         #Reddit
     elif 'craigslist.org'   in url: return craigslist_url(url)     #Craigslist
     elif 'wikipedia.org'    in url: return wikipedia_url(url)      #Wikipedia
@@ -52,15 +53,24 @@ def process_url(match,bot=None,input=None):
     else:                           return unmatched_url(url)      #process other url
 
 
-# @hook.regex(*fourchan_quote_re)
-# def process_fourchan_quote(inp):
-#     url = 'http://boards.4chan.org/%s/res/%s' % (inp.group(0).split('/')[0].replace('>>',''),inp.group(0).split('/')[1])
-#     if '#p' in url: return fourchanquote_url(url)  #4chan Quoted Post
-#     else: return fourchan_url(url)
-    
+def amazon_url(match):
+    item = http.get_html(match)
+    title = item.xpath('//title/text()')[0]
+    price = item.xpath("//span[@id='priceblock_ourprice']/text()")[0]
+    rating = item.xpath("//div[@id='avgRating']/span/text()")[0].strip()
+
+    star_count = rating.split('.')[0]
+    stars=""
+    for x in xrange(0,int(star_count)):
+        stars = "%s%s" % (stars,'★')
+    for y in xrange(int(star_count),5):
+        stars = "%s%s" % (stars,'☆')
+
+    return ('\x02%s\x02 - \x02%s\x02 - \x034%s\x034' % (title, stars, price)).decode('utf-8')
+
+
 #@hook.regex(*reddit_re)
 def reddit_url(match):
-    # match.group(0)
     thread = http.get_html(match)
     title = thread.xpath('//title/text()')[0]
     upvotes = thread.xpath("//span[@class='upvotes']/span[@class='number']/text()")[0]
@@ -72,12 +82,13 @@ def reddit_url(match):
     return '\x02%s\x02 - posted by \x02%s\x02 %s ago - %s upvotes, %s downvotes - %s' % (
             title, author, timeago, upvotes, downvotes, comments)
 
+
 #@hook.regex(*fourchan_re)
 def fourchanboard_url(match):
     soup = http.get_soup(match)
     title = soup.title.renderContents().strip()
-    # boardtitle = soup.find('div', {'class': 'boardTitle'})
     return http.process_text('\x02%s\x02' % (title))
+
 
 #@hook.regex(*fourchan_re)
 def fourchanpost_url(match):
@@ -113,6 +124,7 @@ def craigslist_url(match):
     if trim_length > 1: return http.process_text('\x02Craigslist.org: %s\x02 - %s' % (title, post[:int(trim_length)]))
     else: return http.process_text('\x02Craigslist.org: %s\x02 - %s' % (title, post))
 
+
 def wikipedia_url(match):
     soup = http.get_soup(match)
     title = soup.find('h1', {'id': 'firstHeading'}).renderContents().strip()
@@ -140,9 +152,6 @@ def unmatched_url(match):
         elif length < 0: length = 'Unknown size'
         else: length = str(length) + ' B'
       else: length = "Unknown size"
-
-      # content_type.find("image") != -1
-
     result = ''
     if length != None:
       result += ('[%s] %s ' % (content_type, length))
