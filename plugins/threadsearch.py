@@ -117,7 +117,7 @@ def catalog(inp):
 
     inp = inp.split(" ")
     board = inp[0]
-    string = "".join(inp[1:])
+    string = " ".join(inp[1:])
 
     json_url = "https://a.4cdn.org/{0}/catalog.json".format(board)
     sections = ["com", "name", "trip", "email", "sub", "filename"]
