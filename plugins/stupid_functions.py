@@ -52,7 +52,12 @@ def citation(db,chan,nick,reason):
     out = "PRIVMSG %s :\x01ACTION fines %s $%i %s. You owe: $%s\x01" % (chan, nick, fine, reason, totalfines)
     save_fines(db,nick,totalfines)
     return out
-    #conn.send(out)
+
+@hook.command(autohelp=False)
+def owed(inp, nick=None, conn=None, chan=None,db=None):
+    db_init(db)
+    out = '\x02You owe: \x0304${}\x02'.format(get_fines(db,nick))
+    return out
 
 @hook.command(autohelp=False)
 def honk(inp, nick=None, conn=None, chan=None,db=None):
