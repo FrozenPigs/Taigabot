@@ -131,7 +131,6 @@ def voice(inp, conn=None, chan=None, notice=None):
     notice("Attempting to voice %s from %s..." % (user, chan))
     
 
-
 @hook.command(channeladminonly=True)
 def devoice(inp, conn=None, chan=None, notice=None):
     "devoice [channel] <user> -- Makes the bot devoice <user> in [channel]. "\
@@ -218,6 +217,7 @@ def kickban(inp, chan=None, conn=None, notice=None):
     conn.send(out2)
     return('(USER WAS BANNED FOR THIS POST)')
 
+
 @hook.command(channeladminonly=True)
 def enable(inp, conn=None, chan=None, notice=None, bot=None):
     "enable [channel] <commands|all> -- Enables commands for a channel." \
@@ -294,7 +294,7 @@ def disabled(inp, chan=None, notice=None, bot=None):
 @hook.command(channeladminonly=True)
 def flood(inp, conn=None, chan=None, notice=None, bot=None):
     "flood [channel] <number> <duration> -- Enables flood protection for a channel. " \
-    "ex: .flood 5 15 -- Allows 5 messages in 15 seconds before kicking, set to 0 to disable"
+    "ex: .flood 3 30 -- Allows 3 messages in 30 seconds, set to 0 to disable"
     inp = inp.lower()
     if inp[0][0] == "#": 
         chan = inp.split()[0]
@@ -310,7 +310,7 @@ def flood(inp, conn=None, chan=None, notice=None, bot=None):
         flood_num = inp.split()[0]
         flood_duration = inp.split()[1]
         bot.channelconfig[channel]['flood_protection'] = [flood_num,flood_duration]
-        notice("Flood Protection limited to %s messages in %s seconds." % (flood_num,flood_duration))
+        notice("Flood Protection limited to %s commands in %s seconds." % (flood_num,flood_duration))
     bot.channelconfig.write()
     return
 
@@ -338,6 +338,24 @@ def cmdflood(inp, conn=None, chan=None, notice=None, bot=None):
     bot.channelconfig.write()
     return
 
+@hook.command(autohelp=False)
+def showfloods(inp, chan=None, notice=None, bot=None):
+    "ignored -- Lists ignored channels/nicks/hosts."
+    channel = chan.lower()
+    floodconfig = bot.channelconfig[channel]['flood_protection']
+    cmdfloodconfig = bot.channelconfig[channel]['cmdflood_protection']
+    if floodconfig:
+        flood =  'Flood: {}/{}'.format(floodconfig[0],floodconfig[1])
+    else:
+        flood = "Flood: Not Set"
+
+    if cmdfloodconfig:
+        cmdflood =  'CMD: {}/{}'.format(cmdfloodconfig[0],cmdfloodconfig[1])
+    else:
+        cmdflood = "CMD: Not Set"
+
+    notice('{} - {}'.format(flood,cmdflood))
+
 
 @hook.command(channeladminonly=True)
 def invite(inp, conn=None, chan=None, notice=None):
@@ -353,28 +371,7 @@ def invite(inp, conn=None, chan=None, notice=None):
             conn.send(out)
             
     notice("Inviting %s to %s..." % (user, chan))
-# @hook.command(channeladminonly=True)
-# def set(inp, conn=None, chan=None, notice=None, bot=None):
-#     "flood [channel] <number> <duration> -- Enables flood protection for a channel. " \
-#     "ex: .flood 3 30 -- Allows 3 commands in 30 seconds, set to 0 to disable"
-#     inp = inp.lower()
-#     if inp[0][0] == "#": 
-#         chan = inp.split()[0]
-#         inp = inp.replace(chan,'').strip()
-#     channel = chan.lower()
-#     try: bot.channelconfig[channel]
-#     except: bot.channelconfig[channel] = {}
 
-#     if "0 " in inp:
-#         bot.channelconfig[channel]['flood_protection'] = []
-#         notice("Flood Protection Disabled.")
-#     else:
-#         flood_num = inp.split()[0]
-#         flood_duration = inp.split()[1]
-#         bot.channelconfig[channel]['flood_protection'] = [flood_num,flood_duration]
-#         notice("Flood Protection limited to %s commands in %s seconds." % (flood_num,flood_duration))
-#     bot.channelconfig.write()
-#     return
 
 @hook.command(channeladminonly=True)
 def trim(inp, conn=None, chan=None, notice=None, bot=None):
@@ -407,7 +404,9 @@ def sudoku(inp, conn=None, chan=None, notice=None, nick=None):
     "the channel the command was used in."
     out = "KICK %s %s" % (chan, nick)
     notice("Sayonara bonzai-chan...")
-    conn.send(out)    
+    conn.send(out) 
+
+       
 # @hook.command(autohelp=False,channeladminonly=True)
 # def touhouradio(inp, chan=None, notice=None, bot=None):
 #     "disabled -- Lists channels's disabled commands."
