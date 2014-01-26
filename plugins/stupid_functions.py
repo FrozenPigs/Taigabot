@@ -48,7 +48,7 @@ def save_fines(db, nick, totalfines):
 def citation(db,chan,nick,reason):
     fine = random.randint(1, 500)
     totalfines = int(get_fines(db,nick)) + fine
-    out = "PRIVMSG %s :\x01ACTION fines %s $%i %s. You owe: $%s\x01" % (chan, nick, fine, reason, totalfines)
+    out = "PRIVMSG %s :\x01ACTION fines %s \x02$%i\x02 %s. You owe: \x0304$%s\x02\x01" % (chan, nick, fine, reason, totalfines)
     save_fines(db,nick,totalfines)
     return out
 
