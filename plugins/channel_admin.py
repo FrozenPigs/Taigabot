@@ -149,6 +149,38 @@ def devoice(inp, conn=None, chan=None, notice=None):
     notice("Attempting to devoice %s from %s..." % (user, chan))
     conn.send(out)
 
+@hook.command(channeladminonly=True)
+def hop(inp, conn=None, chan=None, notice=None):
+    "hop [channel] <user> -- Makes the bot hop <user> in [channel]. "\
+    "If [channel] is blank the bot will hop <user> in "\
+    "the channel the command was used in."
+    inp = inp.split(" ")
+    if inp[0][0] == "#":
+        chan = inp[0]
+        user = inp[1]
+        out = "MODE %s +h %s" % (chan, user)
+    else:
+        user = inp[0]
+        out = "MODE %s +h %s" % (chan, user)
+    notice("Attempting to halfop %s from %s..." % (user, chan))
+    conn.send(out)
+
+
+@hook.command(channeladminonly=True)
+def dehop(inp, conn=None, chan=None, notice=None):
+    "dehop [channel] <user> -- Makes the bot dehop <user> in [channel]. "\
+    "If [channel] is blank the bot will dehop <user> in "\
+    "the channel the command was used in."
+    inp = inp.split(" ")
+    if inp[0][0] == "#":
+        chan = inp[0]
+        user = inp[1]
+        out = "MODE %s -h %s" % (chan, user)
+    else:
+        user = inp[0]
+        out = "MODE %s -h %s" % (chan, user)
+    notice("Attempting to dehop %s from %s..." % (user, chan))
+    conn.send(out)
 
 @hook.command(channeladminonly=True)
 def ban(inp, conn=None, chan=None, notice=None):
