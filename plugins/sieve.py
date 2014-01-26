@@ -104,7 +104,7 @@ def sieve_suite(bot, input, func, kind, args):
                 now = time.time()
                 cmdflood = json.load(open(cmdflood_filename))
                 try: 
-                    user = flood[input.nick]
+                    user = cmdflood[input.nick]
                 except: 
                     user = []
                     cmdflood[input.nick] = user
@@ -116,7 +116,7 @@ def sieve_suite(bot, input, func, kind, args):
                         cmdflood[input.nick].remove(x)
 
                 json.dump(cmdflood, open(cmdflood_filename, 'w'), sort_keys=True, indent=2)
-
+     
                 if len(cmdflood[input.nick]) > (int(cmdflood_num)):
                     input.notice("Flood detected. Please wait %s seconds." % cmdflood_duration)
                     return None
@@ -125,6 +125,7 @@ def sieve_suite(bot, input, func, kind, args):
             global count
             count+=1
             if count % 3 == 0:
+                if count == 999: count = 0
                 try: flood_protection = bot.channelconfig[input.chan.lower()]['flood_protection']
                 except: flood_protection = None
                 if flood_protection:
