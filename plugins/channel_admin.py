@@ -19,7 +19,7 @@ def topic(inp, conn=None, chan=None, notice=None):
 @hook.command('k',channeladminonly=True)
 @hook.command('kal',channeladminonly=True)
 @hook.command(channeladminonly=True)
-def kick(inp, chan=None, conn=None, notice=None):
+def kick(inp, nick=None,chan=None, conn=None, notice=None):
     "kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel] "\
     "If [channel] is blank the bot will kick the <user> in "\
     "the channel the command was used in."
@@ -27,6 +27,7 @@ def kick(inp, chan=None, conn=None, notice=None):
     if inp[0][0] == "#":
         chan = inp[0]
         user = inp[1]
+        if user.lower() == conn.nick.lower(): user = nick
         out = "KICK %s %s" % (chan, user)
         if len(inp) > 2:
             reason = ""
@@ -185,37 +186,39 @@ def unban(inp, conn=None, chan=None, notice=None):
 
 @hook.command('kb',channeladminonly=True)
 @hook.command(channeladminonly=True)
-def kickban(inp, chan=None, conn=None, notice=None):
+def kickban(inp, nick=None, chan=None, conn=None, notice=None):
     "kickban [channel] <user> [reason] -- Makes the bot kickban <user> in [channel] "\
     "If [channel] is blank the bot will kickban the <user> in "\
     "the channel the command was used in."
+    reason = ""
     inp = inp.split(" ")
     if inp[0][0] == "#":
         chan = inp[0]
         user = inp[1]
-        out1 = "MODE %s +b %s" % (chan, user)
-        out2 = "KICK %s %s" % (chan, user)
         if len(inp) > 2:
-            reason = ""
             for x in inp[2:]:
                 reason = reason + x + " "
             reason = reason[:-1]
-            out = out + " :" + reason
     else:
         user = inp[0]
-        out1 = "MODE %s +b %s" % (chan, user)
-        out2 = "KICK %s %s" % (chan, user)
         if len(inp) > 1:
-            reason = ""
             for x in inp[1:]:
                 reason = reason + x + " "
             reason = reason[:-1]
-            out = out + " :" + reason
 
-    notice("Attempting to kickban %s from %s..." % (user, chan))
-    conn.send(out1)
-    conn.send(out2)
-    return('(USER WAS BANNED FOR THIS POST)')
+    if user.lower() == conn.nick.lower(): 
+        user = nick
+        out = "KICK %s %s u so funneh" % (chan, user)
+        conn.send(out)
+        return
+    else:
+        out1 = "MODE %s +b %s" % (chan, user)
+        out2 = "KICK %s %s %s" % (chan, user, reason)
+
+        notice("Attempting to kickban %s from %s..." % (user, chan))
+        conn.send(out1)
+        conn.send(out2)
+        return('(USER WAS BANNED FOR THIS POST)')
 
 
 @hook.command(channeladminonly=True)
@@ -403,8 +406,8 @@ def sudoku(inp, conn=None, chan=None, notice=None, nick=None):
     "If [channel] is blank the bot will op you in "\
     "the channel the command was used in."
     out = "KICK %s %s" % (chan, nick)
-    notice("Sayonara bonzai-chan...")
     conn.send(out) 
+    return "Sayonara bonzai-chan..."
 
        
 # @hook.command(autohelp=False,channeladminonly=True)
