@@ -16,7 +16,7 @@ def get_json_data(url, sleep_time=0):
     try:
         response = requests.get(url)
         if response.status_code == 404:
-            log.error("url {} 404".format(url))
+            print ("url {} 404".format(url))
             return None
         json_data = json.loads(response.text.encode())
         return json_data
@@ -117,7 +117,7 @@ def catalog(inp):
 
     inp = inp.split(" ")
     board = inp[0]
-    string = " ".join(inp[1:])
+    string = (" ".join(inp[1:])).strip()
 
     json_url = "https://a.4cdn.org/{0}/catalog.json".format(board)
     sections = ["com", "name", "trip", "email", "sub", "filename"]
@@ -146,7 +146,7 @@ def board(inp):
 
     inp = inp.split(" ")
     board = inp[0]
-    string = "".join(inp[1:])
+    string = (" ".join(inp[1:]))
 
     json_url = "https://a.4cdn.org/{0}/threads.json".format(board)
     sections = ["com", "name", "trip", "email", "sub", "filename"]
