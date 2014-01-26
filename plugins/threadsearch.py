@@ -97,12 +97,12 @@ def process_results(board, string, results_deque):
         if len(urls) > max_num_urls_displayed:
             for url in urls:
                 title =  get_title(url)
-                urllist.append("{}".format(title))
+                urllist.append("{}".format(title).encode('ascii', 'ignore'))
             message = sprunge('\n\n'.join(urllist))
         else:
             for url in urls:
                 title =  get_title(url)
-                urllist.append("{}".format(title[:int(120)]))
+                urllist.append("{}".format(title[:int(120)].encode('ascii', 'ignore')))
             message = " ".join(urllist[:max_num_urls_displayed])
 
     return message
