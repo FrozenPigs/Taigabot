@@ -11,7 +11,6 @@ def same(inp,bot=None,chan=None):
         return 'butts'
     else:
         return 'same'
-    
 
 @hook.regex(r'^(HUEHUEHUE)$')
 @hook.regex(r'^(huehuehue)$')
@@ -92,7 +91,7 @@ def pet(inp, nick=None, conn=None, chan=None,db=None):
         if randnum == 1: 
             out = citation(db,chan,nick,"for petting")
         elif randnum == 2: 
-            out = citation(db,chan,inp.strip(),"for being too lewd and getting pet.")
+            out = citation(db,chan,inp.strip(),"for being too lewd and getting pet")
         else:
             out = "PRIVMSG %s :\x01ACTION pets %s\x01" % (chan, inp.strip())
     conn.send(out)
@@ -111,18 +110,16 @@ def diddle(inp, nick=None, conn=None, chan=None,db=None):
         if randnum == 1: 
             out = citation(db,chan,nick,"for diddling")
         elif randnum == 2: 
-            out = citation(db,chan,inp.strip(),"for being too lewd and getting diddled.")
+            out = citation(db,chan,inp.strip(),"for being too lewd and getting diddled")
         else:
             out = "PRIVMSG %s :\x01ACTION diddles %s\x01" % (chan, inp.strip())
     conn.send(out)
-
 
 @hook.command(autohelp=False)
 def pantsumap(inp, chan=None, notice=None):
     "pantsumap -- pantsumap"
     if chan == "#pantsumen":
         notice(("Pantsumen Map: http://tinyurl.com/clx2qeg\r\n").encode('utf-8', 'ignore'))
-
 
 @hook.command('deidle', autohelp=False)
 @hook.command(autohelp=False)

@@ -67,9 +67,8 @@ def countdown(inp, bot=None, nick=None, conn=None, chan=None, notice=None):
 @hook.command(autohelp=False) #, adminonly=True
 def ready(inp, bot=None, nick=None,chan=None,conn=None):
     "ready-- when all users are ready the countdown will begin."
-
-    nicks_size_start = len(countdown_nicks)
     global countdown_nicks
+    nicks_size_start = len(countdown_nicks)
     try: countdown_nicks.remove(nick.lower())
     except: pass
     if nicks_size_start > len(countdown_nicks):
