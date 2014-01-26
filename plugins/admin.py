@@ -230,6 +230,20 @@ def msg(inp, conn=None, chan=None, notice=None):
     conn.send(out)
 
 @hook.command(adminonly=True)
+def ctcp(inp, conn=None, chan=None, notice=None):
+    "ctcp <destination> <command> -- Send a CTCP command"
+    inp = inp.split(" ")
+    destination = inp[0]
+    command = inp[1]
+    command = command.upper()
+    #if message == None:
+    result = conn.send('PRIVMSG {} :\x01{}\x01'.format( destination, command ) )
+    #out = "PRIVMSG %s :%s" % (chan, result)
+    #conn.send(out)
+    #else:
+    #        conn.send ( 'PRIVMSG {} :\x01{} {}\x01'.format( destination, command, message ) )
+
+@hook.command(adminonly=True)
 def say(inp, conn=None, chan=None, notice=None):
     "say [channel] <message> -- Makes the bot say <message> in [channel]. " \
     "If [channel] is blank the bot will say the <message> in the channel " \
@@ -270,6 +284,7 @@ def me(inp, conn=None, chan=None, notice=None):
         message = message[:-1]
         out = "PRIVMSG %s :\x01ACTION %s\x01" % (chan, message)
     conn.send(out)
+
 
 
 @hook.command(autohelp=False)
