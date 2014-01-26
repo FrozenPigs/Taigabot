@@ -37,6 +37,7 @@ def kick(inp, nick=None,chan=None, conn=None, notice=None):
             out = out + " :" + reason
     else:
         user = inp[0]
+        if user.lower() == conn.nick.lower(): user = nick
         out = "KICK %s %s" % (chan, user)
         if len(inp) > 1:
             reason = ""
