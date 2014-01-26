@@ -31,87 +31,92 @@ def tetete(inp, nick=None,bot=None,chan=None):
     if 'tetete' in disabled_channel_commands: return None
     return 'tetete %s%s%s' % (nick, nick, nick)
 
+def db_init(db):
+    db.execute("create table if not exists fines(nick primary key, totalfines)")
+    db.commit()
 
-# def honk_db_init(db):
-#     "check to see that our db has the tell table and return a dbection."
-#     db.execute("create table if not exists tell"
-#                 "(user_to, user_from, message, chan, time,"
-#                 "primary key(user_to, message))")
-#     db.commit()
+def get_fines(db, nick):
+    totalfines = db.execute("select totalfines from fines where nick=lower(?)", [nick]).fetchone()
+    if totalfines:
+        return totalfines[0]
+    else:
+        return 0
 
-#     return db
+def save_fines(db, nick, totalfines):
+    db.execute("insert or replace into fines(nick, totalfines) values (?,?)", (nick.lower(), totalfines))
+    db.commit()
 
-
-# def get_tells(db, user_to):
-#     return db.execute("select user_from, message, time, chan from tell where"
-#                          " user_to=lower(?) order by time",
-#                          (user_to.lower(),)).fetchall()
+def citation(db,chan,nick,reason):
+    fine = random.randint(1, 500)
+    totalfines = int(get_fines(db,nick)) + fine
+    out = "PRIVMSG %s :\x01ACTION fines %s $%i %s. You owe: $%s\x01" % (chan, nick, fine, reason, totalfines)
+    save_fines(db,nick,totalfines)
+    return out
+    #conn.send(out)
 
 @hook.command(autohelp=False)
-def honk(inp, nick=None, conn=None, chan=None):
+def honk(inp, nick=None, conn=None, chan=None,db=None):
     "honk <person} -- Honks at someone."
+    db_init(db)
     if len(inp) == 0:
         if random.randint(1, 3) == 2: 
-            out = "PRIVMSG %s :\x01ACTION fines %s $%i for honking.\x01" % (chan, nick, random.randint(1, 500))
+            out = citation(db,chan,nick,"for honking")
         else:
             out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, nick)
     else:
         randnum = random.randint(1, 4)
         if randnum == 1: 
-            out = "PRIVMSG %s :\x01ACTION fines %s $%i for honking.\x01" % (chan, nick, random.randint(1, 500))
+            out = citation(db,chan,nick,"for honking")
         elif randnum == 2: 
-            out = "PRIVMSG %s :\x01ACTION fines %s $%i for being too lewd and getting honked at.\x01" % (chan, inp.strip(), random.randint(1, 500))
+            out = citation(db,chan,inp.strip(),"for being too lewd and getting honked at")
         else:
             out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, inp.strip())
     conn.send(out)
 
 @hook.command(autohelp=False)
-def pet(inp, nick=None, conn=None, chan=None):
-    "pet <person} -- Honks at someone."
+def pet(inp, nick=None, conn=None, chan=None,db=None):
+    "pet <person} -- Pets someone."
+    db_init(db)
     if len(inp) == 0:
         if random.randint(1, 3) == 2: 
-            out = "PRIVMSG %s :\x01ACTION fines %s $%i for petting.\x01" % (chan, nick, random.randint(1, 500))
+            out = citation(db,chan,nick,"for petting")
         else:
             out = "PRIVMSG %s :\x01ACTION pets %s\x01" % (chan, nick)
     else:
         randnum = random.randint(1, 4)
         if randnum == 1: 
-            out = "PRIVMSG %s :\x01ACTION fines %s $%i for petting.\x01" % (chan, nick, random.randint(1, 500))
+            out = citation(db,chan,nick,"for petting")
         elif randnum == 2: 
-            out = "PRIVMSG %s :\x01ACTION fines %s $%i for being too lewd and getting pet.\x01" % (chan, inp.strip(), random.randint(1, 500))
+            out = citation(db,chan,inp.strip(),"for being too lewd and getting pet.")
         else:
             out = "PRIVMSG %s :\x01ACTION pets %s\x01" % (chan, inp.strip())
     conn.send(out)
 
 @hook.command(autohelp=False)
-def diddle(inp, nick=None, conn=None, chan=None):
-    "pet <person} -- Honks at someone."
+def diddle(inp, nick=None, conn=None, chan=None,db=None):
+    "diddle <person} -- Diddles someone."
+    db_init(db)
     if len(inp) == 0:
         if random.randint(1, 3) == 2: 
-            out = "PRIVMSG %s :\x01ACTION fines %s $%i for diddling.\x01" % (chan, nick, random.randint(1, 500))
+            out = citation(db,chan,nick,"for diddling")
         else:
             out = "PRIVMSG %s :\x01ACTION diddles %s\x01" % (chan, nick)
     else:
         randnum = random.randint(1, 4)
         if randnum == 1: 
-            out = "PRIVMSG %s :\x01ACTION fines %s $%i for diddling.\x01" % (chan, nick, random.randint(1, 500))
+            out = citation(db,chan,nick,"for diddling")
         elif randnum == 2: 
-            out = "PRIVMSG %s :\x01ACTION fines %s $%i for being too lewd and getting diddled.\x01" % (chan, inp.strip(), random.randint(1, 500))
+            out = citation(db,chan,inp.strip(),"for being too lewd and getting diddled.")
         else:
             out = "PRIVMSG %s :\x01ACTION diddles %s\x01" % (chan, inp.strip())
     conn.send(out)
+
 
 @hook.command(autohelp=False)
 def pantsumap(inp, chan=None, notice=None):
     "pantsumap -- pantsumap"
     if chan == "#pantsumen":
         notice(("Pantsumen Map: http://tinyurl.com/clx2qeg\r\n").encode('utf-8', 'ignore'))
-
-
-@hook.command(autohelp=False)
-def lcs(inp):
-    "Some LoL shit..."
-    return 'http://na.lolesports.com/#tabs=2'
 
 
 @hook.command('deidle', autohelp=False)
