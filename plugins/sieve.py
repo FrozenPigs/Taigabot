@@ -154,7 +154,7 @@ def sieve_suite(bot, input, func, kind, args):
 
                     json.dump(flood, open(flood_filename, 'w'), sort_keys=True, indent=2)
                     return None
-            else:
-                return None
+            # else:
+            #     return None
 
     return input
