@@ -58,61 +58,35 @@ def owed(inp, nick=None, conn=None, chan=None,db=None):
     out = '\x02You owe: \x0304${}\x02'.format(get_fines(db,nick))
     return out
 
+@hook.command('spank', autohelp=False)
+@hook.command('diddle', autohelp=False)
+@hook.command('pet', autohelp=False)
 @hook.command(autohelp=False)
-def honk(inp, nick=None, conn=None, chan=None,db=None):
+def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None):
     "honk <person} -- Honks at someone."
+    target = inp.strip()
+    command = paraml[-1].split(' ')[0][1:].lower()
+    actions = {
+        'honk':'honked at',
+        'pet':'pet',
+        'diddle':'diddled',
+        'spank':'spanked'
+    }
+ 
     db_init(db)
     if len(inp) == 0:
         if random.randint(1, 3) == 2: 
-            out = citation(db,chan,nick,"for honking")
+            out = citation(db,chan,nick,"for {}ing".format(command))
         else:
-            out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, nick)
+            out = "PRIVMSG {} :\x01ACTION {}s {}\x01".format(chan, command, nick)
     else:
         randnum = random.randint(1, 4)
         if randnum == 1: 
-            out = citation(db,chan,nick,"for honking")
+            out = citation(db,chan,nick,"for {}ing".format(command))
         elif randnum == 2: 
-            out = citation(db,chan,inp.strip(),"for being too lewd and getting honked at")
+            out = citation(db,chan,target,"for being too lewd and getting {}".format(actions[command]))
         else:
-            out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, inp.strip())
-    conn.send(out)
-
-@hook.command(autohelp=False)
-def pet(inp, nick=None, conn=None, chan=None,db=None):
-    "pet <person} -- Pets someone."
-    db_init(db)
-    if len(inp) == 0:
-        if random.randint(1, 3) == 2: 
-            out = citation(db,chan,nick,"for petting")
-        else:
-            out = "PRIVMSG %s :\x01ACTION pets %s\x01" % (chan, nick)
-    else:
-        randnum = random.randint(1, 4)
-        if randnum == 1: 
-            out = citation(db,chan,nick,"for petting")
-        elif randnum == 2: 
-            out = citation(db,chan,inp.strip(),"for being too lewd and getting pet")
-        else:
-            out = "PRIVMSG %s :\x01ACTION pets %s\x01" % (chan, inp.strip())
-    conn.send(out)
-
-@hook.command(autohelp=False)
-def diddle(inp, nick=None, conn=None, chan=None,db=None):
-    "diddle <person} -- Diddles someone."
-    db_init(db)
-    if len(inp) == 0:
-        if random.randint(1, 3) == 2: 
-            out = citation(db,chan,nick,"for diddling")
-        else:
-            out = "PRIVMSG %s :\x01ACTION diddles %s\x01" % (chan, nick)
-    else:
-        randnum = random.randint(1, 4)
-        if randnum == 1: 
-            out = citation(db,chan,nick,"for diddling")
-        elif randnum == 2: 
-            out = citation(db,chan,inp.strip(),"for being too lewd and getting diddled")
-        else:
-            out = "PRIVMSG %s :\x01ACTION diddles %s\x01" % (chan, inp.strip())
+            out = "PRIVMSG {} :\x01ACTION {}s {}\x01".format(chan, command, target)
     conn.send(out)
 
 @hook.command(autohelp=False)
@@ -126,3 +100,10 @@ def pantsumap(inp, chan=None, notice=None):
 def idle(inp):
     "idle -- idle"
     return 'Thats not a command you baka.'
+
+
+@hook.command(autohelp=False)
+def intensify(inp):
+    "intensify <word> -- idle"
+    word = inp.upper()
+    return '\x02[{} INTENSIFIES]\x02'.format(word)
