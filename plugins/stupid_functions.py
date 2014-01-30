@@ -72,7 +72,6 @@ def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None):
         'diddle':'diddled',
         'spank':'spanked'
     }
- 
     db_init(db)
     if len(inp) == 0:
         if random.randint(1, 3) == 2: 
@@ -101,9 +100,10 @@ def idle(inp):
     "idle -- idle"
     return 'Thats not a command you baka.'
 
-
+@hook.regex(r'.*\[(.*)\].*')
 @hook.command(autohelp=False)
 def intensify(inp):
     "intensify <word> -- idle"
-    word = inp.upper()
+    try: word = inp.upper()
+    except: word = inp.group(1).upper()
     return '\x02[{} INTENSIFIES]\x02'.format(word)
