@@ -105,13 +105,7 @@ def owed(inp, nick=None, conn=None, chan=None,db=None):
     return u'\x02{} owes: \x0304${}\x02'.format(nick,database.get(db,'users','fines','nick',nick))
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 @hook.command('rape', autohelp=False)
-=======
->>>>>>> 08b4f3f8e27c3b99a55eb3477ef5ee7ecd99dff0
-=======
->>>>>>> 08b4f3f8e27c3b99a55eb3477ef5ee7ecd99dff0
 @hook.command('spank', autohelp=False)
 @hook.command('diddle', autohelp=False)
 @hook.command('pet', autohelp=False)
@@ -124,8 +118,6 @@ def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None):
         'honk':'honked at',
         'pet':'pet',
         'diddle':'diddled',
-<<<<<<< HEAD
-<<<<<<< HEAD
         'spank':'spanked',
         'rape':'raped'
     }
@@ -137,29 +129,11 @@ def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None):
     #     ("rape", "raped", "raping")
     # )
 
-=======
-        'spank':'spanked'
-    }
-    db_init(db)
->>>>>>> 08b4f3f8e27c3b99a55eb3477ef5ee7ecd99dff0
-=======
-        'spank':'spanked'
-    }
-    db_init(db)
->>>>>>> 08b4f3f8e27c3b99a55eb3477ef5ee7ecd99dff0
     if len(inp) == 0:
         if random.randint(1, 3) == 2: 
             out = citation(db,chan,nick,"for {}ing".format(command))
         else:
-<<<<<<< HEAD
-<<<<<<< HEAD
             out = u"PRIVMSG {} :\x01ACTION {}s {}\x01".format(chan, command, nick)
-=======
-            out = "PRIVMSG {} :\x01ACTION {}s {}\x01".format(chan, command, nick)
->>>>>>> 08b4f3f8e27c3b99a55eb3477ef5ee7ecd99dff0
-=======
-            out = "PRIVMSG {} :\x01ACTION {}s {}\x01".format(chan, command, nick)
->>>>>>> 08b4f3f8e27c3b99a55eb3477ef5ee7ecd99dff0
     else:
         randnum = random.randint(1, 4)
         if randnum == 1: 
@@ -167,20 +141,11 @@ def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None):
         elif randnum == 2: 
             out = citation(db,chan,target,"for being too lewd and getting {}".format(actions[command]))
         else:
-<<<<<<< HEAD
-<<<<<<< HEAD
             out = u"PRIVMSG {} :\x01ACTION {}s {}\x01".format(chan, command, target)
     conn.send(out)
 
-=======
-=======
->>>>>>> 08b4f3f8e27c3b99a55eb3477ef5ee7ecd99dff0
-            out = "PRIVMSG {} :\x01ACTION {}s {}\x01".format(chan, command, target)
-    conn.send(out)
->>>>>>> 08b4f3f8e27c3b99a55eb3477ef5ee7ecd99dff0
 
 
-<<<<<<< HEAD
 # /action uguubot bursts out laughing
 
 
@@ -208,22 +173,3 @@ def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None):
 #     #COMPARE TO DB
 #     image = http.unquote(re.search('.+?imgurl=(.+)&imgrefurl.+', link).group(1))
 #     return image
-=======
-@hook.command('deidle', autohelp=False)
-@hook.command(autohelp=False)
-def idle(inp):
-    "idle -- idle"
-    return 'Thats not a command you baka.'
-
-@hook.regex(r'.*\[(.*)\].*')
-@hook.command(autohelp=False)
-def intensify(inp):
-    "intensify <word> -- idle"
-    try: word = inp.upper()
-    except: word = inp.group(1).upper()
-<<<<<<< HEAD
-    return '\x02[{} INTENSIFIES]\x02'.format(word)
->>>>>>> 08b4f3f8e27c3b99a55eb3477ef5ee7ecd99dff0
-=======
-    return '\x02[{} INTENSIFIES]\x02'.format(word)
->>>>>>> 08b4f3f8e27c3b99a55eb3477ef5ee7ecd99dff0
