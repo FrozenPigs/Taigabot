@@ -14,24 +14,24 @@ def convert_kilobytes(kilobytes):
         size = '%.2f KB' % kilobytes
     return size
 
-@hook.command('hwinfo',autohelp=False,adminonly=True)
-@hook.command(autohelp=False,adminonly=True)
+
+@hook.command(autohelp=False, adminonly=True)
 def system(inp):
-    "system -- Retrieves information about the host system."
+    """system -- Retrieves information about the host system."""
     hostname = platform.node()
     os = platform.platform()
     python_imp = platform.python_implementation()
     python_ver = platform.python_version()
     architecture = '-'.join(platform.architecture())
     cpu = platform.machine()
-    return "Hostname: \x02%s\x02, Operating System: \x02%s\x02, Python " \
-           "Version: \x02%s %s\x02, Architecture: \x02%s\x02, CPU: \x02%s" \
-           "\x02" % (hostname, os, python_imp, python_ver, architecture, cpu)
+    return "Hostname: \x02{}\x02, Operating System: \x02{}\x02, Python " \
+           "Version: \x02{} {}\x02, Architecture: \x02{}\x02, CPU: \x02{}" \
+           "\x02".format(hostname, os, python_imp, python_ver, architecture, cpu)
 
 
-@hook.command(autohelp=False,adminonly=True)
+@hook.command(autohelp=False, adminonly=True)
 def memory(inp):
-    "memory -- Displays the bot's current memory usage."
+    """memory -- Displays the bot's current memory usage."""
     if os.name == "posix":
         # get process info
         status_file = open('/proc/self/status').read()
@@ -41,9 +41,9 @@ def memory(inp):
         data = [float(i.replace(' kB', '')) for i in data]
         strings = [convert_kilobytes(i) for i in data]
         # prepare the output
-        out = "Threads: \x02%s\x02, Real Memory: \x02%s\x02, Allocated Memory: \x02%s\x02, Peak " \
-              "Allocated Memory: \x02%s\x02, Stack Size: \x02%s\x02, Heap " \
-              "Size: \x02%s\x02" % (s['Threads'], strings[0], strings[1], strings[2],
+        out = "Threads: \x02{}\x02, Real Memory: \x02{}\x02, Allocated Memory: \x02{}\x02, Peak " \
+              "Allocated Memory: \x02{}\x02, Stack Size: \x02{}\x02, Heap " \
+              "Size: \x02{}\x02".format(s['Threads'], strings[0], strings[1], strings[2],
               strings[3], strings[4])
         # return output
         return out
@@ -55,28 +55,33 @@ def memory(inp):
         for amount in re.findall(r'([,0-9]+) K', out):
             memory += float(amount.replace(',', ''))
         memory = convert_kilobytes(memory)
-        return "Memory Usage: \x02%s\x02" % memory
+        return "Memory Usage: \x02{}\x02".format(memory)
 
     else:
         return "Sorry, this command is not supported on your OS."
 
-@hook.command('honktime',autohelp=False,adminonly=True)
-@hook.command(autohelp=False,adminonly=True)
+
+@hook.command(autohelp=False, adminonly=True)
 def uptime(inp, bot=None):
-    "uptime -- Shows the bot's uptime."
+    """uptime -- Shows the bot's uptime."""
     uptime_raw = round(time.time() - bot.start_time)
     uptime = timedelta(seconds=uptime_raw)
-    return "Uptime: \x02%s\x02" % uptime
+    return "Uptime: \x02{}\x02".format(uptime)
 
 
-@hook.command(autohelp=False,adminonly=True)
+@hook.command(autohelp=False, adminonly=True)
 def pid(inp):
-    "pid -- Prints the bot's PID."
-    return "PID: \x02%s\x02" % os.getpid()
+    """pid -- Prints the bot's PID."""
+    return "PID: \x02{}\x02".format(os.getpid())
 
-# import subprocess
-# @hook.command(autohelp=False)
-# def host(inp):
-#     result = subprocess.Popen("host", "animetake.com")
-#     print result
-#     return result
+
+@hook.command(autohelp=False)
+def bots(inp):
+    "HELLO"
+    return "\x02Reporting in! [Python] See http://github.com/infinitylabs/UguuBot\x02"
+
+
+@hook.command(autohelp=False)
+def source(inp):
+    "HELLO"
+    return "\x02Uguubot\x02 - http://github.com/infinitylabs/UguuBot"

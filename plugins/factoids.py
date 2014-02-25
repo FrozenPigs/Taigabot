@@ -47,7 +47,7 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
         #word = inp.group(1)
         #data = inp.group(2)
     except ValueError:
-        return remember.__doc__
+        notice(remember.__doc__)
 
     old_data = get_memory(db, word)
 
@@ -112,8 +112,8 @@ def info(inp, notice=None, db=None):
     else:
         notice("Unknown Factoid.")
 
+# @hook.regex(r'^(\b\S+\b)\?$')
 @hook.regex(r'\#(\b\S+\b)')
-@hook.regex(r'^(\b\S+\b)\?$')
 @hook.regex(r'^\? ?(.+)')
 def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
     "<word>? -- Shows what data is associated with <word>."

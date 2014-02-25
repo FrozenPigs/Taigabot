@@ -29,6 +29,10 @@ class Input(dict):
         def me(msg):
             conn.msg(chan, "\x01%s %s\x01" % ("ACTION", msg))
 
+        def ctcp(message, ctcp_type, target=chan):
+            """sends an ctcp to the current channel/user or a specific channel/user"""
+            conn.ctcp(target, ctcp_type, message)
+
         def notice(msg):
             conn.cmd('NOTICE', [nick, msg])
 
@@ -182,9 +186,10 @@ def main(conn, out):
 
         # REGEXES
         for func, args in bot.plugs['regex']:
-            m = args['re'].search(inp.lastparam)
+            m = args['re'].finditer(inp.lastparam)
             if m:
-                input = Input(conn, *out)
-                input.inp = m
+                for match in m:
+                    input = Input(conn, *out)
+                    input.inp = match
 
-                dispatch(input, "regex", func, args)
+                    dispatch(input, "regex", func, args)

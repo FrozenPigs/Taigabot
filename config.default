@@ -1,0 +1,65 @@
+{
+  "connections":
+  {
+    "Rizon":
+    {
+      "server": "irc.rizon.net",
+      "nick": "MyUguuBot",
+      "user": "uguubot",
+      "realname": "UguuBot - http://github.com/infinitylabs/UguuBot",
+      "mode": "",
+      "nickserv_password": "",
+      "nickserv_user": "",
+      "channels": ["#uguubot", "#devbot"],
+      "invite_join": true,
+      "auto_rejoin": true,
+      "command_prefix": "."
+    }
+  },
+  "ignorebots": "true",
+  "disabled_plugins": [],
+  "disabled_commands": [],
+  "acls": {},
+  "api_keys":
+  {
+    "tvdb": "",
+    "wolframalpha": "",
+    "lastfm": "",
+    "rottentomatoes": "",
+    "soundcloud": "",
+    "twitter_consumer_key": "",
+    "twitter_consumer_secret": "",
+    "twitter_access_token": "",
+    "twitter_access_secret": "",
+    "wunderground": "",
+    "googletranslate": "",
+    "rdio_key": "",
+    "rdio_secret": ""
+  },
+  "permissions": {
+    "admins": {
+      "perms": ["adminonly", "addfactoid", "delfactoid", "ignore", "botcontrol", "permissions_users", "op"],
+      "users": ["examplea!user@example.com", "exampleb!user@example.com"]
+    },
+    "moderators": {
+      "perms": ["addfactoid", "delfactoid", "ignore"],
+      "users": ["examplec!user@example.com"]
+    }
+  },
+  "plugins":
+  {
+    "factoids":
+    {
+      "prefix": false
+    },
+    "ignore":
+    {
+      "ignored": []
+    }
+  },
+  "censored_strings":
+  [
+    "mypass",
+    "mysecret"
+  ]
+}

@@ -1,4 +1,4 @@
-from util import hook, web
+from util import hook, http, web, database
 
 
 def get_weather(location):
@@ -11,7 +11,8 @@ def get_weather(location):
 
     # wind conversions
     data['wind']['chill_c'] = int(round((int(data['wind']['chill']) - 32) / 1.8, 0))
-    data['wind']['speed_kph'] = int(round(float(data['wind']['speed']) * 1.609344))
+    try: data['wind']['speed_kph'] = int(round(float(data['wind']['speed']) * 1.609344))
+    except: data['wind']['speed_kph'] = 0
 
     # textual wind direction
     direction = data['wind']['direction']
@@ -66,37 +67,27 @@ def get_weather(location):
 @hook.command('w', autohelp=False)
 @hook.command('we', autohelp=False)
 @hook.command(autohelp=False)
-def weather(inp, nick="", reply=None, db=None, notice=None):
+def weather(inp, nick=None, reply=None, db=None, notice=None):
     "weather <location|@user> [save] -- Gets weather data for <location>."
+    save = False
+    
+    if '@' in inp:
+        nick = inp.split('@')[1].strip()
+        loc = database.get(db,'users','location','nick',nick)
+        if not loc: return "No location stored for {}.".format(nick)
+    else:
+        loc = database.get(db,'users','location','nick',nick)
+        if not inp:
+            if not loc:
+                notice(weather.__doc__)
+                return
+        else:
+            if not loc: save = True
+            if " save" in inp: save = True
+            loc = inp.split()[0]
 
-    # initalise weather DB
-    db.execute("create table if not exists locations(ircname primary key, location)")
-
-    if not inp: # if there is no input, try getting the users last location from the DB
-        location = db.execute("select location from locations where ircname=lower(?)", [nick]).fetchone()
-        if not location: # no location saved in the database, send the user help text
-            notice(weather.__doc__)
-            return "No location stored for %s." % nick
-        location = location[0]
-        save = False # no need to save a location, we already have it
-    elif inp.endswith(" save"):
-        location = inp[:-5].strip().lower() # remove "save" from the input string after checking for it
-        save = True
-    elif '@' in inp:
-        nick = inp.replace('@','')
-        location = db.execute("select location from locations where ircname=lower(?)", [nick]).fetchone()
-        if not location: # no location saved in the database
-            return "No location stored for %s." % nick
-        location = location[0]
-        save = False # no need to save a location, we already have it
-    else: 
-        location = db.execute("select location from locations where ircname=lower(?)", [nick]).fetchone() # check if user already has a location
-        # if not location: save = True # If theres no location in the db, save it
-        # else: save = False 
-        save = True
-        location = inp.strip().lower()
-
-    location = location.replace(',','').replace(' ','-')
+    location = http.quote_plus(loc)
+    # location = location.replace(',','').replace(' ','-')
 
     # now, to get the actual weather
     try:
@@ -104,9 +95,7 @@ def weather(inp, nick="", reply=None, db=None, notice=None):
     except KeyError:
         return "Could not get weather for that location."
 
-    if location and save:
-        db.execute("insert or replace into locations(ircname, location) values (?,?)", (nick.lower(), location))
-        db.commit()
+    if location and save: database.set(db,'users','location',location,'nick',nick)
 
     # put all the stuff we want to use in a dictionary for easy formatting of the output
     weather_data = {

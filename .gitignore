@@ -1,7 +1,7 @@
 persist
 config
 channelconfig
-flood
+_delete
 gitflow
 *.db
 *.log

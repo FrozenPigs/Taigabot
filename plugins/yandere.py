@@ -5,7 +5,7 @@ import random
 yandere_cache = []
 
 def refresh_cache():
-    "gets a page of random MLIAs and puts them into a dictionary "
+    "gets a page of random yande.re posts and puts them into a dictionary "
     url = 'https://yande.re/post?page=%s' % random.randint(1,11000)
     soup = http.get_soup(url)
 
@@ -16,12 +16,17 @@ def refresh_cache():
             yandere_cache.append((result['id'].replace('p','') ,title['title'].split(' User')[0], img['href']))
 
 def get_yandere_tags(inp):
-    return 'https://yande.re/post?tags=%s' % inp.replace(' ','_')
-
+    url = 'https://yande.re/post?tags=%s' % inp.replace(' ','_')
+    soup = http.get_soup(url)
+    imagelist = soup.find('ul', {'id': 'post-list-posts'}).findAll('li')
+    image = imagelist[random.randint(0,len(imagelist)-1)]
+    imageid = image["id"].replace('p','')
+    title = image.find('img')['title']
+    src = image.find('a', {'class': 'directlink'})["href"]
+    return u"\x034NSFW\x03: \x02({})\x02 {}: {}".format(imageid, title, web.isgd(http.unquote(src)))
 
 #do an initial refresh of the cache
 refresh_cache()
-
 
 @hook.command(autohelp=False)
 def yandere(inp, reply=None):
@@ -30,6 +35,6 @@ def yandere(inp, reply=None):
     if inp: return get_yandere_tags(inp)
 
     id, title, image = yandere_cache.pop()
-    reply('\x034NSFW\x03: \x02(%s)\x02 %s: %s' % (id, title, web.isgd(image)))
+    reply(u'\x034NSFW\x03: \x02(%s)\x02 %s: %s' % (id, title, web.isgd(image)))
     if len(yandere_cache) < 3:
         refresh_cache()

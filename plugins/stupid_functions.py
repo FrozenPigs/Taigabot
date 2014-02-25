@@ -1,5 +1,6 @@
-from util import hook
+from util import hook,http, database
 import random
+import urllib
 
 @hook.regex(r'^(same)$')
 def same(inp,bot=None,chan=None):
@@ -30,99 +31,179 @@ def tetete(inp, nick=None,bot=None,chan=None):
     if 'tetete' in disabled_channel_commands: return None
     return 'tetete %s%s%s' % (nick, nick, nick)
 
-def db_init(db):
-    db.execute("create table if not exists fines(nick primary key, totalfines)")
-    db.commit()
-
-def get_fines(db, nick):
-    totalfines = db.execute("select totalfines from fines where nick=lower(?)", [nick]).fetchone()
-    if totalfines:
-        return totalfines[0]
-    else:
-        return 0
-
-def save_fines(db, nick, totalfines):
-    db.execute("insert or replace into fines(nick, totalfines) values (?,?)", (nick.lower(), totalfines))
-    db.commit()
-
-def citation(db,chan,nick,reason):
-    fine = random.randint(1, 500)
-    totalfines = int(get_fines(db,nick)) + fine
-    out = "PRIVMSG %s :\x01ACTION fines %s \x02$%i\x02 %s. You owe: \x0304$%s\x02\x01" % (chan, nick, fine, reason, totalfines)
-    save_fines(db,nick,totalfines)
-    return out
-
-@hook.command(autohelp=False)
-def owed(inp, nick=None, conn=None, chan=None,db=None):
-    db_init(db)
-    out = '\x02You owe: \x0304${}\x02'.format(get_fines(db,nick))
-    return out
-
-@hook.command(autohelp=False)
-def honk(inp, nick=None, conn=None, chan=None,db=None):
-    "honk <person} -- Honks at someone."
-    db_init(db)
-    if len(inp) == 0:
-        if random.randint(1, 3) == 2: 
-            out = citation(db,chan,nick,"for honking")
-        else:
-            out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, nick)
-    else:
-        randnum = random.randint(1, 4)
-        if randnum == 1: 
-            out = citation(db,chan,nick,"for honking")
-        elif randnum == 2: 
-            out = citation(db,chan,inp.strip(),"for being too lewd and getting honked at")
-        else:
-            out = "PRIVMSG %s :\x01ACTION honks %s\x01" % (chan, inp.strip())
-    conn.send(out)
-
-@hook.command(autohelp=False)
-def pet(inp, nick=None, conn=None, chan=None,db=None):
-    "pet <person} -- Pets someone."
-    db_init(db)
-    if len(inp) == 0:
-        if random.randint(1, 3) == 2: 
-            out = citation(db,chan,nick,"for petting")
-        else:
-            out = "PRIVMSG %s :\x01ACTION pets %s\x01" % (chan, nick)
-    else:
-        randnum = random.randint(1, 4)
-        if randnum == 1: 
-            out = citation(db,chan,nick,"for petting")
-        elif randnum == 2: 
-            out = citation(db,chan,inp.strip(),"for being too lewd and getting pet")
-        else:
-            out = "PRIVMSG %s :\x01ACTION pets %s\x01" % (chan, inp.strip())
-    conn.send(out)
-
-@hook.command(autohelp=False)
-def diddle(inp, nick=None, conn=None, chan=None,db=None):
-    "diddle <person} -- Diddles someone."
-    db_init(db)
-    if len(inp) == 0:
-        if random.randint(1, 3) == 2: 
-            out = citation(db,chan,nick,"for diddling")
-        else:
-            out = "PRIVMSG %s :\x01ACTION diddles %s\x01" % (chan, nick)
-    else:
-        randnum = random.randint(1, 4)
-        if randnum == 1: 
-            out = citation(db,chan,nick,"for diddling")
-        elif randnum == 2: 
-            out = citation(db,chan,inp.strip(),"for being too lewd and getting diddled")
-        else:
-            out = "PRIVMSG %s :\x01ACTION diddles %s\x01" % (chan, inp.strip())
-    conn.send(out)
 
 @hook.command(autohelp=False)
 def pantsumap(inp, chan=None, notice=None):
     "pantsumap -- pantsumap"
-    if chan == "#pantsumen":
-        notice(("Pantsumen Map: http://tinyurl.com/clx2qeg\r\n").encode('utf-8', 'ignore'))
+    if chan == "#pantsumen": notice(("Pantsumen Map: http://tinyurl.com/clx2qeg\r\n").encode('utf-8', 'ignore'))
+
 
 @hook.command('deidle', autohelp=False)
 @hook.command(autohelp=False)
 def idle(inp):
     "idle -- idle"
     return 'Thats not a command you baka.'
+
+
+@hook.command()
+def penis(inp, conn=None, chan=None, notice=None, nick=None):
+    "penis <nicks> -- Analyzes Penis's"
+    url = 'http://en.inkei.net/{}'.format('!'.join(inp.split(' ')))
+    return url
+
+
+@hook.regex(r'^\[(.*)\]$')
+@hook.command(autohelp=False)
+def intensify(inp):
+    "intensify <word> -- idle"
+    try: word = inp.upper()
+    except: word = inp.group(1).upper()
+    return '\x02[{} INTENSIFIES]\x02'.format(word)
+
+
+@hook.command(autohelp=False)
+def hug(inp):
+    "hug <nick> -- hugs someone"
+    #return u'\x02♥♡♥ {} ♥♡♥\x02'.format(inp.strip())
+    return '♥♡❤♡♥ {} ♥♡❤♡♥'.format(inp).decode('UTF-8')
+
+
+@hook.command(autohelp=False)
+def sudoku(inp, conn=None, chan=None, notice=None, nick=None, say=None):
+    "up -- Makes the bot kill you in [channel]. "\
+    "If [channel] is blank the bot will op you in "\
+    "the channel the command was used in."
+    say("Sayonara bonzai-chan...")
+    conn.send(u"KICK {} {}".format(chan, nick)) 
+    return
+
+
+@hook.command(autohelp=False)
+def increase(inp):
+    "increase"
+    return '\x02[QUALITY OF CHANNEL SIGNIFICANTLY INCREASED]\x02'
+
+
+@hook.command(autohelp=False)
+def decrease(inp):
+    "decrease"
+    return '\x02[QUALITY OF CHANNEL SIGNIFICANTLY DECREASED]\x02'
+
+
+# HONK HONK
+def citation(db,chan,nick,reason):
+    fine = random.randint(1, 500)
+    try: totalfines = int(database.get(db,'users','fines','nick',nick)) + fine
+    except: totalfines = 0 + fine
+    database.set(db,'users','fines',totalfines,'nick',nick)
+    return u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 {}. You owe: \x0304${}\x02\x01".format(chan, nick, fine, reason, totalfines)
+
+
+@hook.command(autohelp=False)
+def owed(inp, nick=None, conn=None, chan=None,db=None):
+    if '@' in inp: nick = inp.split('@')[1].strip()
+    return u'\x02{} owes: \x0304${}\x02'.format(nick,database.get(db,'users','fines','nick',nick))
+
+
+<<<<<<< HEAD
+@hook.command('rape', autohelp=False)
+=======
+>>>>>>> 08b4f3f8e27c3b99a55eb3477ef5ee7ecd99dff0
+@hook.command('spank', autohelp=False)
+@hook.command('diddle', autohelp=False)
+@hook.command('pet', autohelp=False)
+@hook.command(autohelp=False)
+def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None):
+    "honk <person} -- Honks at someone."
+    target = inp.strip()
+    command = paraml[-1].split(' ')[0][1:].lower()
+    actions = {
+        'honk':'honked at',
+        'pet':'pet',
+        'diddle':'diddled',
+<<<<<<< HEAD
+        'spank':'spanked',
+        'rape':'raped'
+    }
+    # actions = (
+    #     ("honk", "honked at", "honking"),
+    #     ("pet", "pet", "petting"),
+    #     ("diddle", "diddled", "diddling"),
+    #     ("spank", "spanked", "spanking"),
+    #     ("rape", "raped", "raping")
+    # )
+
+=======
+        'spank':'spanked'
+    }
+    db_init(db)
+>>>>>>> 08b4f3f8e27c3b99a55eb3477ef5ee7ecd99dff0
+    if len(inp) == 0:
+        if random.randint(1, 3) == 2: 
+            out = citation(db,chan,nick,"for {}ing".format(command))
+        else:
+<<<<<<< HEAD
+            out = u"PRIVMSG {} :\x01ACTION {}s {}\x01".format(chan, command, nick)
+=======
+            out = "PRIVMSG {} :\x01ACTION {}s {}\x01".format(chan, command, nick)
+>>>>>>> 08b4f3f8e27c3b99a55eb3477ef5ee7ecd99dff0
+    else:
+        randnum = random.randint(1, 4)
+        if randnum == 1: 
+            out = citation(db,chan,nick,"for {}ing".format(command))
+        elif randnum == 2: 
+            out = citation(db,chan,target,"for being too lewd and getting {}".format(actions[command]))
+        else:
+<<<<<<< HEAD
+            out = u"PRIVMSG {} :\x01ACTION {}s {}\x01".format(chan, command, target)
+    conn.send(out)
+
+=======
+            out = "PRIVMSG {} :\x01ACTION {}s {}\x01".format(chan, command, target)
+    conn.send(out)
+>>>>>>> 08b4f3f8e27c3b99a55eb3477ef5ee7ecd99dff0
+
+
+<<<<<<< HEAD
+# /action uguubot bursts out laughing
+
+
+# @hook.command('siid')
+# @hook.command(autohelp=False)
+# def sleepytime(inp, chan=None, conn=None, notice=None):
+#     "kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel] "\
+#     "If [channel] is blank the bot will kick the <user> in "\
+#     "the channel the command was used in."
+#     user = 'siid'
+#     out = "KICK %s %s" % (chan, user)
+#     reason = "sleepytime!"
+#     out = out + " :" + reason
+#     notice("Attempting to kick %s from %s..." % (user, chan))
+#     conn.send(out)
+
+
+# @hook.command(autohelp=False,channeladminonly=True)
+# def touhouradio(inp, chan=None, notice=None, bot=None):
+#     "disabled -- Lists channels's disabled commands."
+#     url = "http://booru.touhouradio.com/post/list/%7Bchannel%7C%23pantsumen%7D/1"
+#     html = http.get_html(url)
+# 
+#     link = html.xpath("//div[@id='main']//a/@href")[0]
+#     #COMPARE TO DB
+#     image = http.unquote(re.search('.+?imgurl=(.+)&imgrefurl.+', link).group(1))
+#     return image
+=======
+@hook.command('deidle', autohelp=False)
+@hook.command(autohelp=False)
+def idle(inp):
+    "idle -- idle"
+    return 'Thats not a command you baka.'
+
+@hook.regex(r'.*\[(.*)\].*')
+@hook.command(autohelp=False)
+def intensify(inp):
+    "intensify <word> -- idle"
+    try: word = inp.upper()
+    except: word = inp.group(1).upper()
+    return '\x02[{} INTENSIFIES]\x02'.format(word)
+>>>>>>> 08b4f3f8e27c3b99a55eb3477ef5ee7ecd99dff0

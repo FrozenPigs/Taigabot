@@ -1,70 +1,88 @@
-from util import hook, http
+from util import hook, http, database
 import time
 from util.text import capitalize_first
-
-import urllib, urllib2
 
 @hook.command('t', autohelp=False)
 @hook.command(autohelp=False)
 def time(inp, nick="", reply=None, db=None, notice=None):
-    "time <location|@nick> [save] -- Gets time for <location>."
+    "time <location|@ nick> [save] -- Gets time for <location>."
 
-    # initalise locations DB
-    db.execute("create table if not exists locations(ircname primary key, location)")
+    save = False
     
-    if not inp: # if there is no input, try getting the users last location from the DB
-        location = db.execute("select location from locations where ircname=lower(?)", [nick]).fetchone()
-        if not location: # no location saved in the database, send the user help text
-            notice(time.__doc__)
-            return "No location stored for %s." % nick
-        location = location[0]
-        save = False # no need to save a location, we already have it
-    elif inp.endswith(" save"):
-        location = inp[:-5].strip().lower() # remove "save" from the input string after checking for it
-        save = True
-    elif '@' in inp:
-        nick = inp.replace('@','')
-        location = db.execute("select location from locations where ircname=lower(?)", [nick]).fetchone()
-        if not location: # no location saved in the database, send the user help text
-            return "No location stored for %s." % nick
-        location = location[0]
-        save = False # no need to save a location, we already have it
-    else: 
-        location = db.execute("select location from locations where ircname=lower(?)", [nick]).fetchone() # check if user already has a location
-        if not location: save = True # If theres no location in the db, save it
-        else: save = False 
-        location = inp.strip().lower()
+    if '@' in inp:
+        nick = inp.split('@')[1].strip()
+        location = database.get(db,'users','location','nick',nick)
+        if not location: return "No location stored for {}.".format(nick)
+    else:
+        location = database.get(db,'users','location','nick',nick)
+        if not inp:
+            if not location:
+                notice(time.__doc__)
+                return
+        else:
+            if not location: save = True
+            if " save" in inp: save = True
+            location = inp.split()[0]
 
     # now, to get the actual time
     try:
         url = "https://www.google.com/search?q=time+in+%s" % location.replace(' ','+')
         html = http.get_html(url)
         prefix = html.xpath("//div[contains(@class,'vk_c vk_gy')]//span[@class='vk_gy vk_sh']/text()")[0].strip()
-        time = html.xpath("//div[contains(@class,'vk_c vk_gy')]//div[@class='vk_bk vk_ans']/text()")[0].strip()
+        curtime = html.xpath("//div[contains(@class,'vk_c vk_gy')]//div[@class='vk_bk vk_ans']/text()")[0].strip()
         day = html.xpath("//div[contains(@class,'vk_c vk_gy')]//div[@class='vk_gy vk_sh']/text()")[0].strip()
         date = html.xpath("//div[contains(@class,'vk_c vk_gy')]//div[@class='vk_gy vk_sh']/span/text()")[0].strip()
     except IndexError:
         return "Could not get time for that location."
 
-    if location and save:
-        db.execute("insert or replace into locations(ircname, location) values (?,?)", (nick.lower(), location))
-        db.commit()
+    if location and save: database.set(db,'users','location',location,'nick',nick)
 
-    return '%s is \x02%s\x02 [%s %s]' % (prefix, time, day, date)
+    return u'{} is \x02{}\x02 [{} {}]'.format(prefix, curtime, day, date)
 
+
+
+api_url = 'http://api.wolframalpha.com/v2/query?format=plaintext'
+
+@hook.command("watime")
+def time_command(inp, bot=None):
+    """time <area> -- Gets the time in <area>"""
+
+    query = "current time in {}".format(inp)
+
+    api_key = bot.config.get("api_keys", {}).get("wolframalpha", None)
+    if not api_key:
+        return "error: no wolfram alpha api key set"
+
+    request = http.get_xml(api_url, input=query, appid=api_key)
+    time = " ".join(request.xpath("//pod[@title='Result']/subpod/plaintext/text()"))
+    time = time.replace("  |  ", ", ")
+
+    if time:
+        # nice place name for UNIX time
+        if inp.lower() == "unix":
+            place = "Unix Epoch"
+        else:
+            place = capitalize_first(" ".join(request.xpath("//pod[@"
+                                                            "title='Input interpretation']/subpod/plaintext/text()"))[
+                                     16:])
+        return "{} - \x02{}\x02".format(time, place)
+    else:
+        return u"Could not get the time for '{}'.".format(inp)
 
 
 @hook.command(autohelp=False)
 def beats(inp):
-    "beats -- Gets the current time in .beats (Swatch Internet Time). "
+    """beats -- Gets the current time in .beats (Swatch Internet Time). """
 
     if inp.lower() == "wut":
         return "Instead of hours and minutes, the mean solar day is divided " \
-        "up into 1000 parts called \".beats\". Each .beat lasts 1 minute and" \
-        " 26.4 seconds. Times are notated as a 3-digit number out of 1000 af" \
-        "ter midnight. So, @248 would indicate a time 248 .beats after midni" \
-        "ght representing 248/1000 of a day, just over 5 hours and 57 minute" \
-        "s. There are no timezones."
+               "up into 1000 parts called \".beats\". Each .beat lasts 1 minute and" \
+               " 26.4 seconds. Times are notated as a 3-digit number out of 1000 af" \
+               "ter midnight. So, @248 would indicate a time 248 .beats after midni" \
+               "ght representing 248/1000 of a day, just over 5 hours and 57 minute" \
+               "s. There are no timezones."
+    elif inp.lower() == "guide":
+        return u"1 day = 1000 .beats, 1 hour = 41.666 .beats, 1 min = 0.6944 .beats, 1 second = 0.01157 .beats"
 
     t = time.gmtime()
     h, m, s = t.tm_hour, t.tm_min, t.tm_sec

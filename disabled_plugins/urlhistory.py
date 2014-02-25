@@ -11,22 +11,22 @@ ignored_urls = [urlnorm.normalize("http://google.com"),]
 
 
 def db_init(db):
-    db.execute("create table if not exists urlhistory"
-                 "(chan, url, nick, time)")
+    db.execute("create table if not exists urls"
+               "(chan, url, nick, time)")
     db.commit()
 
 
 def insert_history(db, chan, url, nick):
     now = time.time()
-    db.execute("insert into urlhistory(chan, url, nick, time) "
-                 "values(?,?,?,?)", (chan, url, nick, time.time()))
+    db.execute("insert into urls(chan, url, nick, time) "
+               "values(?,?,?,?)", (chan, url, nick, time.time()))
     db.commit()
 
 
 def get_history(db, chan, url):
-    db.execute("delete from urlhistory where time < ?",
+    db.execute("delete from urls where time < ?",
                  (time.time() - expiration_period,))
-    return db.execute("select nick, time from urlhistory where "
+    return db.execute("select nick, time from urls where "
             "chan=? and url=? order by time desc", (chan, url)).fetchall()
 
 
@@ -61,19 +61,24 @@ def format_reply(history):
 
     return #"that url has been posted %s in the past %s by %s (%s)." % (ordinal,
 
+
+link_re = (r'((https?://([-\w\.]+)+(:\d+)?(/([\S/_\.]*(\?\S+)?)?)?))', re.I)
+@hook.regex(*link_re)
 @hook.command
 def url(inp, nick='', chan='', db=None, bot=None):
     db_init(db)
-    url = urlnorm.normalize(inp.group().encode('utf-8'))
+    url = urlnorm.normalize(inp.group(0).lower().encode('utf-8'))
+    print url
     if url not in ignored_urls:
         url = url.decode('utf-8')
         history = get_history(db, chan, url)
-        insert_history(db, chan, url, nick)
+        print history
+        #insert_history(db, chan, url, nick)
 
-        inp = match.string.lower()
+        # inp = url.lower()
 
         for name in dict(history):
-            if name.lower() in inp:  # person was probably quoting a line
+            if name.lower() in url:  # person was probably quoting a line
                 return               # that had a link. don't remind them.
 
         if nick not in dict(history):

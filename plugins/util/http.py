@@ -182,5 +182,11 @@ def is_active(url):
         return False
 
 
+def get_element(soup,element,idclass=None,selector=None):
+    if idclass: result = soup.find(element, {idclass: selector}).renderContents().strip()
+    else: result = soup.find(element).renderContents().strip()
+    return process_text(result)
+
+
 # while u',,' in page:
 #         page = page.replace(u',,', u',"",')

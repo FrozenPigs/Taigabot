@@ -156,6 +156,7 @@ def quote(inp, nick='', chan='', db=None, notice=None):
     create_table_if_not_exists(db)
 
     add = re.match(r"add[^\w@]+(\S+?)>?\s+(.*)", inp, re.I)
+    delete = re.match(r"del[^\w@]+(\S+?)>?\s+(.*)", inp, re.I)
     retrieve = re.match(r"(\S+)(?:\s+#?(-?\d+))?$", inp)
     retrieve_chan = re.match(r"(#\S+)\s+(\S+)(?:\s+#?(-?\d+))?$", inp)
 
@@ -176,17 +177,30 @@ def quote(inp, nick='', chan='', db=None, notice=None):
 
     notice(quote.__doc__)
 
+
 @hook.command(adminonly=True)
-def rquote(inp, nick='', chan='', db=None, notice=None):
-    "rquote <nick> <#n> -- Removes <#n>th quote by <nick>"
-    create_table_if_not_exists(db)
+def rquote(inp, db=None, notice=None):
+    """Deletes a quote from a nick"""
+    nick = inp.split(' ')[0]
+    num = inp.split(' ')[1]
+    notice(del_quote(db, nick, num))
     
-    remove = re.match(r"(\S+?)\s+(\d+)", inp)
+
+# elif delete:
+#         quoted_nick, msg = add.groups()
+#         notice(del_quote(db, quoted_nick, msg))
+
+# @hook.command(adminonly=True)
+# def rquote(inp, nick='', chan='', db=None, notice=None):
+#     "rquote <nick> <#n> -- Removes <#n>th quote by <nick>"
+#     create_table_if_not_exists(db)
     
-    if remove:
-        quoted_nick, num = remove.groups()
-        notice(del_quote(db, quoted_nick, num))
-        return
+#     remove = re.match(r"(\S+?)\s+(\d+)", inp)
     
-    notice(quote.__doc__)
+#     if remove:
+#         quoted_nick, num = remove.groups()
+#         notice(del_quote(db, quoted_nick, num))
+#         return
+    
+#     notice(quote.__doc__)
         

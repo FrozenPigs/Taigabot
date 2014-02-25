@@ -22,7 +22,7 @@ def get_bash_quote(inp):
         soup = http.get_soup('http://bash.org/?%s' % inp)
         quote_info = soup.find('p', {'class': 'quote'}).text
         quote = soup.find('p', {'class': 'qt'}).text
-        return ('\x02#%s\x02 (%s): %s' % (quote_info.split()[0].replace('#',''), quote_info.split()[1].split('(')[1].split(')')[0].strip(), quote.replace('\n', ' ').replace('\r', ' |')))
+        return (u'\x02#{}\x02 ({}): {}'.format(quote_info.split()[0].replace('#',''), quote_info.split()[1].split('(')[1].split(')')[0].strip(), quote.replace('\n', ' ').replace('\r', ' |')))
     except:
         return "No quote found."
 
@@ -37,7 +37,7 @@ def bash(inp, reply=None):
     #grab the last item in the mlia cache and remove it
     id, votes, text = bash_cache.pop()
     # reply with the bash we grabbed
-    reply('\x02#%s\x02 (%s): %s' % (id, votes, text))
+    reply(u'\x02#{}\x02 ({}): {}'.format(id, votes, text))
     # refresh bash cache if its getting empty
     if len(bash_cache) < 3:
         refresh_cache()

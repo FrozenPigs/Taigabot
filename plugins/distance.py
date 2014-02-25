@@ -1,23 +1,61 @@
 from util import hook, http
-import re
+import re, math
+
+def get_distance(origin, destination):
+    lat1, lon1 = origin
+    lat2, lon2 = destination
+    radius = 6371 # km
+
+    dlat = math.radians(lat2-lat1)
+    dlon = math.radians(lon2-lon1)
+    a = math.sin(dlat/2) * math.sin(dlat/2) + math.cos(math.radians(lat1)) \
+        * math.cos(math.radians(lat2)) * math.sin(dlon/2) * math.sin(dlon/2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    d = radius * c
+
+    return d
+
+def get_location(location):
+    location_data = http.get_json("http://maps.googleapis.com/maps/api/geocode/json?address={}&sensor=false".format(location))['results'][0]
+    location_name = location_data['formatted_address']
+    Location_latlong = [location_data['geometry']['location']['lat'], location_data['geometry']['location']['lng']]
+    return (location_name, Location_latlong)
 
 @hook.command
 def distance(inp):
-    "distance <start> to <end> -- Calculate the distance between 2 places."
     if 'from ' in inp: inp = inp.replace('from ','')
     inp = inp.replace(', ','+')
-    start = inp.split(" to ")[0].strip().replace(' ','+')
+    orig = inp.split(" to ")[0].strip().replace(' ','+')
     dest = inp.split(" to ")[1].strip().replace(' ','+')
-    url = "http://www.travelmath.com/flying-distance/from/%s/to/%s" % (start, dest)
-    print url
-    soup = http.get_soup(url)
-    query = soup.find('h1', {'class': re.compile('flight-distance')})
-    distance = soup.find('h3', {'class': 'space'})
-    result = "%s %s" % (query, distance)
-    result = http.strip_html(result)
-    result = unicode(result, "utf8").replace('flight ','')
+    try:
+        orig_location, orig_latlong = get_location(orig)
+        dest_location, dest_latlong = get_location(dest)
+        distance_km = get_distance(orig_latlong, dest_latlong)
+        distance_mile = distance_km * 0.621371
 
-    if not distance:
-        return "Could not calculate the distance from %s to %s." % (start, dest)
+        return u"The distance from \x02%s\x02 to \x02%s\x02 is: %0.2f miles / %0.2f km" % (orig_location, dest_location, distance_mile, distance_km)
+    except:
+        return "Cannot get distance from {} to {}".format(orig,dest)
+# OLD
+# @hook.command
+# def distance(inp):
+#     "distance <start> to <end> -- Calculate the distance between 2 places."
+#     if 'from ' in inp: inp = inp.replace('from ','')
+#     inp = inp.replace(', ','+')
+#     start = inp.split(" to ")[0].strip().replace(' ','+')
+#     dest = inp.split(" to ")[1].strip().replace(' ','+')
+#     url = "http://www.travelmath.com/flying-distance/from/%s/to/%s" % (start, dest)
+#     print url
+#     soup = http.get_soup(url)
+#     query = soup.find('h1', {'class': re.compile('flight-distance')})
+#     distance = soup.find('h3', {'class': 'space'})
+#     result = "%s %s" % (query, distance)
+#     result = http.strip_html(result)
+#     result = unicode(result, "utf8").replace('flight ','')
 
-    return result
+#     if not distance:
+#         return "Could not calculate the distance from %s to %s." % (start, dest)
+
+#     return result
+
+

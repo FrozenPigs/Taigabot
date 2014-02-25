@@ -25,7 +25,7 @@ os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
 class Bot(object):
     pass
 
-print 'UguuBot %s (%s) <http://github.com/infinitylabs/UguuBot' % (__version__, __status__)
+print 'UguuBot %s (%s) <http://github.com/infinitylabs/UguuBot>' % (__version__, __status__)
 
 # print debug info
 opsys = platform.platform()
@@ -78,7 +78,6 @@ print 'Connection(s) made, starting main loop.'
 while True:
     reload()  # these functions only do things
     config()  # if changes have occured
-    channelconfig()
 
     for conn in bot.conns.itervalues():
         try:

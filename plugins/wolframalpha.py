@@ -3,10 +3,12 @@ import re
 from util import hook, http, text, web
 
 
+# @hook.command('math')
+# @hook.command('calc')
 @hook.command('wa')
 @hook.command
 def wolframalpha(inp, bot=None):
-    "wa <query> -- Computes <query> using Wolfram Alpha."
+    """wa <query> -- Computes <query> using Wolfram Alpha."""
 
     api_key = bot.config.get("api_keys", {}).get("wolframalpha", None)
 
@@ -20,10 +22,7 @@ def wolframalpha(inp, bot=None):
     # get the URL for a user to view this query in a browser
     query_url = "http://www.wolframalpha.com/input/?i=" + \
                 http.quote_plus(inp.encode('utf-8'))
-    try:
-        short_url = web.isgd(query_url)
-    except (web.ShortenError, http.HTTPError):
-        short_url = query_url
+    short_url = web.try_isgd(query_url)
 
     pod_texts = []
     for pod in result.xpath("//pod[@primary='true']"):
@@ -38,9 +37,9 @@ def wolframalpha(inp, bot=None):
             if subpod:
                 results.append(subpod)
         if results:
-            pod_texts.append(title + ': ' + ', '.join(results))
+            pod_texts.append(title + u': ' + u', '.join(results))
 
-    ret = ' - '.join(pod_texts)
+    ret = u' - '.join(pod_texts)
 
     if not pod_texts:
         return 'No results.'
@@ -57,4 +56,4 @@ def wolframalpha(inp, bot=None):
     if not ret:
         return 'No results.'
 
-    return "%s - %s" % (ret, short_url)
+    return u"{} - {}".format(ret, short_url)

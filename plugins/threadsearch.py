@@ -170,11 +170,10 @@ def board(inp):
 @hook.command(autohelp=False)
 def bs(inp, reply=None):
     "bs -- Returns current battlestation threads on /g/"
-    results = catalog("g battlestation")
-    return results
+    return catalog("g battlestation")
+
 
 @hook.command(autohelp=False)
-def desktop(inp, reply=None):
+def desktops(inp, reply=None):
     "desktop -- Returns current desktop threads on /g/"
-    results = catalog("g desktop")
-    return results
+    return catalog("g desktop thread")
