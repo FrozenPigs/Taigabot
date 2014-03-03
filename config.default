@@ -1,4 +1,8 @@
 {
+  "acls": {}, 
+  "admins": [
+    "infinity@*like.lolis"
+  ], 
   "connections":
   {
     "Rizon":
@@ -34,7 +38,8 @@
     "wunderground": "",
     "googletranslate": "",
     "rdio_key": "",
-    "rdio_secret": ""
+    "rdio_secret": "",
+    "yahoo": ""
   },
   "permissions": {
     "admins": {
