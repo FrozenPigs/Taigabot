@@ -1,8 +1,9 @@
 from util import hook, http, text, web
 import json
 
-@hook.command
+@hook.command(autohelp=False)
 def debt(inp):
+    """debt -- returns the us national debt"""
     href = "http://www.nationaldebtclocks.org/debtclock/unitedstates"
     results = http.get_html(href)
     debt = results.xpath("//span[@id='debtDisplayFast']/text()")[0]

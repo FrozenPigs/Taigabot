@@ -10,8 +10,7 @@ db_ready = False
 
 def db_init(db):
     "check to see that our db has the the seen table and return a connection."
-    db.execute("create table if not exists seen(name, time, quote, chan, host, "
-                 "primary key(name, chan))")
+    db.execute("create table if not exists seen(name, time, quote, chan, host, primary key(name, chan))")
     db.commit()
     db_ready = True
 
@@ -85,11 +84,8 @@ def seen_sieve(paraml, input=None, db=None, bot=None, notice=None, say=None):
 
     # keep private messages private
     if input.chan[:1] == "#":
-        db.execute("insert or replace into seen(name, time, quote, chan, host)"
-            "values(?,?,?,?,?)", (input.nick.lower(), time.time(), input.msg,
-            input.chan, input.mask))
+        db.execute("insert or replace into seen(name, time, quote, chan, host) values(?,?,?,?,?)", (input.nick.lower(), time.time(), input.msg.replace('\"', "").replace("'", ""), input.chan, input.mask))
         db.commit()
-
 
 @hook.command
 def seen(inp, nick='', chan='', db=None, input=None):
@@ -101,8 +97,8 @@ def seen(inp, nick='', chan='', db=None, input=None):
     if inp.lower() == nick.lower():
         return "Have you looked in a mirror lately?"
 
-    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", inp.lower()):
-        return "I can't look up that name, its impossible to use!"
+    #if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", inp.lower()):
+    #    return "I can't look up that name, its impossible to use!"
 
     if not db_ready: db_init(db)
 

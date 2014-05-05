@@ -16,7 +16,7 @@ def get_db_connection(conn, name=''):
         return threaddbs[name][threadid]
     filename = os.path.join(bot.persist_dir, name)
 
-    db = sqlite3.connect(filename, timeout=10)
+    db = sqlite3.connect(filename, timeout=1)
     if name in threaddbs:
         threaddbs[name][threadid] = db
     else:

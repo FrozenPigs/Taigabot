@@ -66,9 +66,7 @@ def youtube_url(match):
     return get_video_description(match.group(1))
 
 
-@hook.command('you')
 @hook.command('yt')
-@hook.command('y')
 @hook.command
 def youtube(inp):
     """youtube <query> -- Returns the first YouTube search result for <query>."""
@@ -122,9 +120,8 @@ def youtime(inp):
 
 ytpl_re = (r'(.*:)//(www.youtube.com/playlist|youtube.com/playlist)(:[0-9]+)?(.*)', re.I)
 
-
 @hook.regex(*ytpl_re)
-def ytplaylist_url(match):
+def youtubeplaylist_url(match):
     location = match.group(4).split("=")[-1]
     try:
         soup = http.get_soup("https://www.youtube.com/playlist?list=" + location)

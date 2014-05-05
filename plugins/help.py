@@ -1,11 +1,9 @@
 import re
 from util import hook
 
-@hook.command('commands', autohelp=False)
 @hook.command(autohelp=False)
-def help(inp, say=None, notice=None, input=None, conn=None, bot=None):
-    "help  -- Gives a list of commands/help for a command."
-
+def commands(inp, say=None, notice=None, input=None, conn=None, bot=None):
+    "commands  -- Gives a list of commands/help for a command."
     funcs = {}
     disabled = bot.config.get('disabled_plugins', [])
     disabled_comm = bot.config.get('disabled_commands', [])
@@ -46,3 +44,29 @@ def help(inp, say=None, notice=None, input=None, conn=None, bot=None):
     else:
         if inp in commands:
             notice(conn.conf["command_prefix"] + commands[inp].__doc__)
+
+
+@hook.command('command', autohelp=False)
+@hook.command(autohelp=False)
+def help(inp, say=None, notice=None, input=None, conn=None, bot=None):
+    if not inp:
+        say("For help visit http://uguubot.com or see .COMMANDS")
+    else:
+        commands(inp, say, notice, input, conn, bot)
+    return
+
+
+# @hook.command(autohelp=False)
+# def export(inp, say=None, notice=None, input=None, conn=None, bot=None):
+#     #print bot.commands #.iteritems()
+#     helptext = ''
+#     for command, (func, args) in bot.commands.iteritems():
+#         #print command.__doc__
+#         helptext = helptext + u'{}\n'.format(func.__doc__).encode('utf-8')
+            
+#         #print '{} {} {}'.format(command,func,args)
+
+#     with open('plugins/data/help.txt', 'a') as file:
+#         file.write(u'{}\n'.format(helptext).encode('utf-8'))
+#     file.close()
+#     print helptext

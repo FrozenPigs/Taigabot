@@ -1,0 +1,363 @@
+desktop -- Returns current desktop threads on /g/
+forget <word> -- Forgets a remembered <word>.
+lyrics <search> - Search AZLyrics.com for song lyrics
+.tv <series> -- get info for the <series>
+troll -- Trolls on demand
+aops [channel] -- Lists autoops on channel.
+battlestation <url | @ person> -- Shows a users Battlestation.
+None
+>laughing girls.gif <num> -- Returns first Google Image result for <query>.
+shutup [channel] <user> -- Shuts the user up. 
+None
+honk <person} -- Honks at someone.
+moistcake -- Moists on demand.
+gis <query> -- Returns first Google Image result for <query>.
+help  -- Gives a list of commands/help for a command.
+youtime <query> -- Gets the total run time of the first YouTube search result for <query>.
+help  -- Gives a list of commands/help for a command.
+spartist <artist> -- Search Spotify for <artist>
+dice <diceroll> -- Simulates dicerolls. Example of <diceroll>: 'dice 2d20-d5+4 roll 2'. D20s, subtract 1D5, add 4
+title <url> -- gets the title of a web page
+decypher <pass> <string> -- Decyphers <string> with <password>.
+devoice [channel] <user> -- Makes the bot devoice <user> in [channel].
+    If [channel] is blank the bot will devoice <user> in
+    the channel the command was used in.
+base64 <string> -- Encode <string> with base64.
+desktop http://url.to/desktop | @ nick -- Shows a users Desktop.
+countdown [seconds] [nick1 nick2 nick3]-- does a countdown for the channelThe countdown will begin when all the users type .ready
+HELLO
+None
+version <user> -- Returns version 
+choose <choice1>, [choice2], [choice3], [choice4], ... -- Randomly picks one of the given choices.
+weather <location|@user> [dontsave] -- Gets weather data for <location>.
+wa <query> -- Computes <query> using Wolfram Alpha.
+MyLifeIsAverage -- Gets a random quote from MyLifeIsAverage.com.
+info <factoid> -- Shows the source of a factoid.
+gelbooru <tags> -- Gets a random image from gelbooru.com
+aops [channel] -- Lists autoops on channel.
+bans -- Lists bans on channel.
+title <string> -- Convert string to title case.
+enable [#channel] <commands|all> -- Enables commands for a channel.
+    (you can enable multiple commands at once)
+spell <word/sentence> -- Check spelling of a word or sentence.
+stop [reason] -- Kills the bot with [reason] as its quit message.
+disable [#channel] <commands> -- Disables commands for a channel.
+    (you can disable multiple commands at once)
+answer <query> -- find the answer to a question on Yahoo! Answers
+None
+choose <choice1>, [choice2], [choice3], [choice4], ... -- Randomly picks one of the given choices.
+slogan <word> -- Makes a slogan for <word>.
+google <query> -- Returns first google search result for <query>.
+password <length> [types] -- Generates a password of <length> (default 10). [types] can include 'alpha', 'no caps', 'numeric', 'symbols' or any combination of the inp, eg. 'numbers symbols'
+intensify <word> -- idle
+youtube <query> -- Returns the first YouTube search result for <query>.
+restart [reason] -- Restarts the bot with [reason] as its quit message.
+permissions [group] -- lists the users and their permission level who have permissions.
+disabled [#channel] -- Lists disabled commands/.
+litecoin -- gets current exchange rate for litecoins from BTC-E
+fortune -- Fortune cookies on demand.
+mc [all|movie|tv|album|x360|ps3|wii|pc|ds|3ds|vita] <title> -- Gets rating for <title> from metacritic on the specified medium.
+spotify <song> -- Search Spotify for <song>
+board <board> <regex> -- Search all the posts on a board and return matching results
+None
+lastfm [username | @ nick] [save] -- Displays the now playing (or last played) track of LastFM user [username].
+remove [channel] [user] -- Force a user to part from a channel.
+.tv_last <series> -- gets the most recently aired episode of <series>
+ignore [channel] <nick|host> -- Makes the bot ignore <nick|host>.
+catalog <board> <regex> -- Search all OP posts on the catalog of a board, and return matching results
+admins [channel] -- Lists admins on channel.
+clearlogs -- Clears the bots log(s).
+cmdflood [channel] <number> <duration> | disable -- Enables commandflood protection for a channel.
+    ex: .cmdflood 3 30 -- Allows 3 commands in 30 seconds, set to 0 to disable
+time <location|@ nick> [save] -- Gets time for <location>.
+ban [channel] <user> [timer] -- Makes the bot ban <user> in [channel].
+    If [channel] is blank the bot will ban <user> in
+    the channel the command was used in.
+imdb <movie> -- Gets information about <movie> from IMDb.
+version <nick> -- Returns version 
+steam [search] - Search for specified game/trailer/DLC
+gelbooru <tags> -- Gets a random image from gelbooru.com
+admins -- Lists bot's global admins.
+upper <string> -- Convert string to uppercase.
+set <field> <nick> <value> -- Admin override for setting database values. Example: set location infinity 80210 - set lastfm infinity spookieboogie
+adduser [user] [group] -- adds elevated permissions to [user].
+    [group] must be specified.
+ignored [channel]-- Lists ignored channels/nicks/hosts.
+.tv <series> -- get info for the <series>
+twitter <user>/<user> <n>/<id>/#<hashtag>/@<user> -- Gets last/<n>th tweet from <user>/gets tweet <id>/Gets random tweet with #<hashtag>/gets replied tweet from @<user>.
+.koran <chapter.verse> -- gets <chapter.verse> from the Koran
+None
+greet <message | @ person> -- Shows a users Greeting.
+unlock [channel] -- Makes the bot unlock a channel..
+    If [channel] is blank the bot will mute
+    the channel the command was used in.
+None
+bitcoin <exchange | list> -- Gets current exchange rate for bitcoins from several exchanges, default is MtGox. Supports MtGox, Blockchain, Bitpay, Coinbase and BitStamp.
+escape <string> -- Escapes <string>.
+8ball <question> -- The all knowing magic eight ball,
+    =in electronic form. Ask and it shall be answered!
+todo (add|del|list|search) args -- Manipulates your list of todos.
+.rt <title> -- gets ratings for <title> from Rotten Tomatoes
+drama <phrase> -- Gets the first paragraph of the Encyclopedia Dramatica article on <phrase>.
+wa <query> -- Computes <query> using Wolfram Alpha.
+lart <user> -- LARTs <user>.
+honk <person} -- Honks at someone.
+.bible <passage> -- gets <passage> from the Bible (ESV)
+honk <person} -- Honks at someone.
+lmgtfy [phrase] - Posts a google link for the specified phrase
+aop [channel] <enable|disable> OR <add|del> <nick|host> -- Add/Del Autoops.
+increase
+etymology <word> -- Retrieves the etymology of <word>.
+isdown <url> -- Checks if the site at <url> is up or down.
+rb -- Shows the latest Craftbukkit recommended build
+None
+None
+unban [channel] <user> -- Makes the bot unban <user> in [channel].
+    If [channel] is blank the bot will unban <user> in
+    the channel the command was used in.
+None
+mute [channel] -- Makes the bot mute a channel..
+    If [channel] is blank the bot will mute
+    the channel the command was used in.
+weather <location|@user> [dontsave] -- Gets weather data for <location>.
+shutup [channel] <user> -- Shuts the user up. 
+hash <string> -- Returns hashes of <string>.
+define <word> -- Fetches definition of <word>.
+spotify <song> -- Search Spotify for <song>
+anime <list|get> [anime name] - Searches Animetake for the latest updates
+munge <text> -- Munges up <text>.
+urban <phrase> [id] -- Looks up <phrase> on urbandictionary.com.
+release <input> - Returns the next airdate & time for an anime -- Input can be: today, tomorrow, monday-sunday, or show name
+None
+lastfm [username | @ nick] [save] -- Displays the now playing (or last played) track of LastFM user [username].
+bs -- Returns current battlestation threads on /g/
+tell <nick> <message> -- Relay <message> to <nick> when <nick> is around.
+version <user> -- Returns version 
+None
+time <area> -- Gets the time in <area>
+bash <id> -- Gets a random quote from Bash.org, or returns a specific id.
+mc [all|movie|tv|album|x360|ps3|wii|pc|ds|3ds|vita] <title> -- Gets rating for <title> from metacritic on the specified medium.
+convert <val1> <val2> -- converts a measurement or currencyconvert 1000 usd to yenconvert 100 miles to km
+.bible <passage> -- gets <passage> from the Bible (ESV)
+unescape <string> -- Unescapes <string>.
+reverse <string> -- reverses <string>.
+google <query> -- Returns first google search result for <query>.
+admin [channel} <add|del> <nick|host> -- Makes the user an admin.
+Yande.re -- Gets a random image from Yande.re.
+kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel]
+    If [channel] is blank the bot will kick the <user> in
+    the channel the command was used in.
+waifu <waifu | @ person> -- Shows a users Waifu or Husbando.
+quiet [channel] <user> -- Makes the bot quiet <user> in [channel].
+    If [channel] is blank the bot will quiet <user> in
+    the channel the command was used in.
+litecoin -- gets current exchange rate for litecoins from BTC-E
+.tv <series> -- get info for the <series>
+length <string> -- gets the length of <string>
+youtime <query> -- Gets the total run time of the first YouTube search result for <query>.
+anime <list|get> [anime name] - Searches Animetake for the latest updates
+weather <location|@user> [dontsave] -- Gets weather data for <location>.
+me [channel] <action> -- Makes the bot act out <action> in [channel].
+    If [channel] is blank the bot will act the <action> in the channel the
+    command was used in.
+lmgtfy [phrase] - Posts a google link for the specified phrase
+domainr <domain> - Use domain.nr's API to search for a domain, and similar domains.
+HELLO
+qt --  return qts.
+shutup [channel] <user> -- Shuts the user up. 
+op [channel] <user> -- Makes the bot op <user> in [channel].
+    If [channel] is blank the bot will op <user> in
+    the channel the command was used in.
+rss <feed> -- Gets the first three items from the RSS feed <feed>.
+wiki <phrase> -- Gets first sentence of Wikipedia article on <phrase>.
+yiff <user> -- yiffs <user>.
+unbase64 <string> -- Decode <string> with base64.
+None
+google <query> -- Returns first google search result for <query>.
+gis <query> -- Returns first Google Image result for <query>.
+unquiet [channel] <user> -- Makes the bot unquiet <user> in [channel].
+    If [channel] is blank the bot will unquiet <user> in
+    the channel the command was used in.
+idle -- idle
+honk <person} -- Honks at someone.
+system -- Retrieves information about the host system.
+deop [channel] <user> -- Makes the bot deop <user> in [channel].
+    If [channel] is blank the bot will deop <user> in
+    the channel the command was used in.
+nyaa <query> - NYAA Search
+topkek -- keks on demand.
+lmgtfy [phrase] - Posts a google link for the specified phrase
+decrease
+names [channel] -- Gets Names.
+lewd <user> -- lewd <user>.
+speak [channel] <user> -- Shuts the user up. 
+stop [reason] -- Kills the bot with [reason] as its quit message.
+validate <url> -- Runs url through the w3c markup validator.
+coin [amount] -- Flips [amount] of coins.
+gis <query> -- Returns first Google Image result for <query>.
+None
+deop [channel] <user> -- Makes the bot deop <user> in [channel].
+    If [channel] is blank the bot will deop <user> in
+    the channel the command was used in.
+showtells -- View all pending tell messages (sent in a notice).
+.doge -- Returns the value of a dogecoin.
+bitcoin <exchange | list> -- Gets current exchange rate for bitcoins from several exchanges, default is MtGox. Supports MtGox, Blockchain, Bitpay, Coinbase and BitStamp.
+snopes <topic> -- Searches snopes for an urban legend about <topic>.
+kill <user> -- Makes the bot kill <user>.
+fml -- Gets a random quote from fmyfife.com.
+newegg <item name> -- Searches newegg.com for <item name>
+None
+bender -- Bender quotes.
+memory -- Displays the bot's current memory usage.
+msg <user> <message> -- Sends a Message.
+translate [from language] [to language] <text> -- Will usually autotranslate from other languages to english.
+tell <nick> <message> -- Relay <message> to <nick> when <nick> is around.
+define <word> -- Fetches definition of <word>.
+urban <phrase> [id] -- Looks up <phrase> on urbandictionary.com.
+hug <nick> -- hugs someone
+disabled [#channel] -- Lists disabled commands/.
+showfloods [channel]-- Shows flood settings.
+ban [channel] <user> [timer] -- Makes the bot ban <user> in [channel].
+    If [channel] is blank the bot will ban <user> in
+    the channel the command was used in.
+.tv_next <series> -- get the next episode of <series>
+c <term> -- Calculate <term> with custom calculator.
+calc <term> -- Calculate <term> with Google Calc.
+part <channel> -- Leaves <channel>.
+    If [channel] is blank the bot will leave the
+    channel the command was used in.
+penis <nicks> -- Analyzes Penis's
+isdown <url> -- Checks if the site at <url> is up or down.
+urmom --  return urmom.
+rss <feed> -- Gets the first three items from the RSS feed <feed>.
+me [channel] <action> -- Makes the bot act out <action> in [channel].
+    If [channel] is blank the bot will act the <action> in the channel the
+    command was used in.
+None
+cypher <pass> <string> -- Cyphers <string> with <password>.
+join <channel> -- Joins <channel>.
+eden [url]-- Returns current eden song
+forget <word> -- Forgets a remembered <word>.
+mute [channel] -- Makes the bot mute a channel..
+    If [channel] is blank the bot will mute
+    the channel the command was used in.
+geoip <host/ip> -- Gets the location of <host/ip>
+beats -- Gets the current time in .beats (Swatch Internet Time). 
+kill <user> -- Makes the bot kill <user>.
+None
+urban <phrase> [id] -- Looks up <phrase> on urbandictionary.com.
+remember <word> <data> -- Remembers <data> with <word>. Add
+radio [url]-- Returns current r/a/dio song
+kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel]
+    If [channel] is blank the bot will kick the <user> in
+    the channel the command was used in.
+.tv_last <series> -- gets the most recently aired episode of <series>
+remember <word> <data> -- Remembers <data> with <word>. Add
+voice [channel] <user> -- Makes the bot voice <user> in [channel].
+    If [channel] is blank the bot will voice <user> in
+    the channel the command was used in.
+idle -- idle
+unban [channel] <user> -- Makes the bot unban <user> in [channel].
+    If [channel] is blank the bot will unban <user> in
+    the channel the command was used in.
+trim [channel] <length|disable> -- Sets trim length for parsers.
+    ex: .trim 150 -- Returns the first 150 characters of a parsed url
+None
+.rt <title> -- gets ratings for <title> from Rotten Tomatoes
+.koran <chapter.verse> -- gets <chapter.verse> from the Koran
+spalbum <album> -- Search Spotify for <album>
+Deletes a quote from a nick
+lock [channel] -- Makes the bot lock a channel.
+    If [channel] is blank the bot will mute
+    the channel the command was used in.
+deop [channel] <user> -- Makes the bot deop <user> in [channel].
+    If [channel] is blank the bot will deop <user> in
+    the channel the command was used in.
+pid -- Prints the bot's PID.
+slap <user> -- Makes the bot slap <user>.
+topic [channel] <topic> -- Change the topic of a channel.
+raw <command> -- Sends a RAW IRC command.
+say [channel] <message> -- Makes the bot say <message> in [channel].
+    If [channel] is blank the bot will say the <message> in the channel
+    the command was used in.
+greet <message | @ person> -- Shows a users Greeting.
+imdb <movie> -- Gets information about <movie> from IMDb.
+gis <query> -- Returns first Google Image result for <query>.
+ready-- when all users are ready the countdown will begin.
+seen <nick> -- Tell when a nickname was last in active in one of this bot's channels.
+None
+honk <person} -- Honks at someone.
+invite [channel] <user> -- Makes the bot invite <user> to [channel].
+    If [channel] is blank the bot will invite <user> to
+    the channel the command was used in.
+None
+uptime -- Shows the bot's uptime.
+honry --  return honry.
+None
+ctcp <destination> <command> -- Send a CTCP command
+version <nick> -- Returns version 
+vndb <query> - Visual Novel Search
+shorten <url> - Makes an is.gd shortlink to the url provided.
+steamcalc <username> [currency] - Gets value of steam account and
+       total hours played. Uses steamcommunity.com/id/<nickname>. 
+nick <nick> -- Changes the bots nickname to <nick>.
+rot13 <string> -- Encode <string> with rot13.
+flood [channel] <number> <duration> | disable -- Enables flood protection for a channel.
+    ex: .flood 3 30 -- Allows 3 messages in 30 seconds, set to 0 to disable
+op [channel] <user> -- Makes the bot op <user> in [channel].
+    If [channel] is blank the bot will op <user> in
+    the channel the command was used in.
+lmgtfy [phrase] - Posts a google link for the specified phrase
+None
+lastfm [username | @ nick] [save] -- Displays the now playing (or last played) track of LastFM user [username].
+youtube <query> -- Returns the first YouTube search result for <query>.
+None
+dice <diceroll> -- Simulates dicerolls. Example of <diceroll>: 'dice 2d20-d5+4 roll 2'. D20s, subtract 1D5, add 4
+None
+stock <symbol> -- gets stock information
+troll -- Trolls on demand
+pantsumap -- pantsumap
+horoscope <sign> -- Get your horoscope.
+quote [#chan] [nick] [#n]/.quote add <nick> <msg> -- Gets random or [#n]th quote by <nick> or from <#chan>/adds quote.
+unignore [channel] <nick|host> -- Makes the bot listen to <nick|host>.
+husbando <husbando | @ person> -- Shows a users husbando or Husbando.
+swapcase <string> -- Swaps the capitalization of <string>.
+kill <user> -- Makes the bot kill <user>.
+kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel]
+    If [channel] is blank the bot will kick the <user> in
+    the channel the command was used in.
+steamcalc <username> [currency] - Gets value of steam account and
+       total hours played. Uses steamcommunity.com/id/<nickname>. 
+catalog <board> <regex> -- Search all OP posts on the catalog of a board, and return matching results
+birthday <01/01/2001> | <@ person> -- Shows a users Birthday.
+aop [channel] <enable|disable> OR <add|del> <nick|host> -- Add/Del Autoops.
+validate <url> -- Runs url through the w3c markup validator.
+None
+capitalize <string> -- Capitalizes <string>.
+mal <query> - MyAnimeList anime result
+cycle <channel> -- Cycles <channel>.
+    If [channel] is blank the bot will cycle the
+    channel the command was used in.
+None
+up -- Makes the bot kill you in [channel]. If [channel] is blank the bot will op you in the channel the command was used in.
+lower <string> -- Convert string to lowercase.
+etymology <word> -- Retrieves the etymology of <word>.
+remember <word> <data> -- Remembers <data> with <word>. Add
+capitalize <string> -- Capitalizes <string>.
+op [channel] <user> -- Makes the bot op <user> in [channel].
+    If [channel] is blank the bot will op <user> in
+    the channel the command was used in.
+youtube <query> -- Returns the first YouTube search result for <query>.
+.etranslate <source language> <target language> <sentence> -- Translates <sentence> from <source language> to <target language> using MyGengo.
+quote [#chan] [nick] [#n]/.quote add <nick> <msg> -- Gets random or [#n]th quote by <nick> or from <#chan>/adds quote.
+deluser [user] [group] -- removes elevated permissions from [user].
+    If [group] is specified, they will only be removed from [group].
+urban <phrase> [id] -- Looks up <phrase> on urbandictionary.com.
+wapanese <text> -- Translate english text into japanese romanji
+time <location|@ nick> [save] -- Gets time for <location>.
+youtube <query> -- Returns the first YouTube search result for <query>.
+gadmin <add|del> <nick|host> -- Make <nick|host> an global admin.(you can delete multiple admins at once)
+manga <query> - batoto Search
+loli -- Returns a loli.
+fact -- Gets a random fact from OMGFACTS.
+

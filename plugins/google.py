@@ -1,5 +1,5 @@
 import random
-from util import hook, http, text, database
+from util import hook, http, text, database, web
 import re
 
 def api_get(kind, query):
@@ -8,32 +8,6 @@ def api_get(kind, query):
           'v=1.0&safe=off'
     return http.get_json(url % kind, q=query)
 
-# @hook.command('image')
-@hook.command('gis')
-@hook.command('gi')
-@hook.command('image')
-@hook.command
-def googleimage(inp):
-    """gis <query> -- Returns first Google Image result for <query>."""
-
-    parsed = api_get('images', inp)
-    if not 200 <= parsed['responseStatus'] < 300:
-        raise IOError('error searching for images: {}: {}'.format(parsed['responseStatus'], ''))
-    if not parsed['responseData']['results']:
-        return 'no images found'
-    return random.choice(parsed['responseData']['results'][:10])['unescapedUrl']
-
-@hook.command
-def calc(inp):
-    "calc <term> -- Calculate <term> with Google Calc."
-    soup = http.get_soup('http://www.google.com/search', q=inp)
-
-    result = soup.find('span', {'class': 'cwcot'})
-    formula = soup.find('span', {'class': 'cwclet'})
-    if not result:
-        return "Could not calculate '{}'".format(inp)
-
-    return u"{} {}".format(formula.contents[0].strip(),result.contents[0].strip())
 
 @hook.command('search')
 @hook.command('g')
@@ -59,7 +33,37 @@ def google(inp,db=None,chan=None):
     return u'{} -- \x02{}\x02: "{}"'.format(result['unescapedUrl'], title, content)
 
 
-@hook.regex(r'^\>(.*\.(gif|GIF|jpg|JPG|png|PNG|tiff|TIFF|bmp|BMP))\s?(\d+)?')
+# @hook.command('image')
+@hook.command('gis')
+@hook.command('gi')
+@hook.command('image')
+@hook.command
+def googleimage(inp):
+    """gis <query> -- Returns first Google Image result for <query>."""
+
+    parsed = api_get('images', inp)
+    if not 200 <= parsed['responseStatus'] < 300:
+        raise IOError('error searching for images: {}: {}'.format(parsed['responseStatus'], ''))
+    if not parsed['responseData']['results']:
+        return 'no images found'
+    return random.choice(parsed['responseData']['results'][:10])['unescapedUrl']
+
+
+# @hook.command('calc')
+@hook.command
+def gcalc(inp):
+    "calc <term> -- Calculate <term> with Google Calc."
+    soup = http.get_soup('http://www.google.com/search', q=inp)
+
+    result = soup.find('span', {'class': 'cwcot'})
+    formula = soup.find('span', {'class': 'cwclet'})
+    if not result:
+        return "Could not calculate '{}'".format(inp)
+
+    return u"{} {}".format(formula.contents[0].strip(),result.contents[0].strip())
+
+
+@hook.regex(r'^\>(.*\.(gif|GIF|jpg|JPG|jpeg|JPEG|png|PNG|tiff|TIFF|bmp|BMP))\s?(\d+)?')
 @hook.command
 def implying(inp):
     """>laughing girls.gif <num> -- Returns first Google Image result for <query>."""
@@ -78,3 +82,19 @@ def implying(inp):
     try: return u'\x033\x02>{}\x02\x03 {}'.format(search, parsed['responseData']['results'][:10][num]['unescapedUrl'])
     except: return u'\x033\x02>{}\x02\x03 {}'.format(search, parsed['responseData']['results'][:10][0]['unescapedUrl'])
     #return random.choice(parsed['responseData']['results'][:10])['unescapedUrl']
+
+
+@hook.command('nym')
+@hook.command('littleanon')
+@hook.command('gfy')
+@hook.command
+def lmgtfy(inp, bot=None):
+    "lmgtfy [phrase] - Posts a google link for the specified phrase"
+
+    link = "http://lmgtfy.com/?q=%s" % http.quote_plus(inp)
+
+    try:
+        return web.isgd(link)
+    except (web.ShortenError, http.HTTPError):
+        return link
+

@@ -1,4 +1,4 @@
-from util import hook, text
+from util import hook, text, http, web
 import hashlib
 import collections
 import re
@@ -28,7 +28,6 @@ def strip(text):
     return strip_re.sub('', text)
 
 # basic text tools
-
 
 ## TODO: make this capitalize sentences correctly
 @hook.command("capitalise")
@@ -62,8 +61,6 @@ def swapcase(inp):
     return inp.swapcase()
 
 # encoding
-
-
 @hook.command
 def rot13(inp):
     """rot13 <string> -- Encode <string> with rot13."""
@@ -114,25 +111,22 @@ def escape(inp):
     except Exception as e:
         return "Error: {}".format(e)
 
+
 # length
-
-
 @hook.command
 def length(inp):
     """length <string> -- gets the length of <string>"""
     return "The length of that string is {} characters.".format(len(inp))
 
+
 # reverse
-
-
 @hook.command
 def reverse(inp):
     """reverse <string> -- reverses <string>."""
     return inp[::-1]
 
+
 # hashing
-
-
 @hook.command
 def hash(inp):
     """hash <string> -- Returns hashes of <string>."""
@@ -140,16 +134,13 @@ def hash(inp):
                      for x in ['md5', 'sha1', 'sha256'])
 
 # novelty
-
-
 @hook.command
 def munge(inp):
     """munge <text> -- Munges up <text>."""
     return text.munge(inp)
 
+
 # colors - based on code by Reece Selwood - <https://github.com/hitzler/homero>
-
-
 @hook.command
 def rainbow(inp):
     inp = unicode(inp)
@@ -186,3 +177,14 @@ def usa(inp):
     for i, t in enumerate(inp):
         out += c[i % l] + t
     return out
+
+
+@hook.command
+def shorten(inp):
+    "shorten <url> - Makes an is.gd shortlink to the url provided."
+
+    try:
+        return web.isgd(inp)
+    except (web.ShortenError, http.HTTPError) as error:
+        return error
+

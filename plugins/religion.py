@@ -4,14 +4,14 @@ from util import hook, http
 @hook.command('god')
 @hook.command
 def bible(inp):
-    ".bible <passage> -- gets <passage> from the Bible (ESV)"
+    """.bible <passage> -- gets <passage> from the Bible (ESV)"""
 
     base_url = ('http://www.esvapi.org/v2/rest/passageQuery?key=IP&'
-        'output-format=plain-text&include-heading-horizontal-lines&'
-        'include-headings=false&include-passage-horizontal-lines=false&'
-        'include-passage-references=false&include-short-copyright=false&'
-        'include-footnotes=false&line-length=0&'
-        'include-heading-horizontal-lines=false')
+                'output-format=plain-text&include-heading-horizontal-lines&'
+                'include-headings=false&include-passage-horizontal-lines=false&'
+                'include-passage-references=false&include-short-copyright=false&'
+                'include-footnotes=false&line-length=0&'
+                'include-heading-horizontal-lines=false')
 
     text = http.get(base_url, passage=inp)
 

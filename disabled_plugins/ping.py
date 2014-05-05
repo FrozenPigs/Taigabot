@@ -1,14 +1,36 @@
 # ping plugin by neersighted
 from util import hook
+import time
 import subprocess
 import re
 import os
 
+
+
+@hook.command('pingme', autohelp=False)
+@hook.command(autohelp=False)
+def ping(inp, nick=None, chan=None, conn=None, notice=None, reply=None):
+    "version <nick> -- Returns version "
+    import core_ctcp
+    if '.' in inp:
+        return pingip(inp,reply)
+    else:
+        inp = inp.split(" ")
+        user = inp[0]
+        if not user: user=nick
+        #curtime = int((datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).total_seconds())
+        # print len(ctcpcache)
+        curtime = time.time()
+        core_ctcp.ctcpcache.append(("PING",user, chan))
+        # ctcpcache_timer
+        conn.send(u"PRIVMSG {} :\x01PING {}\x01".format(user, str(curtime)))
+    return
+
+
 ping_regex = re.compile(r"(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)")
 
-
 @hook.command(adminonly=True)
-def ping(inp, reply=None):
+def pingip(inp, reply=None):
     "ping <host> [count] -- Pings <host> [count] times."
 
     if os.name == "nt":

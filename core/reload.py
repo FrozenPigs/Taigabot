@@ -77,6 +77,7 @@ def reload(init=False):
 
     # compile new plugins
     for filename in fileset:
+        output = ''
         mtime = os.stat(filename).st_mtime
         if mtime != mtimes.get(filename):
             mtimes[filename] = mtime
@@ -90,6 +91,8 @@ def reload(init=False):
             except Exception:
                 traceback.print_exc()
                 continue
+
+            # output = '<module class="module" name="{}">\n\t<info>{}</info>\n\t'.format(filename.replace(".py",""), filename.replace(".py","<span>.py</span>"))
 
             # remove plugins already loaded from this filename
             for name, data in bot.plugs.iteritems():
@@ -110,8 +113,14 @@ def reload(init=False):
                         bot.plugs[type] += [data]
 
                         if not init:
-                            print '### new plugin (type: %s) loaded:' % \
-                                  type, format_plug(data)
+                            # output+='<div class="command">{}</div>'.format(format_plug(data).replace('[','<opt>').replace(']','</opt>').replace('<','<req>').replace('>','</req>'))
+                            print '### new plugin (type: %s) loaded:' % type, format_plug(data)
+
+                            # output += '</module>'
+                            # with open('index.txt', 'a') as file:
+                                # file.write(u'{}\n'.format(output).encode('utf-8'))
+        
+
 
     if changed:
         bot.commands = {}

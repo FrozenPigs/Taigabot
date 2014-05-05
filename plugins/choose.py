@@ -17,6 +17,8 @@ def choose(inp):
 
     for word in replacewords:
         inp = inp.replace(word,'')
+
+    if ':' in inp: inp = inp.split(':')[1]
     
     c = inp.split(', ')
     if len(c) == 1:

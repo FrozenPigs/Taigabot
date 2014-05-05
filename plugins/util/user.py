@@ -1,5 +1,6 @@
 from util import database
 import re
+from fnmatch import fnmatch
 
 #@hook.command(autohelp=False)
 def get_hostmask(inp,db):
@@ -43,7 +44,10 @@ def format_hostmask(inp):
     except:
         return db_host.lower()
 
-
+# def compare_masks(mask,matchlist):
+#     for pattern in channeladmins.split(' '):
+#         if bool(fnmatch(mask, pattern)): return True
+#     return False
 
 
 #@hook.command(autohelp=False)

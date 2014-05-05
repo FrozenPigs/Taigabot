@@ -4,7 +4,6 @@ from datetime import datetime
 api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 
 @hook.command('np', autohelp=False)
-@hook.command('l', autohelp=False)
 @hook.command(autohelp=False)
 def lastfm(inp, nick='', db=None, bot=None, notice=None):
     "lastfm [username | @ nick] [save] -- Displays the now playing (or last played) track of LastFM user [username]."

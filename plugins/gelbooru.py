@@ -10,6 +10,7 @@ def refresh_cache(inp):
     gelbooru_cache = []
     num = 0
     search = inp.replace(' ','+').replace('explicit','rating:explicit').replace('nsfw','rating:explicit').replace('safe','rating:safe').replace('sfw','rating:safe')
+    # score:>100
     #print 'http://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=20&tags={}'.format(search)
     soup = http.get_soup('http://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=20&tags={}'.format(search))
     posts = soup.find_all('post')
@@ -40,7 +41,7 @@ def gelbooru(inp, reply=None):
     id, score, url, rating, tags = gelbooru_cache.pop()
     
     if rating is 'e': rating = "\x02\x034NSFW\x03\x02"
-    elif rating is 'q': rating = "\x02Questionable\x02"
+    elif rating is 'q': rating = "\x02\x037Questionable\x03\x02"
     elif rating is 's': rating = "\x02\x033Safe\x03\x02"
 
     return u'\x02[{}]\x02 Score: \x02{}\x02 - Rating: {} - {}'.format(id, score, rating, url)
@@ -64,7 +65,7 @@ def gelbooru_url(match):
     id, score, url, rating, tags = (posts[0].get('id'), posts[0].get('score'), posts[0].get('file_url'),posts[0].get('rating'),posts[0].get('tags'))
 
     if rating is 'e': rating = "\x02\x034NSFW\x03\x02"
-    elif rating is 'q': rating = "\x02Questionable\x02"
+    elif rating is 'q': rating = "\x02\x037Questionable\x03\x02"
     elif rating is 's': rating = "\x02\x033Safe\x03\x02"
 
     return u'\x02[{}]\x02 Score: \x02{}\x02 - Rating: {} - {} - {}'.format(id, score, rating, url, tags[:75].strip())

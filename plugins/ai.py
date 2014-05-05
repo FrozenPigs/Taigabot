@@ -4,15 +4,32 @@ from util import hook
 
 responses = (
     ("hi.*uguu.*",              ("Hi!", "Hello!", "Greetings!", "Howdy!", "how are you?", "I missed you!", ";_; its you again...","time to abandon ship")),
-    ("hello.*",                 ("Hi!", "Hello!", "Greetings!", "Howdy!", "how are you?", "I missed you!", ";_; its you again...","time to abandon ship")),
-    (".*how are you.*",         ("I'm fine, thank you.","Tired","Horny!","Leave me alone Im fapping","DEATH TO ALL HUMANS","STOP ASKING")),
+    (".*hello.*uguu.*",         ("Hi!", "Hello!", "Greetings!", "Howdy!", "how are you?", "I missed you!", ";_; its you again...","time to abandon ship")),
+    # (".*how are you.*",         ("I'm fine, thank you.","Tired","Horny!","Leave me alone Im fapping","DEATH TO ALL HUMANS","STOP ASKING")),
     (".*i love you.*",          ("Awww I love you too!","ilu2bby","Gross!","ugh, thats too bad...","DEATH TO ALL HUMANS","you disgusting robosexual...","d'awwwwww","yay! wanna fuck?")),
+    (".*ilu.*uguu.*",           ("Awww I love you too!","ilu2bby","Gross!","ugh, thats too bad...","DEATH TO ALL HUMANS","you disgusting robosexual...","d'awwwwww","yay! wanna fuck?")),
+    (".*fuck.*uguu.*",          ("pls no!","Gross!","ugh, thats too bad...","you disgusting robosexual...","grow another 6 inches and maybe well talk..","Im not designed to accept inputs that small")),
     (".*fuck you.*",            ("Fuck you too...", "No thanks, I only do qt3.14s","you wish faggot","h-hidoi! ;_;","ok! get on all fours you little bitch!")),
-    (".*uguu.* stupid",         ("No youre stupid", ";____;","say that to my face faggot!","u want 1v1 me m8?","/ignore {nick}")),
+    (".*uguu.*stupid",          ("No youre stupid", "like Id care what a neckbeard permavirgin thinks", ";____;","say that to my face faggot!","u want 1v1 me m8?","/ignore {nick}")),
+    (".*uguu.*suck",            ("No you suck", "like Id care what a neckbeard permavirgin thinks","say that to my face faggot!","u want 1v1 me m8?","/ignore {nick}")),
+    (".*uguu.*hate",            ("boohoo go cry about it", "like I care what a neckbeard permavirgin thinks","uguu:9001 / {nick}:0","u want 1v1 me m8?","/ignore {nick}")),
+    (".*hate.*uguu",            ("boohoo go cry about it", "like I care what a neckbeard permavirgin thinks","uguu:9001 / {nick}:0","u want 1v1 me m8?","/ignore {nick}")),
     ("thanks uguu",             ("youre welcome!", "np it was easy","i didnt really do much","that was nothing for my superior intelligence")),
     (".*uguu.*lewd.*",          ("I cant help it ;_;", "Im a horny bitch!","you know you love me baby","says the guy that likes being pegged...")),
     ("taiga",                   ("TAIGA WANT UP!", "TAIGA WANT DOWN!","TAIGA LOVE WEDNESDAY BECAUSE WEDNESDAY WANT TO DO LEWD THINGS WITH TAIGA")),
+    (".*derpa.*",               ("DERPA DERPA MOHAMMED JIHAD","DERPA DERPA MOHAMMED JIHAD")),
+    (".*incest.*",              ("more like WINcest amirite?","more like WINcest amirite?")),
+    ("sanic",                   ("GOTTA GO FAST","GOTTA GO FAST")),
+    ("gotta go fast",           ("SANIC","SANIC")),
+    ("\^",                       ("^")),
+    ("(´･ω･`)",                 ("(´･ω･`)","(´･ω･`)")),
+
+    
 )
+
+
+# wise/smart
+
 
 pronouns = {
     "i'm": "you're", 
@@ -35,6 +52,9 @@ def ai_sieve(paraml, input=None, notice=None, db=None, bot=None, nick=None, conn
     # replace = {
     #     'nick':input.nick
     # }
+    # process all aif
+
+    # process uguu ai
 
     for pattern in responses:
         wildcards = []

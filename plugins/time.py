@@ -5,14 +5,14 @@ from util.text import capitalize_first
 @hook.command('t', autohelp=False)
 @hook.command(autohelp=False)
 def time(inp, nick="", reply=None, db=None, notice=None):
-    "time <location|@ nick> [save] -- Gets time for <location>."
+    "time [location] [dontsave] | [@ nick] -- Gets time for <location>."
 
-    save = False
+    save = True
     
     if '@' in inp:
         nick = inp.split('@')[1].strip()
         location = database.get(db,'users','location','nick',nick)
-        if not location: return "No location stored for {}.".format(nick)
+        if not location: return "No location stored for {}.".format(nick.encode('ascii', 'ignore'))
     else:
         location = database.get(db,'users','location','nick',nick)
         if not inp:
@@ -26,7 +26,7 @@ def time(inp, nick="", reply=None, db=None, notice=None):
 
     # now, to get the actual time
     try:
-        url = "https://www.google.com/search?q=time+in+%s" % location.replace(' ','+')
+        url = "https://www.google.com/search?q=time+in+%s" % location.replace(' ','+').replace(' save','')
         html = http.get_html(url)
         prefix = html.xpath("//div[contains(@class,'vk_c vk_gy')]//span[@class='vk_gy vk_sh']/text()")[0].strip()
         curtime = html.xpath("//div[contains(@class,'vk_c vk_gy')]//div[@class='vk_bk vk_ans']/text()")[0].strip()
@@ -43,8 +43,8 @@ def time(inp, nick="", reply=None, db=None, notice=None):
 
 api_url = 'http://api.wolframalpha.com/v2/query?format=plaintext'
 
-@hook.command("watime")
-def time_command(inp, bot=None):
+
+def watime(inp, bot=None):
     """time <area> -- Gets the time in <area>"""
 
     query = "current time in {}".format(inp)

@@ -105,7 +105,7 @@ def evaluateStack( s ):
 
 @hook.command
 def c(inp):
-    "c <term> -- Calculate <term> with custom calculator."
+    "c [equation] -- calculates equation with custom calculator"
     global exprStack
     exprStack = []
     #try: 

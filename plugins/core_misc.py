@@ -2,25 +2,13 @@ import socket
 import time
 import re
 import json
+# import datetime
 
 from util import hook, user, database
 
 socket.setdefaulttimeout(10)
 
 nick_re = re.compile(":(.+?)!")
-
-
-
-# @hook.command('ver')
-# @hook.command()
-# def version(inp, conn=None, notice=None):
-#     "version <user> -- Returns version "
-#     inp = inp.split(" ")
-#     user = inp[0]
-#     out = conn.cmd('VERSION', user)
-#     conn.send(out)
-
-
 
 # Identify to NickServ (or other service)
 @hook.event('004')
@@ -35,12 +23,12 @@ def onjoin(paraml, conn=None, bot=None):
         bot.config['censored_strings'].append(nickserv_password)
         time.sleep(1)
 
-# Set bot modes
+    # Set bot modes
     mode = conn.conf.get('mode')
     if mode:
         conn.cmd('MODE', [conn.nick, mode])
 
-# Join config-defined channels
+    # Join config-defined channels
     for channel in conn.channels:
         conn.join(channel)
         time.sleep(1)
@@ -55,7 +43,7 @@ def invite(paraml, conn=None, bot=None):
     if invite_join:
         conn.join(paraml[-1])
         channellist = bot.config["connections"][conn.name]["channels"]
-        channellist.append(paraml[-1])
+        channellist.append(paraml[-1].lower())
         json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
 
 
@@ -75,28 +63,30 @@ def onkick(paraml, conn=None, chan=None, bot=None):
 
 @hook.event("JOIN")
 def onjoined(inp,input=None, conn=None, chan=None,raw=None, db=None):
-    #print input.nick
-    #print input.mask
-    #print input.chan
     mask = user.format_hostmask(input.mask)
-
-    #check if bans
-    banlist = database.get(db,'channels','bans','chan',chan)
-    if banlist and mask in banlist:
-        conn.send(u"MODE {} {} *{}".format(input.chan, '+b', mask))
-        conn.send(u"KICK {} {} :{}".format(input.chan, input.nick, 'I dont think so Tim.'))
-
-    #check if ops
-    autoop = database.get(db,'channels','autoop','chan',chan)
-    if autoop: autoops = database.get(db,'channels','admins','chan',chan)
-    else: autoops = database.get(db,'channels','autoops','chan',chan)
+    disabled_commands = database.get(db,'channels','disabled','chan',chan)
+    if not disabled_commands: disabled_commands = ""
     
-    if autoops and mask in autoops:
-        conn.send(u"MODE {} {} {}".format(input.chan, '+o', input.nick))
+    if not 'banlist' in disabled_commands:
+        #check if bans
+        banlist = database.get(db,'channels','bans','chan',chan)
+        if banlist and mask in banlist:
+            conn.send(u"MODE {} {} *{}".format(input.chan, '+b', mask))
+            conn.send(u"KICK {} {} :{}".format(input.chan, input.nick, 'I dont think so Tim.'))
 
-    # send greeting
-    greeting = database.get(db,'users','greeting','nick',input.nick)
-    if greeting: return greeting
+    if not 'autoop' in disabled_commands:
+        #check if ops
+        autoop = database.get(db,'channels','autoop','chan',chan)
+        if autoop: autoops = database.get(db,'channels','admins','chan',chan)
+        else: autoops = database.get(db,'channels','autoops','chan',chan)
+        
+        if autoops and mask in autoops:
+            conn.send(u"MODE {} {} {}".format(input.chan, '+o', input.nick))
+
+    if not 'greeting' in disabled_commands:
+        # send greeting
+        greeting = database.get(db,'users','greeting','nick',input.nick)
+        if greeting: return greeting
 
 
 @hook.event("NICK")

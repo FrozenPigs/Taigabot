@@ -518,3 +518,9 @@ SCRIPT_TABLE = {
     'FEMININE': (1, 'latin')
 }
 ## end of http://code.activestate.com/recipes/578243/ }}}
+
+def num(s):
+    try:
+        return int(s)
+    except ValueError:
+        return float(s)

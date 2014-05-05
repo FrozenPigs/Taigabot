@@ -37,7 +37,7 @@ def get_memory(db, word):
 @hook.command("r", adminonly=False)
 @hook.command(adminonly=False)
 def remember(inp, nick='', db=None, say=None, input=None, notice=None):
-    "remember <word> <data> -- Remembers <data> with <word>. Add"
+    "remember <word> <data> -- Remembers <data> with <word>."
     db_init(db)
 
     append = False
@@ -100,7 +100,7 @@ def forget(inp, db=None, input=None, notice=None):
 
 @hook.command
 def info(inp, notice=None, db=None):
-    "info <factoid> -- Shows the source of a factoid."
+    "info <word> -- Shows the source of a factoid."
 
     db_init(db)
 
@@ -115,7 +115,7 @@ def info(inp, notice=None, db=None):
 # @hook.regex(r'^(\b\S+\b)\?$')
 @hook.regex(r'\#(\b\S+\b)')
 @hook.regex(r'^\? ?(.+)')
-def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
+def hashtag(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
     "<word>? -- Shows what data is associated with <word>."
     try:
         prefix_on = bot.config["plugins"]["factoids"].get("prefix", False)

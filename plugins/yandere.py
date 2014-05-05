@@ -30,11 +30,11 @@ refresh_cache()
 
 @hook.command(autohelp=False)
 def yandere(inp, reply=None):
-    "Yande.re -- Gets a random image from Yande.re."
+    "tandere [tags] -- Yande.re -- Gets a random image from Yande.re."
 
     if inp: return get_yandere_tags(inp)
 
     id, title, image = yandere_cache.pop()
-    reply(u'\x034NSFW\x03: \x02(%s)\x02 %s: %s' % (id, title, web.isgd(image)))
+    reply(u'\x034NSFW\x03: \x02(%s)\x02 %s: %s' % (id, title[:75], web.isgd(image)))
     if len(yandere_cache) < 3:
         refresh_cache()

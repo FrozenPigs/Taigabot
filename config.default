@@ -1,8 +1,4 @@
 {
-  "acls": {}, 
-  "admins": [
-    "infinity@*like.lolis"
-  ], 
   "connections":
   {
     "Rizon":
@@ -26,6 +22,7 @@
   "acls": {},
   "api_keys":
   {
+    "ebay": "",
     "tvdb": "",
     "wolframalpha": "",
     "lastfm": "",
@@ -39,7 +36,7 @@
     "googletranslate": "",
     "rdio_key": "",
     "rdio_secret": "",
-    "yahoo": ""
+    "exhentai":"user:pass"
   },
   "permissions": {
     "admins": {
@@ -51,17 +48,14 @@
       "users": ["examplec!user@example.com"]
     }
   },
-  "plugins":
-  {
-    "factoids":
-    {
+  "plugins": {
+    "factoids": {
       "prefix": false
-    },
-    "ignore":
-    {
-      "ignored": []
     }
   },
+  "ignored": [
+    "ignored"
+  ],
   "censored_strings":
   [
     "mypass",

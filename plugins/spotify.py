@@ -31,7 +31,7 @@ def sptfy(inp, sptfy=False):
         return web.try_isgd(inp)
 
 
-@hook.command('sptrack')
+@hook.command('sp')
 @hook.command
 def spotify(inp):
     """spotify <song> -- Search Spotify for <song>"""

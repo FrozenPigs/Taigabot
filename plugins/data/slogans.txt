@@ -195,3 +195,4 @@ I trust <text>.
 <text> is the only way to be happy.
 <text> - One name. One legend.
 The ideal <text>.
+The K in KDE stands for Krap

@@ -32,6 +32,7 @@ def amazon_url(match):
 @hook.command('az')
 @hook.command
 def amazon(inp):
+    """az [query] -- Searches amazon for query"""
     href = "http://www.amazon.com/s/url=search-alias%3Daps&field-keywords={}".format(inp.replace(" ","%20"))
     results = http.get_html(href)
     # title = results.xpath('//title/text()')[0]

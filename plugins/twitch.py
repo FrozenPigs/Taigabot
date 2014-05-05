@@ -53,9 +53,9 @@ def twitch_url(match):
     return twitch_lookup(location)
 
 
-@hook.command('twitchviewers')
+# @hook.command('twitchviewers')
 @hook.command
-def twviewers(inp):
+def twitch(inp):
     inp = inp.split("/")[-1]
     if test(inp):
         location = inp

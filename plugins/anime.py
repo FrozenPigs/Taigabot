@@ -5,12 +5,118 @@ from datetime import datetime, timedelta
 from pytz import timezone
 import pytz
 import time
+import media
+
+def parse_dayname(inp):
+    days = {'sunday': 0,'monday': 1,'tuesday': 2,'wednesday': 3,'thursday': 4,'friday': 5,'saturday': 6}
+    now = datetime.now(timezone('Asia/Tokyo'))
+    today = days[now.strftime("%A").lower()]
+    destday = days[inp.lower()]
+    if destday < today: destday = destday + 7
+    days_between = destday - today
+    return days_between
 
 
-@hook.command('anime')
+def GetInHMS(seconds):
+    hours = seconds / 3600
+    seconds -= 3600*hours
+    minutes = seconds / 60
+    seconds -= 60*minutes
+    if hours == 0:
+        return "%02d:%02d" % (minutes, seconds)
+    return "%02d:%02d:%02d" % (hours, minutes, seconds)
+
+
+@hook.command(autohelp=False)
+def get_time_until(inp):
+    fmt = '%Y-%m-%d %H:%M:%S %Z%z'
+    jp = timezone('Asia/Tokyo')
+    jt = datetime.now(timezone('Asia/Tokyo'))
+    now_jst = jt.strftime(fmt)
+    jp_lt = jp.localize(datetime.strptime(inp,'%Y-%m-%d %H:%M:%S')) 
+    days_remaining = (jp_lt-jt).days
+    seconds_remaining = (jp_lt-jt).seconds
+    if days_remaining < 0 or days_remaining == 6: 
+        diff=datetime.strptime('23:59:59','%H:%M:%S')-datetime.strptime(GetInHMS(seconds_remaining),'%H:%M:%S')
+        return 'Aired %s ago' % (diff)
+    else:
+        return ('%s days %s' % (days_remaining, GetInHMS(seconds_remaining))).replace('1 days','1 day').replace('0 days ','')
+
+
+@hook.command('release')
+@hook.command
+def anime(inp, notice=None):
+    "release <input> - Returns the next airdate & time for an anime -- "\
+    "Input can be: today, tomorrow, monday-sunday, or show name"
+
+    days = []
+    daynames = 'sunday monday tuesday wednesday thursday friday saturday'
+    show_name = ''
+
+    now = datetime.now(timezone('Asia/Tokyo'))
+    curday = now.day - 1
+    month = now.strftime("%m")
+    year = now.year
+
+    url = "http://www.animecalendar.net/%s/%s" % (year,month)
+
+    try: soup = http.get_soup(url)
+    except: return 'Website is down.'
+    days = soup.findAll('div', {"class":re.compile(r'^da.+')})
+
+    if 29 - int(curday) < 7:
+        days_nextmonth = []
+        url = "http://www.animecalendar.net/%s/%i" % (year, int(month) + 1)
+        try: soup = http.get_soup(url)
+        except: return 'Website is down.'
+        days_nextmonth = soup.findAll('div', {"class":re.compile(r'^da.+')})
+        days = days + days_nextmonth
+
+    if inp.lower() in daynames \
+    or inp == 'today' \
+    or inp == 'tomorrow' \
+    or inp == 'yesterday':
+        if inp.lower() in daynames: curday = curday + parse_dayname(inp)
+        elif inp == 'today': curday = curday 
+        elif inp == 'tomorrow': curday = curday + 1
+        elif inp == 'yesterday': curday = curday - 1
+        show_date = days[curday].thead.h2.a['href'].replace('/','',1)
+        result = ''
+        shows = days[curday].table.tbody.findAll('div', {'class': 'tooltip'})
+        for show in shows:
+            show_name = show.find('td', {'class': 'tooltip_title'}).h4.text.strip()
+            show_time =  show.find('td', {'class': 'tooltip_info'}).h4.text.split(' on')[0].strip()
+            air_time = show_time.split('at ')[1].split(' ')[0].strip() + ':00'
+            air_date = show_date.replace('/','-')
+            time_until = get_time_until('%s %s' % (air_date,air_time))
+            try: notice('%s\x02%s\x02: %s [%s]\n' % (result, show_name.decode('utf-8'), show_time,time_until))
+            except: notice('%s\x02%s\x02: %s [%s]\n' % (result, show_name, show_time,time_until))
+        return 'Sent!'
+    else:
+        while curday is not len(days):
+            if days[curday].find(text=re.compile(".*"+inp+".*",re.IGNORECASE)):
+                show_date = days[curday].thead.h2.a['href'].replace('/','',1)
+                shows = days[curday].findAll('tr')
+                for show in shows:
+                    if show.find(text=re.compile(".*"+inp+".*",re.IGNORECASE)):
+                        show_name = show.find('td', {'class': 'tooltip_title'}).h4.text.strip()
+                        show_time =  show.find('td', {'class': 'tooltip_info'}).h4.text.split(' on')[0].strip()
+                        air_time = show_time.split('at ')[1].split(' ')[0].strip() + ':00'
+                        air_date = show_date.replace('/','-')
+                        time_until = get_time_until('%s %s' % (air_date,air_time))
+                        try: return('\x02%s\x02: %s on %s [%s]\n' % (show_name.decode('utf-8'), show_time, show_date, time_until))
+                        except: return('\x02%s\x02: %s on %s [%s]\n' % (show_name, show_time, show_date, time_until))
+                        return
+            curday = curday + 1
+
+    return media.get_series_info(inp)    
+    
+    
+
+
 @hook.command
 def animetake(inp):
-    "anime <list|get> [anime name] - Searches Animetake for the latest updates"
+    "animetake <list> | <get [query]> - searches animetake for the latest updates"
     error = u'not so lucky today..'
     try:
         inp_array = inp.split(' ')
@@ -78,214 +184,118 @@ def mal(inp):
     return url
 
 
-@hook.command()
-def release(inp, notice=None):
-    "release <input> - Returns the next airdate & time for an anime -- "\
-    "Input can be: today, tomorrow, monday-sunday, or show name"
-
-    days = []
-    daynames = 'sunday monday tuesday wednesday thursday friday saturday'
-
-    now = datetime.now(timezone('Asia/Tokyo'))
-    curday = now.day - 1
-    month = now.strftime("%m")
-    year = now.year
-
-    url = "http://www.animecalendar.net/%s/%s" % (year,month)
-
-    try: soup = http.get_soup(url)
-    except: return 'Website is down.'
-    days = soup.findAll('div', {"class":re.compile(r'^da.+')})
-
-    if 29 - int(curday) < 7:
-        days_nextmonth = []
-        url = "http://www.animecalendar.net/%s/%i" % (year, int(month) + 1)
-        try: soup = http.get_soup(url)
-        except: return 'Website is down.'
-        days_nextmonth = soup.findAll('div', {"class":re.compile(r'^da.+')})
-        days = days + days_nextmonth
-
-    if inp.lower() in daynames \
-    or inp == 'today' \
-    or inp == 'tomorrow' \
-    or inp == 'yesterday':
-        if inp.lower() in daynames: curday = curday + parse_dayname(inp)
-        elif inp == 'today': curday = curday 
-        elif inp == 'tomorrow': curday = curday + 1
-        elif inp == 'yesterday': curday = curday - 1
-        show_date = days[curday].thead.h2.a['href'].replace('/','',1)
-        result = ''
-        shows = days[curday].table.tbody.findAll('div', {'class': 'tooltip'})
-        for show in shows:
-            show_name = show.find('td', {'class': 'tooltip_title'}).h4.text.strip()
-            show_time =  show.find('td', {'class': 'tooltip_info'}).h4.text.split(' on')[0].strip()
-            air_time = show_time.split('at ')[1].split(' ')[0].strip() + ':00'
-            air_date = show_date.replace('/','-')
-            time_until = get_time_until('%s %s' % (air_date,air_time))
-            try: notice('%s\x02%s\x02: %s [%s]\n' % (result, show_name.decode('utf-8'), show_time,time_until))
-            except: notice('%s\x02%s\x02: %s [%s]\n' % (result, show_name, show_time,time_until))
-    else:
-        while curday is not len(days):
-            if days[curday].find(text=re.compile(".*"+inp+".*",re.IGNORECASE)):
-                show_date = days[curday].thead.h2.a['href'].replace('/','',1)
-                shows = days[curday].findAll('tr')
-                for show in shows:
-                    if show.find(text=re.compile(".*"+inp+".*",re.IGNORECASE)):
-                        show_name = show.find('td', {'class': 'tooltip_title'}).h4.text.strip()
-                        show_time =  show.find('td', {'class': 'tooltip_info'}).h4.text.split(' on')[0].strip()
-                        air_time = show_time.split('at ')[1].split(' ')[0].strip() + ':00'
-                        air_date = show_date.replace('/','-')
-                        time_until = get_time_until('%s %s' % (air_date,air_time))
-                        try: return('\x02%s\x02: %s on %s [%s]\n' % (show_name.decode('utf-8'), show_time, show_date, time_until))
-                        except: return('\x02%s\x02: %s on %s [%s]\n' % (show_name, show_time, show_date, time_until))
-                        break
-            curday = curday + 1
-
-
-def parse_dayname(inp):
-    days = {'sunday': 0,'monday': 1,'tuesday': 2,'wednesday': 3,'thursday': 4,'friday': 5,'saturday': 6}
-    now = datetime.now(timezone('Asia/Tokyo'))
-    today = days[now.strftime("%A").lower()]
-    destday = days[inp.lower()]
-    if destday < today: destday = destday + 7
-    days_between = destday - today
-    return days_between
-
-
-def GetInHMS(seconds):
-    hours = seconds / 3600
-    seconds -= 3600*hours
-    minutes = seconds / 60
-    seconds -= 60*minutes
-    if hours == 0:
-        return "%02d:%02d" % (minutes, seconds)
-    return "%02d:%02d:%02d" % (hours, minutes, seconds)
-
-
-@hook.command(autohelp=False)
-def get_time_until(inp):
-    fmt = '%Y-%m-%d %H:%M:%S %Z%z'
-    jp = timezone('Asia/Tokyo')
-    jt = datetime.now(timezone('Asia/Tokyo'))
-    now_jst = jt.strftime(fmt)
-    jp_lt = jp.localize(datetime.strptime(inp,'%Y-%m-%d %H:%M:%S')) 
-    days_remaining = (jp_lt-jt).days
-    seconds_remaining = (jp_lt-jt).seconds
-    if days_remaining < 0 or days_remaining == 6: 
-        diff=datetime.strptime('23:59:59','%H:%M:%S')-datetime.strptime(GetInHMS(seconds_remaining),'%H:%M:%S')
-        return 'Aired %s ago' % (diff)
-    else:
-        return ('%s days %s' % (days_remaining, GetInHMS(seconds_remaining))).replace('1 days','1 day').replace('0 days ','')
-
-
-@hook.command(autohelp=False)
-def railgun(inp):
-    return get_time_until('2013-04-19 23:30:00')
-
-
-@hook.command(autohelp=False)
-def yahari(inp):
-    return get_time_until('2013-04-20 01:30:00')
 
 
 
-import pyanidb as anidb
+
+# @hook.command(autohelp=False)
+# def railgun(inp):
+#     return get_time_until('2013-04-19 23:30:00')
+
+
+# @hook.command(autohelp=False)
+# def yahari(inp):
+#     return get_time_until('2013-04-20 01:30:00')
+
+
+
+# import pyanidb as anidb
   
-#anidb.set_client("pyanihttp", 1)
+# #anidb.set_client("pyanihttp", 1)
   
-def get_anime(user, channel, text):
-    try:
-        aid = int(text.split()[1])
-    except ValueError:
-        msg(channel, "%s: %s can't be parsed into an anime id" % (user,
-            text.split()[1]))
-        return None
-    except IndexError:
-        return None
-    print "Querying AniDb for information about {}".format(aid)
-    try:
-        anime = anidb.query(anidb.QUERY_ANIME, aid)
-    except anidb.exceptions.BannedException:
-        msg(channel, "%s: Sorry, looks like I'm banned from using the HTTP api"
-                % user)
-        return None
-    if anime is None:
-        print"No data"
-        return "Sorry, no data could be retrieved"
-    return anime
+# def get_anime(user, channel, text):
+#     try:
+#         aid = int(text.split()[1])
+#     except ValueError:
+#         msg(channel, "%s: %s can't be parsed into an anime id" % (user,
+#             text.split()[1]))
+#         return None
+#     except IndexError:
+#         return None
+#     print "Querying AniDb for information about {}".format(aid)
+#     try:
+#         anime = anidb.query(anidb.QUERY_ANIME, aid)
+#     except anidb.exceptions.BannedException:
+#         msg(channel, "%s: Sorry, looks like I'm banned from using the HTTP api"
+#                 % user)
+#         return None
+#     if anime is None:
+#         print"No data"
+#         return "Sorry, no data could be retrieved"
+#     return anime
   
 
-def atags(user, channel, text):
-    """Show the tags of an anime. Parameters: an aid"""
-    anime = get_anime(user, channel, text)
-    if anime is None:
-        return
-    anime.tags.sort(cmp=lambda x, y: cmp(int(x.count), int(y.count)))
-    anime.tags.reverse()
-    tags = [tag.name for tag in anime.tags]
-    msg(channel, "Anime %s is tagged %s" % (anime.id,
-            ", ".join(tags[:int(get("max_tags", 5))])))
+# def atags(user, channel, text):
+#     """Show the tags of an anime. Parameters: an aid"""
+#     anime = get_anime(user, channel, text)
+#     if anime is None:
+#         return
+#     anime.tags.sort(cmp=lambda x, y: cmp(int(x.count), int(y.count)))
+#     anime.tags.reverse()
+#     tags = [tag.name for tag in anime.tags]
+#     msg(channel, "Anime %s is tagged %s" % (anime.id,
+#             ", ".join(tags[:int(get("max_tags", 5))])))
   
 
-def ainfo(user, channel, text):
-    """Query the AniDB for information about an anime. Parameters: An aid"""
-    anime = get_anime(user, channel, text)
-    if anime is None:
-        return
-    info_s = "Anime #%i: %i episodes." % (anime.id,
-            anime.episodecount)
-    if anime.startdate is not None:
-        info_s += " Airing from: %i/%i/%i" % (anime.startdate.year,
-                anime.startdate.month, anime.startdate.day)
-    if anime.enddate is not None:
-        info_s += " to: %i/%i/%i" % (anime.enddate.year,
-                anime.enddate.month, anime.enddate.day)
-    msg(channel, info_s)
+# def ainfo(user, channel, text):
+#     """Query the AniDB for information about an anime. Parameters: An aid"""
+#     anime = get_anime(user, channel, text)
+#     if anime is None:
+#         return
+#     info_s = "Anime #%i: %i episodes." % (anime.id,
+#             anime.episodecount)
+#     if anime.startdate is not None:
+#         info_s += " Airing from: %i/%i/%i" % (anime.startdate.year,
+#                 anime.startdate.month, anime.startdate.day)
+#     if anime.enddate is not None:
+#         info_s += " to: %i/%i/%i" % (anime.enddate.year,
+#                 anime.enddate.month, anime.enddate.day)
+#     msg(channel, info_s)
   
-    rating_s = u"Ratings:"
-    for i in ("permanent", "temporary"):
-        if anime.ratings[i]["count"] is not None:
-            rating_s += " %s: %.2f by %i people." % \
-                (i,
-                 anime.ratings[i]["rating"],
-                 anime.ratings[i]["count"])
-    msg(channel, rating_s)
-    titles = []
-    for lang in ("ja", "x-jat", "en", "de"):
-        try:
-            titles += [title.title for title in anime.titles[lang] if title.type ==
-                    "main" or title.type == "official"]
-        except KeyError:
-            # There are no titles for that language
-            pass
-    title_s = "Known as: %s" % ", ".join(titles)
-    msg(channel, title_s)
+#     rating_s = u"Ratings:"
+#     for i in ("permanent", "temporary"):
+#         if anime.ratings[i]["count"] is not None:
+#             rating_s += " %s: %.2f by %i people." % \
+#                 (i,
+#                  anime.ratings[i]["rating"],
+#                  anime.ratings[i]["count"])
+#     msg(channel, rating_s)
+#     titles = []
+#     for lang in ("ja", "x-jat", "en", "de"):
+#         try:
+#             titles += [title.title for title in anime.titles[lang] if title.type ==
+#                     "main" or title.type == "official"]
+#         except KeyError:
+#             # There are no titles for that language
+#             pass
+#     title_s = "Known as: %s" % ", ".join(titles)
+#     msg(channel, title_s)
   
-@hook.command(autohelp=False)
-def asearch(inp, chan=None, notice=None):
-    """Search for an anime"""
-    try:
-        name = " ".join(inp.split()[1:])
-    except KeyError:
-        pass
-    print name
-    results = anidb.search(name)
-    max_results = int(get("max_search_results", 5))
+# @hook.command(autohelp=False)
+# def asearch(inp, chan=None, notice=None):
+#     """Search for an anime"""
+#     try:
+#         name = " ".join(inp.split()[1:])
+#     except KeyError:
+#         pass
+#     print name
+#     results = anidb.search(name)
+#     max_results = int(get("max_search_results", 5))
   
-    if len(results) > max_results:
-        notice("Too many results, please refine your search")
+#     if len(results) > max_results:
+#         notice("Too many results, please refine your search")
         
   
-    result_strings = []
-    for anime in results:
-        titles = []
-        for lang in ("ja", "x-jat", "en", "de"):
-            try:
-                titles += [title.title for title in anime.titles[lang] if title.type ==
-                        "main" or title.type == "official"]
-            except KeyError:
-                # There are no titles for that language
-                pass
-        result_strings.append("%i: %s" % (anime.id, ", ".join(titles)))
-    return result_strings
+#     result_strings = []
+#     for anime in results:
+#         titles = []
+#         for lang in ("ja", "x-jat", "en", "de"):
+#             try:
+#                 titles += [title.title for title in anime.titles[lang] if title.type ==
+#                         "main" or title.type == "official"]
+#             except KeyError:
+#                 # There are no titles for that language
+#                 pass
+#         result_strings.append("%i: %s" % (anime.id, ", ".join(titles)))
+#     return result_strings
   

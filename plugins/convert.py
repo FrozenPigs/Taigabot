@@ -6,10 +6,10 @@ from bs4 import BeautifulSoup
 headers = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_1) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.215 Safari/535.1"};
 
 @hook.command
-def convert(inp,conn=None,chan=None):
-    "convert <val1> <val2> -- converts a measurement or currency"\
-    "convert 1000 usd to yen"\
-    "convert 100 miles to km"
+def gconvert(inp,conn=None,chan=None):
+    "gconvert <val1> <val2> -- converts a measurement or currency"\
+    "gconvert 1000 usd to yen"\
+    "gconvert 100 miles to km"
 
     if 'btc' in inp.lower() or 'bitcoin' in inp.lower():
         convert_btc(inp,conn,chan)

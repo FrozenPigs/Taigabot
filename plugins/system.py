@@ -24,9 +24,13 @@ def system(inp):
     python_ver = platform.python_version()
     architecture = '-'.join(platform.architecture())
     cpu = platform.machine()
+    with open('/proc/uptime', 'r') as f:
+        uptime_seconds = float(f.readline().split()[0])
+        uptime = str(timedelta(seconds = uptime_seconds))
+
     return "Hostname: \x02{}\x02, Operating System: \x02{}\x02, Python " \
            "Version: \x02{} {}\x02, Architecture: \x02{}\x02, CPU: \x02{}" \
-           "\x02".format(hostname, os, python_imp, python_ver, architecture, cpu)
+           "\x02, Uptime: \x02{}\x02".format(hostname, os, python_imp, python_ver, architecture, cpu, uptime)
 
 
 @hook.command(autohelp=False, adminonly=True)
@@ -61,12 +65,16 @@ def memory(inp):
         return "Sorry, this command is not supported on your OS."
 
 
-@hook.command(autohelp=False, adminonly=True)
+@hook.command(autohelp=False)
 def uptime(inp, bot=None):
     """uptime -- Shows the bot's uptime."""
     uptime_raw = round(time.time() - bot.start_time)
     uptime = timedelta(seconds=uptime_raw)
-    return "Uptime: \x02{}\x02".format(uptime)
+    with open('/proc/uptime', 'r') as f:
+        sysuptime_seconds = float(f.readline().split()[0])
+        sysuptime = str(timedelta(seconds = sysuptime_seconds))
+
+    return "Uptime: \x02{}\x02, System Uptime: \x02{}\x02".format(uptime, sysuptime)
 
 
 @hook.command(autohelp=False, adminonly=True)
@@ -77,11 +85,10 @@ def pid(inp):
 
 @hook.command(autohelp=False)
 def bots(inp):
-    "HELLO"
-    return "\x02Reporting in! [Python] See http://github.com/infinitylabs/UguuBot\x02"
+    return "Reporting in! [Python] See http://uguubot.com"
 
 
 @hook.command(autohelp=False)
 def source(inp):
-    "HELLO"
-    return "\x02Uguubot\x02 - http://github.com/infinitylabs/UguuBot"
+    return "\x02uguubot\x02 - http://github.com/infinitylabs/uguubot"
+    

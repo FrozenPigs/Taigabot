@@ -6,12 +6,16 @@ import json
 import time
 import subprocess
 
-# def get_chan(inp,chan):
-#     if inp:
-#         if inp[0][0] == "#": 
-#             chan = inp.split()[0]
-#             inp = inp.replace(chan,'').strip()
-#     return (inp.lower(),chan.lower())
+
+@hook.command(autohelp=False, adminonly=True)
+def gadmins(inp, notice=None, bot=None):
+    "admins -- Lists bot's global admins."
+    if bot.config["admins"]:
+        notice(u"Admins are: %s." % ", ".join(bot.config["admins"]))
+    else:
+        notice(u"There are no users with global admin powers.")
+    return
+
 
 @hook.command(adminonly=True)
 def gadmin(inp, notice=None, bot=None, config=None, db=None):
@@ -43,114 +47,66 @@ def gadmin(inp, notice=None, bot=None, config=None, db=None):
                 notice(u"%s is not a global admin." % target)
         return
 
+################################
+### Ignore/Unignore Commands ###
 
-@hook.command(autohelp=False)
-def gadmins(inp, notice=None, bot=None):
-    "admins -- Lists bot's global admins."
-    if bot.config["admins"]:
-        notice(u"Admins are: %s." % ", ".join(bot.config["admins"]))
+@hook.command(permissions=["op_lock", "op"], adminonly=True, autohelp=False)
+def gignored(inp, notice=None, bot=None, chan=None, db=None):
+    """ignored [channel]-- Lists ignored channels/nicks/hosts."""    
+    if bot.config["ignored"]:
+        notice(u"Global ignores are: %s." % ", ".join(bot.config["ignored"]))
     else:
-        notice(u"There are no users with global admin powers.")
+        notice(u"There are no global ignores.")
     return
 
 
-@hook.command(autohelp=False, permissions=["permissions_users"], adminonly=True)
-def permissions(inp, bot=None, notice=None):
-    """permissions [group] -- lists the users and their permission level who have permissions."""
-    permissions = bot.config.get("permissions", [])
-    groups = []
-    if inp:
-        for k in permissions:
-            if inp == k:
-                groups.append(k)
-    else:
-        for k in permissions:
-            groups.append(k)
-    if not groups:
-        notice(u"{} is not a group with permissions".format(inp))
-        return None
-
-    for v in groups:
-        members = ""
-        for value in permissions[v]["users"]:
-            members = members + value + ", "
-        if members:
-            notice(u"the members in the {} group are..".format(v))
-            notice(members[:-2])
+@hook.command(permissions=["op_lock", "op"], adminonly=True, autohelp=False)
+def gignore(inp, notice=None, bot=None, chan=None, db=None):
+    """gignore <nick|host> -- Makes the bot ignore nick|host."""
+    ignorelist = bot.config["ignored"]
+    targets = inp.split()
+    for target in targets:  
+        target = user.get_hostmask(target,db)
+        if (user.is_globaladmin(target,db,bot)):
+            notice(u"[Global]: {} is an admin and cannot be ignored.".format(inp))
         else:
-            notice(u"there are no members in the {} group".format(v))
-
-
-@hook.command(permissions=["permissions_users"], adminonly=True)
-def deluser(inp, bot=None, notice=None):
-    """deluser [user] [group] -- removes elevated permissions from [user].
-    If [group] is specified, they will only be removed from [group]."""
-    permissions = bot.config.get("permissions", [])
-    inp = inp.split(" ")
-    groups = []
-    try:
-        specgroup = inp[1]
-    except IndexError:
-        specgroup = None
-        for k in permissions:
-            groups.append(k)
-    else:
-        for k in permissions:
-            if specgroup == k:
-                groups.append(k)
-    if not groups:
-        notice(u"{} is not a group with permissions".format(inp[1]))
-        return None
-
-    removed = 0
-    for v in groups:
-        users = permissions[v]["users"]
-        for value in users:
-            if inp[0] == value:
-                users.remove(inp[0])
-                removed = 1
-                notice(u"{} has been removed from the group {}".format(inp[0], v))
+            if ignorelist and target in ignorelist:
+                notice(u"[Global]: {} is already ignored.".format(target))
+            else:
+                bot.config["ignored"].append(target)
+                bot.config["ignored"].sort()
                 json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
-    if specgroup:
-        if removed == 0:
-            notice(u"{} is not in the group {}".format(inp[0], specgroup))
-    else:
-        if removed == 0:
-            notice(u"{} is not in any groups".format(inp[0]))
+                notice(u"[Global]: {} has been ignored.".format(target))
+    return
+    #         if ignorelist and target in ignorelist:
+    #             notice(u"[{}]: {} is already ignored.".format(chan, target))
+    #         else:
+    #             ignorelist = '{} {}'.format(target,ignorelist)
+    #             database.set(db,'channels','ignored',ignorelist,'chan',chan)
+
+    #             notice(u"[{}]: {} has been ignored.".format(chan,target))
+    # return
 
 
-@hook.command(permissions=["permissions_users"], adminonly=True)
-def adduser(inp, bot=None, notice=None):
-    """adduser [user] [group] -- adds elevated permissions to [user].
-    [group] must be specified."""
-    permissions = bot.config.get("permissions", [])
-    inp = inp.split(" ")
-    try:
-        user = inp[0]
-        targetgroup = inp[1]
-    except IndexError:
-        notice(u"the group must be specified")
-        return None
-    if not re.search('.+!.+@.+', user):
-        notice(u"the user must be in the form of \"nick!user@host\"")
-        return None
-    try:
-        users = permissions[targetgroup]["users"]
-    except KeyError:
-        notice(u"no such group as {}".format(targetgroup))
-        return None
-    if user in users:
-        notice(u"{} is already in {}".format(user, targetgroup))
-        return None
-
-    users.append(user)
-    notice(u"{} has been added to the group {}".format(user, targetgroup))
-    users.sort()
-    json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+@hook.command(permissions=["op_lock", "op"], adminonly=True, autohelp=False)
+def gunignore(inp, notice=None, bot=None, chan=None, db=None):
+    """unignore [channel] <nick|host> -- Makes the bot listen to <nick|host>."""
+    ignorelist = bot.config["ignored"]
+    targets = inp.split()
+    for target in targets:  
+        target = user.get_hostmask(target,db)
+        if ignorelist and target in ignorelist:
+            bot.config["ignored"].remove(target)
+            bot.config["ignored"].sort()
+            json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+            notice(u"[Global]: {} has been unignored.".format(target))
+        else:
+            notice(u"[Global]: {} is not ignored.".format(target))
+    return
 
 
 @hook.command("quit", autohelp=False, permissions=["botcontrol"], adminonly=True)
-@hook.command(autohelp=False, permissions=["botcontrol"])
+@hook.command(autohelp=False, permissions=["botcontrol"],adminonly=True)
 def stop(inp, nick=None, conn=None):
     """stop [reason] -- Kills the bot with [reason] as its quit message."""
     if inp:
@@ -191,9 +147,11 @@ def join(inp, conn=None, notice=None, bot=None):
         notice(u"Attempting to join {}...".format(target))
         conn.join(target)
 
-    channellist = bot.config["connections"][conn.name]["channels"]
-    channellist.append(target)
-    json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+        channellist = bot.config["connections"][conn.name]["channels"]
+        if not target.lower() in channellist:
+            channellist.append(target.lower())
+            json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+    return
 
 
 @hook.command(autohelp=False, permissions=["botcontrol"], adminonly=True)
@@ -201,19 +159,20 @@ def part(inp, conn=None, chan=None, notice=None, bot=None):
     """part <channel> -- Leaves <channel>.
     If [channel] is blank the bot will leave the
     channel the command was used in."""
-    if inp:
-        targets = inp
-    else:
-        targets = chan
+    if inp: targets = inp
+    else: targets = chan
+
+    channellist = bot.config["connections"][conn.name]["channels"]
+
     for target in targets.split(" "):
         if not target.startswith("#"):
             target = "#{}".format(target)
         notice(u"Attempting to leave {}...".format(target))
         conn.part(target)
-
-    channellist = bot.config["connections"][conn.name]["channels"]
-    channellist.remove(target)
+        channellist.remove(target.lower().strip())
     json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+    print 'Deleted {} from channel list.'.format(target)
+    return
 
 
 @hook.command(autohelp=False, permissions=["botcontrol"], adminonly=True)
@@ -228,6 +187,7 @@ def cycle(inp, conn=None, chan=None, notice=None):
     notice(u"Attempting to cycle {}...".format(target))
     conn.part(target)
     conn.join(target)
+    return
 
 
 @hook.command(permissions=["botcontrol"], adminonly=True)
@@ -238,6 +198,7 @@ def nick(inp, notice=None, conn=None):
         return
     notice(u"Attempting to change nick to \"{}\"...".format(inp))
     conn.set_nick(inp)
+    return
 
 
 @hook.command(permissions=["botcontrol"], adminonly=True)
@@ -291,91 +252,47 @@ def me(inp, conn=None, chan=None):
         message = message[:-1]
         out = u"PRIVMSG {} :\x01ACTION {}\x01".format(chan, message)
     conn.send(out)
+     
 
-
-@hook.command(adminonly=True)
-def ctcp(inp, conn=None, chan=None, notice=None):
-    "ctcp <destination> <command> -- Send a CTCP command"
-    inp = inp.split(" ")
-    destination = inp[0]
-    command = inp[1]
-    command = command.upper()
-    #if message == None:
-    result = conn.send('PRIVMSG {} :\x01{}\x01'.format( destination, command ) )
-    #out = u"PRIVMSG %s :%s" % (chan, result)
-    #conn.send(out)
-    #else:
-    # conn.send ( 'PRIVMSG {} :\x01{} {}\x01'.format( destination, command, message ) )
-
-
-@hook.command(adminonly=True)
+@hook.command(channeladminonly=True)
 def set(inp, conn=None, chan=None, db=None, notice=None):
     "set <field> <nick> <value> -- Admin override for setting database values. " \
     "Example: set location infinity 80210 - " \
     "set lastfm infinity spookieboogie"
 
-    # inpsplit = inp.split(" ")
-    try:
+    inpsplit = inp.split(" ")
+
+    if len(inpsplit) is 2:
+        field = inp.split(" ")[0].strip()
+        value = inp.split(" ")[1].strip()
+
+        if 'voteban' in field or \
+            'votekick' in field:
+            database.set(db,'channels',field, value,'chan',chan)
+            notice(u"Set {} to {}.".format(field, value))
+            return
+    elif len(inpsplit) >= 3:
         field = inp.split(" ")[0].strip()
         nick = inp.split(" ")[1].strip()
-        # value = inp.split(" ")[2:]
         value = inp.replace(field,'').replace(nick,'').strip()
-        # if type(value) is list: ' '.join(value[0:])
-        print value
-    except IndexError: 
-        notice(u"PRIVMSG {} :Could not set {}.".format(chan, field))
-        return
+        if field and nick and value:
+            if 'del' in value or 'none' in value: value = ''
+            if 'location' in field or \
+                'lastfm' in field or  \
+                'desktop' in field or \
+                'battlestation' in field or\
+                'birthday' in field or\
+                'waifu' in field or\
+                'greeting' in field :
+                #if type(value) is list: value = value[0]
+                if value.lower() is 'none': database.set(db,'users',field, '','nick',nick) 
+                else: database.set(db,'users',field, value,'nick',nick) 
+                notice(u"PRIVMSG {} :Set {} for {} to {}.".format(chan, field, nick, value))
+                return
 
-    if field and nick and value:
-        if 'del' in value: value = ''
-        if 'location' in field or \
-            'lastfm' in field or  \
-            'desktop' in field or \
-            'battlestation' in field or\
-            'greeting' in field :
-            #if type(value) is list: value = value[0]
-            database.set(db,'users',field, value,'nick',nick) 
-            notice(u"PRIVMSG {} :Set {} for {} to {}.".format(chan, field, nick, value))
-    else:
-        notice(u"PRIVMSG {} :Could not set {}.".format(chan, field))
-
+    notice(u"Could not set {}.".format(field))
     return
-
-@hook.command("stfu", adminonly=True)
-@hook.command("silence", adminonly=True)
-@hook.command(adminonly=True)
-def shutup(inp, conn=None, chan=None, notice=None):
-    "shutup [channel] <user> -- Shuts the user up. "
-    # inp = inp.split(" ")
-    if inp[0][0] == "#":
-        chan = inp.split(" ")[0]
-        users = inp.split(" ")[1:]
-    else:
-        users = inp.split(" ")
-
-    for user in users:
-        out = u"MODE %s +m-voh %s %s %s" % (chan, user, user, user)
-        conn.send(out)
-        notice(u"Shut up %s from %s..." % (user, chan))
-
-    conn.send(out)
-
-
-@hook.command(adminonly=True)
-def speak(inp, conn=None, chan=None, notice=None):
-    "speak [channel] <user> -- Shuts the user up. "
-    if inp[0][0] == "#":
-        chan = inp.split(" ")[0]
-        users = inp.split(" ")[1:]
-    else:
-        users = inp.split(" ")
-
-    for user in users:
-        out = u"MODE %s -m" % (chan)
-        conn.send(out)
-
-    notice(u"Shut up %s from %s..." % (user, chan))
-
+    
 
 @hook.command(adminonly=True, autohelp=False)
 def db(inp,db=None):
@@ -392,77 +309,3 @@ def db(inp,db=None):
             db.execute("ALTER TABLE {} ADD COLUMN {}".format(table,col))
             db.commit
             return "Added Column"
-
-
-# UPDATE usersettings SET fines=(SELECT totalfines FROM fines WHERE nick = usersettings.nick);
-
-
-def compare_hostmasks(hostmask,matchmask):
-    hostmask = hostmask.replace('~','').replace('*','\S+').lower()
-    matchmask = matchmask.replace('*','.+').lower()
-    if bool(re.search(hostmask,matchmask)): return True
-    else: return False
-
-@hook.command(adminonly=True)
-def checkhost(inp, conn=None, chan=None, notice=None):
-    inp = inp.split(' ')
-    hostmask = inp[0]
-    matchmask = inp[1]
-
-    return compare_hostmasks(hostmask,matchmask)
-
-
-@hook.command(adminonly=True)
-def test(inp,db=None):
-    host = user.get_hostmask(inp,db)
-    print host
-    hostmask = host.lower().replace('~','').replace('*','\S+')
-    print hostmask
-    matchmask = "sid18764@.+uxbridge.irccloud.com wednesday@le-wednesday-face.org 680i@.+studby.hig.no themadman@.+want.it.now austin@.+this.is.austin urmom@.+kills.your.gainz moss@.+like.a.hamster quinn@.+fios.verizon.net sgs@michael-jackson.whosodomized.me kalashniko@doesnt.break.stuff ichiroku@.+fios.verizon.net connor@.+nasty.skanky.slut"
-    #print "{} -- {}".format(matchmask,hostmask)
-    if bool(re.search(hostmask,matchmask)): return True
-    else: return False
-
-
-
-
-    #Database conversion commands
-#Update Uguu's default databases
-@hook.command(adminonly=True)
-def migrate_old_db(inp, notice=None, bot=None, db=None, config=None):
-    #db.execute("ALTER TABLE seen_user RENAME TO seen")
-    #db.execute("create table if not exists seen(name, time, quote, chan, host, primary key(name, chan))")
-    db.commit()
-
-    #db.execute("ALTER TABLE weather RENAME TO locations")
-    #db.execute("DROP TABLE seen")
-    
-    #db.execute("DROP TABLE seen")
-    
-    #db.execute("create table if not exists seen(name, time, quote, chan, host, "
-    #             "primary key(name, chan))")
-    #db.commit()
-    #db.commit()
-    #db.execute("ALTER TABLE seen_user RENAME TO seen")
-    #db.execute("INSERT OR IGNORE INTO usersettings (nick, lastfm) SELECT ircname, lastfmname FROM usernames")
-    #notice('LastFM data was imported into usersettings')
-    #db.commit()
-
-    
-    
-
-    #Migrate old CloudBot DBs
-    #LastFM
-    #db.execute("create table if not exists usernames (ircname primary key, lastfmname)")
-    #db.execute("INSERT INTO usernames (ircname, lastfmname) SELECT nick, acc FROM lastfm") 
-    #db.execute("DROP TABLE lastfm")
-    #db.commit()   
- 
-    #Weather
-    #db.execute("create table if not exists locationsCopy (ircname primary key, location)")
-    #db.execute("INSERT INTO locationsCopy (ircname, location) SELECT nick, loc FROM locations")
-    #db.execute("ALTER TABLE locations RENAME TO locationsOrig")
-    #db.execute("ALTER TABLE locationsCopy RENAME TO locations")    
-    #db.execute("DROP TABLE locationsOrig")
-    #db.commit()
-    conn.send(out)

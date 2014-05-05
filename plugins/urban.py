@@ -31,7 +31,7 @@ def urban(inp):
 
     # try getting the requested definition
     try:
-        output = u"[%i/%i] %s: %s - %s" % \
+        output = u"[%i/%i] \x02%s\x02: %s - %s" % \
               (id, len(defs), defs[id - 1]['word'],
               defs[id - 1]['definition'].replace('\r\n', ' '),defs[id - 1]['example'].replace('\r\n', ' '))
     except IndexError:

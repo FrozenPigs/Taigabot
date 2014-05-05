@@ -8,9 +8,12 @@ gitflow
 .*.swp
 *.pyc
 *.orig
+*.tmp
 .project
 .pydevproject
 .geany
 *.sublime-project
 *.sublime-workspace
 .DS_Store
+cmdflood
+flood

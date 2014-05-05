@@ -79,8 +79,8 @@ def search_page(results_deque, page, search_specifics):
 
 def process_results(board, string, results_deque):
     """Process the resulting data of a search and present it"""
-    max_num_urls_displayed = 4
-    max_num_urls_fetch = 12
+    max_num_urls_displayed = 6
+    max_num_urls_fetch = 20
     board = sanitise(board)
     message = ""
     urllist = []
@@ -177,3 +177,7 @@ def bs(inp, reply=None):
 def desktops(inp, reply=None):
     "desktop -- Returns current desktop threads on /g/"
     return catalog("g desktop thread")
+
+@hook.command(autohelp=False)
+def britbong(inp, reply=None):
+    return catalog("pol britbong")

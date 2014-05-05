@@ -84,6 +84,6 @@ def dice(inp):
                 return "Thanks for overflowing a float, jerk >:["
 
     if desc:
-        return "%s: %d (%s)" % (desc.strip(),  total, ", ".join(rolls))
+        return "%s: %d [%s]" % (desc.strip(),  total, ", ".join(rolls))
     else:
-        return "%d (%s)" % (total, ", ".join(rolls))
+        return "%d [%s]" % (total, ", ".join(rolls))

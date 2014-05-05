@@ -1,6 +1,5 @@
 from util import http, hook
-#import lxml
-#from lxml.html import parse 
+import re
 
 ## CONSTANTS
 
@@ -31,7 +30,6 @@ exchanges = {
     }
 }
 
-
 ## HOOK FUNCTIONS
 
 @hook.command("btc", autohelp=False)
@@ -47,47 +45,30 @@ def bitcoin(inp):
         else:
             return "Available exchanges: {}".format(", ".join(exchanges.keys()))
     else:
-        exchange = exchanges["mtgox"]
+        exchange = exchanges["bitstamp"]
 
     data = http.get_json(exchange["api_url"])
     func = exchange["func"]
     return func(data)
 
-    # try:
-    #     data = http.get_json("http://data.mtgox.com/api/1/generic/order/lag")
-    #     data = data['return']
-    #     lag = {
-    #         'lag': data['lag_text']
-    #     }
-    #     result_lag = ("Lag: %(lag)s" % lag)
-    #     result = "{} {}".format(result,result_lag)
-    # except:
-    #     result = result
-
-
 
 @hook.command("ltc", autohelp=False)
 @hook.command(autohelp=False)
-def litecoin(inp, message=None):
+def litecoin(inp, say=None):
     """litecoin -- gets current exchange rate for litecoins from BTC-E"""
     data = http.get_json("https://btc-e.com/api/2/ltc_usd/ticker")
     ticker = data['ticker']
-    message("Current: \x0307${:,.2f}\x0f - High: \x0307${:,.2f}\x0f"
+    say("Current: \x0307${:,.2f}\x0f - High: \x0307${:,.2f}\x0f"
         " - Low: \x0307${:,.2f}\x0f - Volume: {:,.2f} LTC".format(ticker['buy'], ticker['high'], ticker['low'], ticker['vol_cur']))
-
 
 
 @hook.command(autohelp=False)
 def doge(inp, say=None):
     ".doge -- Returns the value of a dogecoin."
-    # get btc price
-    data = http.get_json("http://data.mtgox.com/api/2/BTCUSD/money/ticker")
-    data = data['data']
-    ticker = {'buy': data['buy']['display_short']}
-    bitcoin_price = ("%(buy)s" % ticker).split('$')[1]
-
-    # get doge->btc price
     try:
+        # get btc price
+        bitcoin_price = re.search(r'\d+\.\d+',bitcoin('coinbase')).group(0)
+        # get doge->btc price
         url = "https://www.coins-e.com/api/v2/markets/data/"
         data = http.get_json(url)
         data = data['markets']
@@ -111,4 +92,4 @@ def doge(inp, say=None):
 
     result = ("Price: \x0307$%s\x0f - $1=\x0307%s\x0f Doge - 10,000 DOGE=\x0307$%s\x0f - BTC: \x0307%s\x0f" % (result,dollar_result,lotsadoge,current['buy']))
     result2 = ("Average: \x0307%(avg)s\x0f - High: \x0307%(high)s\x0f - Low: \x0307%(low)s\x0f" % average)
-    say("%s - %s" % (result, result2))
+    say("{} - {}".format(result, result2))
