@@ -1,5 +1,5 @@
 from util import hook
-import log
+# import log
 
 db_ready = False
 
@@ -43,7 +43,7 @@ def get(db,table,field,matchfield,matchvalue):
         if result: return result[0]
         else: return False
     except:
-        log.log("***ERROR: SELECT {} FROM {} WHERE {}='{}';".format(field,table,matchfield,matchvalue))
+        print "***ERROR: SELECT {} FROM {} WHERE {}='{}';".format(field,table,matchfield,matchvalue)
 
 
 def set(db, table, field, value, matchfield, matchvalue):
