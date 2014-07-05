@@ -48,7 +48,7 @@ def openPoll(question, reply=None, db=None):
             reply("There already is an open poll.")
             return
     except:
-        db.execute("INSERT INTO polls (question, active) VALUES ('{}', 1)".format(question))
+        db.execute("INSERT INTO polls (question, active) VALUES (?, 1)", (question,))
         reply("Opened new poll: {}".format(question))
         #reply("Poll opened!")
     return
@@ -78,14 +78,14 @@ def showPoll(pollID, db=None):
             reply("There's no poll open.")
             return
     else:
-        poll = db.execute("SELECT pollID, question FROM polls WHERE pollID = '{}'".format(pollID))
+        poll = db.execute("SELECT pollID, question FROM polls WHERE pollID = ?", (pollID,))
         if len(poll) == 0:
             reply("No such poll found.")
             return
     pollID = poll[0][0]
     question = poll[0][1]
     reply(question)
-    for (index, answer, votes) in db.execute("SELECT 'index', answer, count(voteID) FROM answers LEFT JOIN votes ON votes.answerID = answers.answerID WHERE pollID = {} GROUP BY answers.answerID, 'index', answer ORDER BY 'index' ASC".format(pollID, )):
+    for (index, answer, votes) in db.execute("SELECT 'index', answer, count(voteID) FROM answers LEFT JOIN votes ON votes.answerID = answers.answerID WHERE pollID = ? GROUP BY answers.answerID, 'index', answer ORDER BY 'index' ASC", (pollID, )):
         reply("%s. %s (%s)" % (index, answer, votes))
 
 
@@ -98,13 +98,13 @@ def voteFor(answerIndex, reply=None, db=None):
         reply("No poll is open at the moment.")
         return
     pollID = polls[0][0]
-    answers = db.execute("SELECT answerID FROM answers WHERE pollID = %s AND 'index' = %s" % (pollID, answerIndex))
+    answers = db.execute("SELECT answerID FROM answers WHERE pollID = ? AND 'index' = ?", (pollID, answerIndex))
     if len(answers) == 0:
         reply("No item #%s found." % answerIndex)
         return
     answerID = answers[0][0]
-    db.execute("DELETE FROM votes WHERE nick = %s AND answerID IN (SELECT answerID FROM answers WHERE pollID = %s)", (sender, pollID))
-    db.execute("INSERT INTO votes (answerID, nick) VALUES (%s, %s)", (answerID, sender))
+    db.execute("DELETE FROM votes WHERE nick = ? AND answerID IN (SELECT answerID FROM answers WHERE pollID = ?)", (sender, pollID))
+    db.execute("INSERT INTO votes (answerID, nick) VALUES (?, ?)", (answerID, sender))
     reply("Vote registered.")
 
 
@@ -117,15 +117,15 @@ def voteNew(answer, reply=None, db=None):
         reply("No poll is open at the moment.")
         return
     pollID = polls[0][0]
-    maxIndex = db.execute("SELECT MAX('index') FROM answers WHERE answers.pollID = %s", pollID)[0][0]
+    maxIndex = db.execute("SELECT MAX('index') FROM answers WHERE answers.pollID = ?", (pollID,))[0][0]
     if maxIndex == None:
         index = 1
     else:
         index = maxIndex + 1
-    db.execute("INSERT INTO answers (pollID, 'index', answer) VALUES (%s, %s, %s)", (pollID, index, answer))
-    answerID = db.execute("SELECT answerID FROM answers WHERE pollID = %s AND 'index' = %s", (pollID, index))[0][0]
-    db.execute("DELETE FROM votes WHERE nick = %s AND answerID IN (SELECT answerID FROM answers WHERE pollID = %s)", (sender, pollID))
-    db.execute("INSERT INTO votes (answerID, nick) VALUES (%s, %s)", (answerID, sender))
+    db.execute("INSERT INTO answers (pollID, 'index', answer) VALUES (?, ?, ?)", (pollID, index, answer))
+    answerID = db.execute("SELECT answerID FROM answers WHERE pollID = ? AND 'index' = ?", (pollID, index))[0][0]
+    db.execute("DELETE FROM votes WHERE nick = ? AND answerID IN (SELECT answerID FROM answers WHERE pollID = ?)", (sender, pollID))
+    db.execute("INSERT INTO votes (answerID, nick) VALUES (?, ?)", (answerID, sender))
     reply("Vote added.")
 
 
@@ -133,7 +133,7 @@ def voteNew(answer, reply=None, db=None):
 def searchPoll(searchTerm, reply=None, db=None):
     """Search polls matching a given search term."""
     if not db_ready: db_init(db)
-    polls = db.execute("SELECT pollID, question FROM polls WHERE question LIKE %s", ('%' + searchTerm + '%',))
+    polls = db.execute("SELECT pollID, question FROM polls WHERE question LIKE ?", ('%' + searchTerm + '%',))
     if len(polls) == 0:
         reply("No polls found.")
         return
@@ -141,7 +141,7 @@ def searchPoll(searchTerm, reply=None, db=None):
         reply("%s entries found, refine your search" % len(polls))
         return
     for (pollID, question) in polls:
-        winners = db.execute("SELECT answer, count(voteID) FROM answers INNER JOIN votes ON votes.answerID = answers.answerID WHERE pollID = %s GROUP BY answers.answerID, answer ORDER BY count(voteID) DESC LIMIT 1", (pollID, ))
+        winners = db.execute("SELECT answer, count(voteID) FROM answers INNER JOIN votes ON votes.answerID = answers.answerID WHERE pollID = ? GROUP BY answers.answerID, answer ORDER BY count(voteID) DESC LIMIT 1", (pollID, ))
         if len(winners) == 0:
             reply("%s. %s" % (pollID, question))
         else:
@@ -152,9 +152,9 @@ def searchPoll(searchTerm, reply=None, db=None):
 def deletePoll(pollID, reply=None, db=None):
     """Deletes a poll from the archives."""
     if not db_ready: db_init(db)
-    if len(db.execute("SELECT pollID FROM polls WHERE pollID = %s", (pollID, ))) == 0:
+    if len(db.execute("SELECT pollID FROM polls WHERE pollID = ?", (pollID, ))) == 0:
         reply("No such poll found")
-    db.execute("DELETE FROM votes WHERE answerID IN (SELECT answerID FROM answers WHERE pollID = %s)", (pollID, ))
-    db.execute("DELETE FROM answers WHERE pollID = %s", (pollID, ))
-    db.execute("DELETE FROM polls WHERE pollID = %s", (pollID, ))
+    db.execute("DELETE FROM votes WHERE answerID IN (SELECT answerID FROM answers WHERE pollID = ?)", (pollID, ))
+    db.execute("DELETE FROM answers WHERE pollID = ?", (pollID, ))
+    db.execute("DELETE FROM polls WHERE pollID = ?", (pollID, ))
     reply("Poll deleted.")
