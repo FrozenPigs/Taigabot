@@ -26,7 +26,7 @@ def add_quote(db, chan, nick, add_nick, msg):
         db.execute('''INSERT OR FAIL INTO quote
                       (chan, nick, add_nick, msg, time)
                       VALUES(?,?,?,?,?)''',
-                   (chan, nick, add_nick, msg, time.time()))
+                   (chan, nick, add_nick, msg.replace("'","").replace('\"', ""), time.time()))
         db.commit()
     except db.IntegrityError:
         return "Message already stored, doing nothing."
@@ -47,6 +47,22 @@ def del_quote(db, nick, num):
         return "Message doesn't exist. Doing nothing."
     return "Message removed"
 
+
+def search_quote(db, nick, search):
+    """Searches a quote from a nick"""
+    quotes = db.execute('''SELECT msg
+                           FROM quote
+                           WHERE deleted != 1
+                           AND lower(nick) = lower(?)
+                           ORDER BY time, 1''', (nick,)).fetchall()
+
+    num = 1
+    results = []
+    for quote in quotes:
+        if search.lower() in quote[0].lower(): #or search.strip().lower() == 'list'
+            results.append(u'[{}/{}] <{}> {}'.format(num, len(quotes),nick, quote[0]))
+        num+=1
+    return results
 
 def get_quote_num(num, count, name):
     """Returns the quote number to fetch from the DB"""
@@ -150,7 +166,7 @@ def get_quote_by_chan(db, chan, num=False):
 
 @hook.command('q')
 @hook.command
-def quote(inp, nick='', chan='', db=None, notice=None):
+def quote(inp, nick='', chan='', db=None, notice=None,reply=None):
     "quote <#chan | nick> [#n] ex: .quote add <nick> <msg> -- Gets " \
     "random or [#n]th quote by <nick> or from <#chan>/adds quote."
     create_table_if_not_exists(db)
@@ -159,7 +175,8 @@ def quote(inp, nick='', chan='', db=None, notice=None):
     delete = re.match(r"del[^\w@]+(\S+?)>?\s+(.*)", inp, re.I)
     retrieve = re.match(r"(\S+)(?:\s+#?(-?\d+))?$", inp)
     retrieve_chan = re.match(r"(#\S+)\s+(\S+)(?:\s+#?(-?\d+))?$", inp)
-
+    retrieve_search = re.match(r"(\S+)(?:\s+)(.+)$", inp)
+    
     if add:
         quoted_nick, msg = add.groups()
         notice(add_quote(db, chan, quoted_nick, nick, msg))
@@ -174,6 +191,20 @@ def quote(inp, nick='', chan='', db=None, notice=None):
     elif retrieve_chan:
         chan, nick, num = retrieve_chan.groups()
         return get_quote_by_nick_chan(db, chan, nick, num)
+    elif retrieve_search:
+        nick, search = retrieve_search.groups()
+        if len(search) < 3: 
+            notice('Please search for something larger than 3 characters')
+            return
+        else:
+            results = search_quote(db,nick,search)
+            if len(results) == 0: 
+                return "No Results"
+            elif len(results) < 3: 
+                for result in results: reply(result)
+            else: 
+                for result in results: notice(result)
+            return
 
     notice(quote.__doc__)
 
@@ -184,6 +215,10 @@ def rquote(inp, db=None, notice=None):
     nick = inp.split(' ')[0]
     num = inp.split(' ')[1]
     notice(del_quote(db, nick, num))
+
+
+
+    # cur.execute("SELECT * FROM list WHERE InstitutionName=?", (Variable,))
     
 
 # elif delete:

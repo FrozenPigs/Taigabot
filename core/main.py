@@ -1,6 +1,6 @@
 import thread
 import traceback
-
+import re
 
 thread.stack_size(1024 * 512)  # reduce vm size
 
@@ -24,7 +24,12 @@ class Input(dict):
                 conn.msg(chan, msg)
             else:
                 #conn.msg(chan, '(' + nick + ') ' + msg)
-                conn.msg(chan, msg)
+                
+                # try: conn.msg(chan, re.match(r'^\W+(\w.*)',msg).group(1))
+                
+                try: conn.msg(chan, re.match(r'\.*(\w+.*)',msg).group(1))
+                # try: conn.msg(chan, re.match(r'^(?:[^a-zA-Z0-9:\\\[^]+)?(.+)',msg).group(1))
+                except: conn.msg(chan,msg)
 
         def me(msg):
             conn.msg(chan, "\x01%s %s\x01" % ("ACTION", msg))

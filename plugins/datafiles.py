@@ -168,12 +168,6 @@ def slogan(inp):
     return out.replace('<text>', inp)
 
 
-
-
-
-
-
-
 def get_filename(action,notice):
     if 'loli' in action: action = 'lolis'
     elif 'insult' in action: action = 'insults'
@@ -187,7 +181,8 @@ def get_filename(action,notice):
     elif 'old' in action: action = 'old'
     elif 'fortune' in action: action = 'fortunes'
     elif 'slogan' in action: action = 'slogans'
-    elif 'troll' in action: action = 'slogans'
+    elif 'troll' in action: action = 'troll'
+    elif 'gain' in action: action = 'gainz'
     else: 
         notice('Invalid action')
         return
@@ -337,7 +332,12 @@ def bender(inp,say=None):
     benders = []
     return
     
-
+@hook.command('gains', autohelp=False)
+@hook.command(autohelp=False)
+def gainz(inp, say=None,notice=None):
+    """gains -- SICK GAINZ BRO"""
+    say(process_text(inp,"gainz",notice))
+    return
 
 
 

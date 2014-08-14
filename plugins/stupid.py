@@ -108,6 +108,14 @@ def hug(inp, nick=None):
     if not inp: inp = nick
     return '\x02\x034♥♡❤♡♥\x03 {} \x034♥♡❤♡♥\x03\x02'.format(inp).decode('UTF-8')
 
+@hook.command(autohelp=False)
+def kiss(inp, nick=None):
+    "hug <nick> -- hugs someone"
+    if not inp: inp = nick
+    return '(づ｡◕‿‿◕｡)づ\x02\x034。。・゜゜・。。・゜❤ {} ❤\x03\x02 '.format(inp).decode('UTF-8')
+
+    
+
 
 @hook.regex(r'^\[(.*)\]$')
 @hook.command(autohelp=False)
@@ -158,7 +166,7 @@ def sudoku(inp, conn=None, chan=None, nick=None, say=None):
     conn.send(u"KICK {} {}".format(chan, nick)) 
     return
 
-
+@hook.command("storyofrincewindscat", autohelp=False)
 @hook.command(channeladminonly=True, autohelp=False)
 def storyofpomfface(inp, reply=None):
    reply(':O C==3')
@@ -247,7 +255,43 @@ def leet(text):
     return text
 
 
-'is trying to steal your girl','or else Im going to fuck her in the ass tonight lil bitch!'
+# 'is trying to steal your girl','or else Im going to fuck her in the ass tonight lil bitch!'
+
+exercises = [
+    "pushups",
+    "handstand pushups",
+    "squats",
+    "curls",
+    "dips",
+    "crunches",
+    "minutes of planking",
+    "burpees",
+    "jumping jacks",
+    "minutes of vigorous fapping"
+    ]
+
+fitnesslevels = [
+    "swole",
+    "fit",
+    "cut",
+    "ripped",
+    "infinity'd",
+    "jacked"
+    ]
+
+motivators = [
+    "bitch",
+    "you hungry skeleton",
+    "you puny mortal",
+    "you weak pathetic fool",
+    "you wat wannabe"
+    ]
+
+@hook.command
+def workout(inp,autohelp=False,me=None,paraml=None):
+    if not inp: inp = 'you'
+    else: inp = inp.replace('@','').strip()
+    me('wants {} to get {} as fuck, do {} {} now {}!'.format(inp,random.choice(fitnesslevels),random.randint(1, 50),random.choice(exercises),random.choice(motivators)))
 
 @hook.command('squats',autohelp=False)
 @hook.command
@@ -255,10 +299,50 @@ def pushups(inp,autohelp=False,me=None,paraml=None):
     activity = paraml[-1].split(' ')[0][1:].lower()
     if not inp: inp = 'you'
     else: inp = inp.replace('@','').strip()
-    me('wants {} to get swole as fuck, do {} {} now bitch!'.format(inp,random.randint(0, 50),activity))
+    me('wants {} to get swole as fuck, do {} {} now bitch!'.format(inp,random.randint(1, 50),activity))
 
+
+
+
+
+@hook.command
+def room(inp, conn=None):
+    letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+    users = inp.split()
+    channel = "#rm-"
+       
+    for i in range(1,6):
+        channel = channel + random.choice(letters)
+
+    conn.send("JOIN " + channel)
+    
+    for user in users:
+        conn.send("INVITE " + user + " " + channel)
+
+
+@hook.command(autohelp=False)
+def madoka(inp):
+    return 'Madoka_Miku has looked at infinitys abs {} times today.'.format(random.randint(1, 500))
+
+@hook.command(autohelp=False)
+def drink(inp,me=None):
+    me('Drinks {}, and it was delicious. mmmmmmmmmmmmmmmm'.format(inp))
 
 # var replies = ['faggot','i ought to fuk u up m8','1v1 me','do u evn lift','ur mom','consider urself trolld','ur mom iz gay','stfu fagget','omg nub','u hax i repert u','my dad works for this site so I would be nice if I were you','ill rek u','get rekt scrub','u r gay'];
+
+
+# .sue
+
+@hook.command(autohelp=False)
+def cayoot(inp, nick=None):
+    if not inp: inp = nick
+    return '{} is cayoot!'.format(inp)
+
+@hook.command(autohelp=False)
+def spit(inp, nick=None, me=None):
+    if not inp: inp = nick
+    me('spits on {} like a dirty whore'.format(inp))
+
 
 
 # @hook.command('siid')

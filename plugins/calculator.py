@@ -120,5 +120,6 @@ def c(inp):
             val = re.search(r'^(.*\...[1-9+]*).*$', val).group(1) 
         except:
             val = val
-    return u"{} = {}".format(inp, val)
+    # return u"{} = {}".format(inp, val)
+    return u"{}".format(val)
 

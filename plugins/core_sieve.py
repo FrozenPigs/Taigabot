@@ -12,15 +12,29 @@ import random
 # except: db.execute("INSERT INTO channelsettings VALUES(?,' ',' ',' ',' ',' ',' ',' ',' ',' ',' ')", [chan])
 # db.commit()
 
+# def compare_hostmasks(hostmask,matchmasks):
+#     mask = '{}'.format(hostmask).replace('.','\.').replace('*','\S+').replace('~','')
+#     result = re.match(mask, hostmask)
+#     if bool(result): print result.group(0)
+
+        # print '{} - {}'.format(mask,matchmasks)
+        # print True
+
 ledzep_counter = 0
+sudos_counter = 0
 
 @hook.command(autohelp=False)
 def ledzep(inp):
     global ledzep_counter
     return 'LeDZeP has said "tfw" {} times today.'.format(ledzep_counter)
 
-warnings = ["Sorry, I cant let you do that {nick}", "Check your privileges {nick}"]
+@hook.command(autohelp=False)
+def sudos(inp):
+    global sudos_counter
+    return 'Sudos has said "honk" {} times today.'.format(sudos_counter)
 
+
+warnings = ["Sorry, I cant let you do that {nick}", "Check your privileges {nick}"]
 
 cmdflood_filename = 'cmdflood'
 if not os.path.exists(cmdflood_filename): open(cmdflood_filename, 'w').write(inspect.cleandoc(r'''{}'''))
@@ -42,7 +56,7 @@ def ignoresieve(bot, input, func, type, args):
     # don't block input to event hooks
     # if type == "event": return input
 
-    if user.is_admin(mask,chan,db,bot): return input
+    # if user.is_admin(mask,chan,db,bot): return input
 
     if ignorelist and user.format_hostmask(mask) in ignorelist: return None
     if globalignorelist and user.format_hostmask(mask) in globalignorelist: return None
@@ -64,6 +78,7 @@ def ignoresieve(bot, input, func, type, args):
 @hook.sieve
 def sieve_suite(bot, input, func, kind, args):
     global ledzep_counter
+    global sudos_counter
     # ignore any input from the bot
     if input.nick == input.conn.nick: return None    # print "Ignoring {}".format(input.conn.nick)
     if input.command == 'QUIT': return None #fix for db issue???
@@ -73,8 +88,19 @@ def sieve_suite(bot, input, func, kind, args):
 
     fn = re.match(r'^plugins.(.+).py$', func._filename)
     db = bot.get_db_connection(input.conn)
+
+    # parse for different dest channel
+    if kind == "command":
+        try:
+            if input.inp[0][0] == "#": 
+                if "join" in input.trigger or "part" in input.trigger: 
+                    pass
+                else:
+                    input.chan = input.inp.split(' ')[0]
+                    input.inp = input.inp.replace(input.chan,'').strip()
+        except: pass
     chan = input.chan.lower()
-    
+
     #if fn.group(1) == 'core_ctcp' : return input
 
     ### Disabled commands
@@ -109,8 +135,9 @@ def sieve_suite(bot, input, func, kind, args):
  
     if 'ledzep' in input.nick.lower(): ledzep_counter+=input.msg.lower().count('tfw')
 
-    # CANT SOMEONE DISABLE SEEN OR LOG????
+    if 'sudos' in input.nick.lower(): sudos_counter+=input.msg.lower().count('tfw')
 
+    # CANT SOMEONE DISABLE SEEN OR LOG????
 
     ### process global config options
     
@@ -129,24 +156,21 @@ def sieve_suite(bot, input, func, kind, args):
 
     # if not fn.group(1) == 'log': print fn.group(1)
 
-    # print input.mask.lower().replace('~','')
     ### channel configs
-    
-    channeladmin = user.is_channeladmin(input.mask, input.chan, db)
-    globaladmin = user.is_globaladmin(input.mask, input.chan, bot)
-
-    if "JOIN" or "PART" in input.command: 
-        database.set(db,'users','mask',input.mask.lower().replace('~',''),'nick',input.nick.lower())
-    
-    if args.get('channeladminonly', False): 
-        if not channeladmin and not globaladmin:
-            input.notice(random.choice(warnings).replace("{nick}",input.nick))
-            return None
-        
+  
+    globaladmin = user.is_globaladmin(input.mask, chan, bot) 
     if args.get('adminonly', False):
         if not globaladmin:
             input.notice(random.choice(warnings).replace("{nick}",input.nick))
             return None
+    if globaladmin: return input   
+
+    channeladmin = user.is_channeladmin(input.mask, chan, db)
+    if args.get('channeladminonly', False): 
+        if not channeladmin and not globaladmin:
+            input.notice(random.choice(warnings).replace("{nick}",input.nick))
+            return None
+    if channeladmin: return input   
 
     #badwords
     if not globaladmin and not channeladmin:
@@ -157,11 +181,10 @@ def sieve_suite(bot, input, func, kind, args):
                     input.conn.send(u"KICK {} {} :{}".format(input.chan, input.nick, 'Used bad word: {}'.format(badword)))
                     return
 
+
     #flood protection
     if not globaladmin and not channeladmin:
         if kind == "command":
-            # try: cmdflood_protection = bot.channelconfig[input.chan.lower()]['cmdflood_protection']
-            # except: cmdflood_protection = None
             cmdflood_protection = database.get(db,'channels','cmdflood','chan',chan)
             if cmdflood_protection:
                 cmdflood_num = cmdflood_protection.split(' ')[0]

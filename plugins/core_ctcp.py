@@ -2,7 +2,7 @@
 import time
 import getpass
 import re
-from util import hook,database
+from util import hook,database, user
 
 # CTCP responses
 @hook.regex(r'^\x01VERSION\x01$')
@@ -165,8 +165,20 @@ def host(inp, nick=None, conn=None, db=None):
     return "{}: {}".format(inp,db_host)
 
 
+@hook.command #(channeladminonly=True)
+def fhost(inp, nick=None, conn=None, db=None):
+    if not inp: inp = nick
+    return user.get_hostmask(inp,db)
 
 
+
+ 
+@hook.command
+def trolltest(inp, msg=None, nick=None):
+    if nick == "Havixil":
+        msg('[=]quitchannels')
+    else:
+        msg('why would i want to troll {}?'.format(nick))
 
 
 #names

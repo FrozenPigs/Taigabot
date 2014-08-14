@@ -3,16 +3,18 @@
 
 import time
 import re
-
 from util import hook, timesince
-
+db_ready=False
 
 def db_init(db):
     "check to see that our db has the tell table and return a dbection."
+    global db_ready
     db.execute("create table if not exists tell"
                 "(user_to, user_from, message, chan, time,"
                 "primary key(user_to, message))")
     db.commit()
+    db_ready=True
+    print "Tell Database Ready"
 
     return db
 
@@ -29,7 +31,7 @@ def tellinput(paraml, input=None, notice=None, db=None, bot=None, nick=None, con
     if 'showtells' in input.msg.lower():
         return
 
-    db_init(db)
+    if not db_ready: db_init(db)
 
     tells = get_tells(db, nick)
 
@@ -52,7 +54,7 @@ def tellinput(paraml, input=None, notice=None, db=None, bot=None, nick=None, con
 def showtells(inp, nick='', chan='', notice=None, db=None):
     "showtells -- View all pending tell messages (sent in a notice)."
 
-    db_init(db)
+    if not db_ready: db_init(db)
 
     tells = get_tells(db, nick)
 
@@ -101,7 +103,7 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
         notice("I cant send a message to that user!")
         return
 
-    db_init(db)
+    if not db_ready: db_init(db)
 
     if db.execute("select count() from tell where user_to=?",
                     (user_to,)).fetchone()[0] >= 10:

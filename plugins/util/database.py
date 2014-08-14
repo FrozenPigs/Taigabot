@@ -1,5 +1,5 @@
 from util import hook
-# import log
+import log
 
 db_ready = False
 
@@ -8,7 +8,7 @@ def init(db):
     if not db_ready: 
         # db.execute("CREATE TABLE if not exists seen(name, time, quote, chan, host, primary key(name, chan))")
         db.execute("CREATE TABLE if not exists channels(chan NOT NULL, admins, permissions, ops, bans, disabled, ignored, badwords, flood, cmdflood, trimlength, autoop, votekick, voteban, primary key(chan));")
-        db.execute("CREATE TABLE if not exists users(nick NOT NULL, mask, version, location, lastfm, fines, battlestation, desktop, horoscope, greeting, waifu, husbando, birthday, homescreen, primary key(nick));")
+        db.execute("CREATE TABLE if not exists users(nick NOT NULL, mask, version, location, lastfm, fines, battlestation, desktop, horoscope, greeting, waifu, husbando, birthday, homescreen, snapchat, mal, selfie, primary key(nick));")
         db.commit()
         db_ready = True
 
@@ -43,7 +43,7 @@ def get(db,table,field,matchfield,matchvalue):
         if result: return result[0]
         else: return False
     except:
-        print "***ERROR: SELECT {} FROM {} WHERE {}='{}';".format(field,table,matchfield,matchvalue)
+        log.log("***ERROR: SELECT {} FROM {} WHERE {}='{}';".format(field,table,matchfield,matchvalue))
 
 
 def set(db, table, field, value, matchfield, matchvalue):

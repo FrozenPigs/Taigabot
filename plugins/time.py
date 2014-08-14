@@ -20,8 +20,8 @@ def time(inp, nick="", reply=None, db=None, notice=None):
                 notice(time.__doc__)
                 return
         else:
-            if not location: save = True
-            if " save" in inp: save = True
+            # if not location: save = True
+            if " dontsave" in inp: save = False
             location = inp.split()[0]
 
     # now, to get the actual time

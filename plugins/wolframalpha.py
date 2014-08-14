@@ -335,9 +335,10 @@ errors = ([
     ('Are you serious?')
 ])
 
-@hook.command('math')
+# @hook.command('math')
+
+# @hook.command('convert')
 @hook.command('calc')
-@hook.command('convert')
 @hook.command('wa')
 @hook.command
 def wolframalpha(inp, bot=None):

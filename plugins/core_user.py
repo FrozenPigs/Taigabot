@@ -122,6 +122,26 @@ def husbando(inp, nick=None, conn=None, chan=None,db=None, notice=None):
         notice("Saved your husbando.")
     return
 
+@hook.command(autohelp=False)
+def imouto(inp, nick=None, conn=None, chan=None,db=None, notice=None):
+    "imouto <imouto | @ person> -- Shows a users imouto or Husbando."
+
+    if not inp or '@' in inp:
+        if '@' in inp: nick = inp.split('@')[1].strip()
+        result = database.get(db,'users','imouto','nick',nick)
+        if result: 
+            return '{}: {}'.format(nick,result)
+        else: 
+            if not '@' in inp: notice(imouto.__doc__)
+            return 'No imouto saved for {}.'.format(nick)
+    elif 'del' in inp:
+        database.set(db,'users','imouto','','nick',nick)
+        notice("Deleted your imouto.")
+    else:
+        database.set(db,'users','imouto','{} '.format(inp.strip().encode('utf8')),'nick',nick)
+        notice("Saved your imouto.")
+    return
+
 
 ### Desktops
 @hook.command(autohelp=False)
@@ -200,7 +220,90 @@ def homescreen(inp, nick=None, conn=None, chan=None,db=None, notice=None):
     else:
         # notice(homescreen.__doc__)
         return 'No homescreen saved for {}.'.format(nick)
+
+@hook.command(autohelp=False)
+def snapchat(inp, nick=None, conn=None, chan=None,db=None, notice=None):
+    "snapchat <snapchatname | @ person> -- Shows a users snapchat name."
+
+    if not inp or '@' in inp:
+        if '@' in inp: nick = inp.split('@')[1].strip()
+        result = database.get(db,'users','snapchat','nick',nick)
+        if result: 
+            return '{}: {}'.format(nick,result)
+        else: 
+            if not '@' in inp: notice(snapchat.__doc__)
+            return 'No snapchat saved for {}.'.format(nick)
+    elif 'del' in inp:
+        database.set(db,'users','snapchat','','nick',nick)
+        notice("Deleted your snapchat.")
+    else:
+        database.set(db,'users','snapchat','{} '.format(inp.strip().encode('utf8')),'nick',nick)
+        notice("Saved your snapchat.")
+    return
         
+@hook.command(autohelp=False)
+def myanime(inp, nick=None, conn=None, chan=None,db=None, notice=None):
+    "myanime <mal name | @ person> -- Shows a users myanimelist profile."
+
+    if not inp or '@' in inp:
+        if '@' in inp: nick = inp.split('@')[1].strip()
+        result = database.get(db,'users','mal','nick',nick)
+        if result: 
+            return '{}: http://myanimelist.net/animelist/{}'.format(nick,result)
+        else: 
+            if not '@' in inp: notice(mal.__doc__)
+            return 'No mal saved for {}.'.format(nick)
+    elif 'del' in inp:
+        database.set(db,'users','mal','','nick',nick)
+        notice("Deleted your mal.")
+    else:
+        database.set(db,'users','mal','{} '.format(inp.strip().encode('utf8')),'nick',nick)
+        notice("Saved your mal.")
+    return
+
+@hook.command(autohelp=False)
+def mymanga(inp, nick=None, conn=None, chan=None,db=None, notice=None):
+    "mymanga <mal name | @ person> -- Shows a users myanimelist profile."
+
+    if not inp or '@' in inp:
+        if '@' in inp: nick = inp.split('@')[1].strip()
+        result = database.get(db,'users','mal','nick',nick)
+        if result: 
+            return '{}: http://myanimelist.net/mangalist/{}'.format(nick,result)
+        else: 
+            if not '@' in inp: notice(mal.__doc__)
+            return 'No mal saved for {}.'.format(nick)
+    elif 'del' in inp:
+        database.set(db,'users','mal','','nick',nick)
+        notice("Deleted your mal.")
+    else:
+        database.set(db,'users','mal','{} '.format(inp.strip().encode('utf8')),'nick',nick)
+        notice("Saved your mal.")
+    return
+
+@hook.command(autohelp=False)
+def selfie(inp, nick=None, conn=None, chan=None,db=None, notice=None):
+    "selfie <url | @ person> -- Shows a users selfie."
+    if inp:
+        if  "http" in inp:
+            database.set(db,'users','selfie',inp.strip(),'nick',nick)
+            notice("Saved your selfie.")
+            return
+        elif 'del' in inp:
+            database.set(db,'users','selfie','','nick',nick)
+            notice("Deleted your selfie.")
+            return
+        else:
+            if '@' in inp: nick = inp.split('@')[1].strip()
+            else: nick = inp.strip()
+
+    result = database.get(db,'users','selfie','nick',nick)
+    if result: 
+        return '{}: {}'.format(nick,result)
+    else: 
+        if not '@' in inp: notice(selfie.__doc__)
+        return 'No selfie saved for {}.'.format(nick)
+
     ###Old
     #result = unicode(result, "utf8").replace('flight ','')
 

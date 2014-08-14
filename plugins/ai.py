@@ -17,19 +17,22 @@ responses = (
     ("thanks uguu",             ("youre welcome!", "np it was easy","i didnt really do much","that was nothing for my superior intelligence")),
     (".*uguu.*lewd.*",          ("I cant help it ;_;", "Im a horny bitch!","you know you love me baby","says the guy that likes being pegged...")),
     ("taiga",                   ("TAIGA WANT UP!", "TAIGA WANT DOWN!","TAIGA LOVE WEDNESDAY BECAUSE WEDNESDAY WANT TO DO LEWD THINGS WITH TAIGA")),
-    (".*derpa.*",               ("DERPA DERPA MOHAMMED JIHAD","DERPA DERPA MOHAMMED JIHAD")),
+    (".*derpa .*",              ("DERPA DERPA MOHAMMED JIHAD","DERPA DERPA MOHAMMED JIHAD")),
     (".*incest.*",              ("more like WINcest amirite?","more like WINcest amirite?")),
     ("sanic",                   ("GOTTA GO FAST","GOTTA GO FAST")),
     ("gotta go fast",           ("SANIC","SANIC")),
-    ("\^",                       ("^")),
-    ("(´･ω･`)",                 ("(´･ω･`)","(´･ω･`)")),
-
+    ("vtec",                    ("JUST KICKED IN","VTEC JUST KICKED IN")),
+    ("\^",                      ("^")),
+    ("\(\´\･\ω\･\`\)",          ("(´･ω･`)","(´･ω･`)")),
+    ("wop",                     ("wop","wop")),
+    ("myah",                    ("i want to die","i want to die")),
+    ("i want to die",           ("MYAH!","MYAH~")),
     
 )
-
+    # ("yeah",                    ("yeah","yeah")),
 
 # wise/smart
-
+# 7205566175 - frankie
 
 pronouns = {
     "i'm": "you're", 

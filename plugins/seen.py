@@ -86,6 +86,8 @@ def seen_sieve(paraml, input=None, db=None, bot=None, notice=None, say=None):
     if input.chan[:1] == "#":
         db.execute("insert or replace into seen(name, time, quote, chan, host) values(?,?,?,?,?)", (input.nick.lower(), time.time(), input.msg.replace('\"', "").replace("'", ""), input.chan, input.mask))
         db.commit()
+        # database.set(db,'users','mask',input.mask.lower().replace('~',''),'nick',input.nick.lower())
+        # db.execute("UPDATE {} SET {} = '{}' WHERE {} = '{}';".format(table,field,value,matchfield,matchvalue))
 
 @hook.command
 def seen(inp, nick='', chan='', db=None, input=None):

@@ -31,6 +31,8 @@ def process_url(match,bot=None,input=None,chan=None,db=None, reply=None):
         #reply(gelbooru.gelbooru("furry nsfw"))
         return
 
+    if '.html' in url: return
+
     if 'lolihub.tk' in url: return "http://lolihub.com <- themadman is a thief. Stealing OC from Nymovyn is the lowest of the low."
 
     if   'youtube.com'       in url: return                         #handled by youtube plugin: exiting
@@ -45,6 +47,7 @@ def process_url(match,bot=None,input=None,chan=None,db=None, reply=None):
     elif 'soundcloud.com'    in url: return                         #handled by soundcloud plugin: exiting
     elif 'spotify.com'       in url: return                         #handled by Spotify plugin: exiting
     elif 'twitch.tv'         in url: return                         #handled by Twitch plugin: exiting
+    elif 'twitter.com'       in url: return                         #handled by Twitter plugin: exiting
     elif 'simg.gelbooru.com' in url: return unmatched_url(url)      #handled by Gelbooru plugin: exiting
     elif 'gelbooru.com'      in url: return                         #handled by Gelbooru plugin: exiting
     elif 'craigslist.org'    in url: return craigslist_url(url)     #Craigslist
@@ -229,9 +232,9 @@ def unmatched_url(match,chan,db):
     disabled_commands = database.get(db,'channels','disabled','chan',chan)
     
     r = requests.get(match, headers=headers,allow_redirects=True, stream=True)
-    print r.headers
-    print r.status_code
-    print r.request.headers
+    # print r.headers
+    # print r.status_code
+    # print r.request.headers
     if r.status_code != 404:
         # image_hash = md5.new(r.content).hexdigest()
         # print image_hash
@@ -244,6 +247,8 @@ def unmatched_url(match,chan,db):
         if content_type.find("html") != -1: # and content_type is not 'gzip':
             body = html.fromstring(r.text)
             return body.xpath('//title/text()')[0]
+
+            # return re.match(r'^\W+(\w.*)', body.xpath('//title/text()')[0]).group(1)
         else:
             if 'filesize' in disabled_commands: return
             try:
@@ -257,8 +262,9 @@ def unmatched_url(match,chan,db):
                     length = "Unknown size"
             except:
                 length = "Unknown size"
-
-            if length != None: return u"[{}] {}".format(content_type, length)
+            if "503 B" in length: length = ""
+            if length is None: length = ""
+            return u"[{}] {}".format(content_type, length)
     else: 
         return 
 

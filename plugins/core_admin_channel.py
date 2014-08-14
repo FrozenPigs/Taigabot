@@ -2,12 +2,50 @@
 from util import hook, scheduler, user, database
 import re
 
-def get_chan(inp,chan):
-    if inp:
-        if inp[0][0] == "#": 
-            chan = inp.split()[0]
-            inp = inp.replace(chan,'').strip()
-    return (inp.lower(),chan.lower())
+# \binfinity@[^\s]*like.lolis\b
+@hook.command(autohelp=False,adminonly=True)
+def mask(inp,bot=None,input=None):
+    return re.sub(r'((?:@)[^@\.]+\d{2,}([^\.]?)+\.)','*',inp.replace('@','@@')).replace('~','').replace('@@','@').lower().strip()
+
+def format_hostmask(inp):
+    "format_hostmask -- Returns a nicks userhost"
+    return re.sub(r'(@[^@\.]+\d{2,}([^\.]?)+\.)','*',inp.replace('@','@@')).replace('~','').replace('@@','@').lower().strip()
+
+
+def compare_hostmasks(hostmask,matchmasks):
+    for mask in re.findall(r'(\b\S+\b)', ' '.join(matchmasks)):
+        mask = '^*{}$'.format(mask).replace('.','\.').replace('*','.*')
+        if bool(re.match(mask, hostmask)): 
+            print '{} - {}'.format(mask,hostmask)
+            return True
+    return False
+
+
+def is_globaladmin(hostmask,chan,bot):
+    globaladmins = bot.config.get('admins', [])
+    if globaladmins: return compare_hostmasks(hostmask,globaladmins)
+
+
+def is_channeladmin(hostmask,chan,db):
+    channeladmins = database.get(db,'channels','admins','chan',chan).split(' ')
+    if channeladmins: return compare_hostmasks(hostmask,channeladmins)
+
+
+@hook.command(autohelp=False,channeladminonly=True)
+def match(inp,nick=None,chan=None,bot=None,input=None,db=None):
+    if inp: mask = user.get_hostmask(inp,db)
+    else: mask = input.mask
+    # hostmask = format_hostmask(mask)
+
+    channeladmin = user.is_channeladmin(mask, chan, db)
+    globaladmin = user.is_globaladmin(mask, chan, bot)
+    if channeladmin and globaladmin: return "Global & Local Admin: ({})".format(mask)
+    elif channeladmin: return "Local Admin: {}".format(mask)
+    elif globaladmin: return "Global Admin: {}".format(mask)
+        
+    return '{}: is not an admin'.format(mask)
+    # return re.sub(r'(@[^@\.]+\d{2,}([^\.]?)+\.)','*',inp.replace('@','@@')).replace('~','').replace('@@','@').lower().strip()
+
 
 ######################
 ### Admin Commands ###
@@ -15,7 +53,6 @@ def get_chan(inp,chan):
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 def admins(inp, notice=None, bot=None, chan=None, db=None):
     """admins [channel] -- Lists admins on channel."""
-    inp,chan = get_chan(inp,chan)
     admins = database.get(db,'channels','admins','chan',chan)
     if admins: notice(u"[{}]: Admins are: {}".format(chan,admins))
     else: notice(u"[{}]: No nicks/hosts are currently admins.".format(chan))
@@ -25,7 +62,6 @@ def admins(inp, notice=None, bot=None, chan=None, db=None):
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 def admin(inp, notice=None, bot=None, chan=None, db=None):
     """admin [channel] <add|del> <nick|host> -- Makes the user an admin."""
-    inp,chan = get_chan(inp,chan)
     admins = database.get(db,'channels','admins','chan',chan)
     
     channel = chan.lower()
@@ -42,14 +78,18 @@ def admin(inp, notice=None, bot=None, chan=None, db=None):
                 database.set(db,'channels','admins',admins,'chan',chan)
                 notice(u"[{}]: {} is now an admin.".format(chan,nick))
     elif 'del' in command:
-        for nick in nicks:  
-            nick = user.get_hostmask(nick,db)
-            if admins and nick in admins:
-                admins = " ".join(admins.replace(nick,'').strip().split())
-                database.set(db,'channels','admins',admins,'chan',chan)
-                notice(u"[{}]: {} is no longer an admin.".format(chan,nick))
-            else:
-                notice(u"[{}]: {} is not an admin.".format(chan,nick))
+        if '*' in nicks: 
+            database.set(db,'channels','admins','','chan',chan)
+            notice(u"[{}]: All admins have been removed.".format(chan))
+        else:
+            for nick in nicks:  
+                nick = user.get_hostmask(nick,db)
+                if admins and nick in admins:
+                    admins = " ".join(admins.replace(nick,'').strip().split())
+                    database.set(db,'channels','admins',admins,'chan',chan)
+                    notice(u"[{}]: {} is no longer an admin.".format(chan,nick))
+                else:
+                    notice(u"[{}]: {} is not an admin.".format(chan,nick))
     return
 
 ######################
@@ -59,7 +99,7 @@ def admin(inp, notice=None, bot=None, chan=None, db=None):
 # @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 # def autoops(inp, notice=None, bot=None, chan=None, db=None):
 #     """aops [channel] -- Lists autoops on channel."""
-#     inp,chan = get_chan(inp,chan)
+#
 #     autoops = database.get(db,'channels','autoops','chan',chan)
 #     if autoops: notice(u"[{}]: Auto ops are: {}".format(chan,autoops))
 #     else: notice(u"[{}]: No nicks/hosts are currently auto opped.".format(chan))
@@ -70,7 +110,6 @@ def admin(inp, notice=None, bot=None, chan=None, db=None):
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 def autoop(inp, notice=None, bot=None, chan=None, db=None):
     """aop [channel] <enable|disable> OR <add|del> <nick|host> -- Add/Del Autoops."""
-    inp,chan = get_chan(inp,chan)
     autoops = database.get(db,'channels','autoops','chan',chan)
     
     channel = chan.lower()
@@ -110,7 +149,6 @@ def autoop(inp, notice=None, bot=None, chan=None, db=None):
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 def ignored(inp, notice=None, bot=None, chan=None, db=None):
     """ignored [channel]-- Lists ignored channels/nicks/hosts."""
-    inp,chan = get_chan(inp,chan)
     ignorelist = database.get(db,'channels','ignored','chan',chan)
     if ignorelist: notice(u"[{}]: Ignored nicks/hosts are: {}".format(chan,ignorelist))
     else: notice(u"[{}]: No nicks/hosts are currently ignored.".format(chan))
@@ -120,7 +158,6 @@ def ignored(inp, notice=None, bot=None, chan=None, db=None):
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 def ignore(inp, notice=None, bot=None, chan=None, db=None):
     """ignore [channel] <nick|host> -- Makes the bot ignore <nick|host>."""
-    inp,chan = get_chan(inp,chan)
     ignorelist = database.get(db,'channels','ignored','chan',chan)
     targets = inp.split()
     for target in targets:  
@@ -141,7 +178,6 @@ def ignore(inp, notice=None, bot=None, chan=None, db=None):
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 def unignore(inp, notice=None, bot=None, chan=None, db=None):
     """unignore [channel] <nick|host> -- Makes the bot listen to <nick|host>."""
-    inp,chan = get_chan(inp,chan)
     ignorelist = database.get(db,'channels','ignored','chan',chan)
     targets = inp.split()
     for target in targets:  
@@ -161,7 +197,6 @@ def unignore(inp, notice=None, bot=None, chan=None, db=None):
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 def disabled(inp, notice=None, bot=None, chan=None, db=None):
     """disabled [#channel] -- Lists disabled commands/."""
-    inp,chan = get_chan(inp,chan)
     disabledcommands = database.get(db,'channels','disabled','chan',chan)
     if disabledcommands: notice(u"[{}]: Disabled commands: {}".format(chan,disabledcommands))
     else: notice(u"[{}]: No commands are currently disabled.".format(chan))
@@ -172,7 +207,7 @@ def disabled(inp, notice=None, bot=None, chan=None, db=None):
 def disable(inp, notice=None, bot=None, chan=None, db=None):
     """disable [#channel] <commands> -- Disables commands for a channel.
     (you can disable multiple commands at once)"""
-    inp,chan = get_chan(inp,chan)
+ 
     disabledcommands = database.get(db,'channels','disabled','chan',chan)
     targets = inp.split()
     for target in targets:  
@@ -192,7 +227,7 @@ def disable(inp, notice=None, bot=None, chan=None, db=None):
 def enable(inp, notice=None, bot=None, chan=None, db=None):
     """enable [#channel] <commands|all> -- Enables commands for a channel.
     (you can enable multiple commands at once)"""
-    inp,chan = get_chan(inp,chan)
+ 
     disabledcommands = database.get(db,'channels','disabled','chan',chan)
     targets = inp.split()
     if 'all' in targets or '*' in targets:
@@ -215,7 +250,6 @@ def enable(inp, notice=None, bot=None, chan=None, db=None):
 @hook.command(autohelp=False)
 def showfloods(inp, chan=None, notice=None, db=None):
     """showfloods [channel]-- Shows flood settings."""
-    inp,chan = get_chan(inp,chan)
 
     flood = database.get(db,'channels','flood','chan',chan)
     if flood: notice(u"[{}]: Flood: {} messages in {} seconds".format(chan,flood.split()[0],flood.split()[1]))
@@ -231,7 +265,6 @@ def showfloods(inp, chan=None, notice=None, db=None):
 def flood(inp, conn=None, chan=None, notice=None, db=None):
     """flood [channel] <number> <duration> | disable -- Enables flood protection for a channel.
     ex: .flood 3 30 -- Allows 3 messages in 30 seconds, set disable to disable"""
-    inp,chan = get_chan(inp,chan)
 
     if len(inp) == 0: 
         floods = database.get(db,'channels','flood','chan',chan)
@@ -256,7 +289,6 @@ def flood(inp, conn=None, chan=None, notice=None, db=None):
 def cmdflood(inp, conn=None, chan=None, notice=None, db=None):
     """cmdflood [channel] <number> <duration> | disable -- Enables commandflood protection for a channel.
     ex: .cmdflood 3 30 -- Allows 3 commands in 30 seconds, set disable to disable"""
-    inp,chan = get_chan(inp,chan)
 
     if len(inp) == 0: 
         floods = database.get(db,'channels','cmdflood','chan',chan)
@@ -283,7 +315,7 @@ def cmdflood(inp, conn=None, chan=None, notice=None, db=None):
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 def badwords(inp, notice=None, bot=None, chan=None, db=None):
     """disabled [#channel] -- Lists disabled commands/."""
-    inp,chan = get_chan(inp,chan)
+ 
 
     if len(inp) == 0 or 'list' in inp:
         badwordlist = database.get(db,'channels','badwords','chan',chan)
@@ -332,7 +364,6 @@ def badwords(inp, notice=None, bot=None, chan=None, db=None):
 def trim(inp, conn=None, chan=None, notice=None, db=None):
     """trim [channel] <length|disable> -- Sets trim length for parsers.
     ex: .trim 150 -- Returns the first 150 characters of a parsed url"""
-    inp,chan = get_chan(inp,chan)
 
     if len(inp) == 0:
         trimlength = database.get(db,'channels','trimlength','chan',chan)
@@ -367,7 +398,6 @@ def invite(inp, conn=None, chan=None, notice=None):
     """invite [channel] <user> -- Makes the bot invite <user> to [channel].
     If [channel] is blank the bot will invite <user> to
     the channel the command was used in."""
-    inp,chan = get_chan(inp,chan)
     users = inp.split()
     for user in users:
         conn.send(u"INVITE {} {}".format(user,chan))
@@ -377,7 +407,6 @@ def invite(inp, conn=None, chan=None, notice=None):
 @hook.command(permissions=["op_topic", "op"], channeladminonly=True)
 def topic(inp, conn=None, chan=None):
     """topic [channel] <topic> -- Change the topic of a channel."""
-    inp,chan = get_chan(inp,chan)
     split = inp.split(" ")
     message = " ".join(split)
     conn.send(u"TOPIC {} :{}".format(chan, message))
@@ -421,7 +450,6 @@ def unlock(inp, conn=None, chan=None, notice=None):
 def mode_cmd(mode, text, inp, chan, conn, notice):
     """ generic mode setting function """
     if len(inp) < 2: inp = conn.nick
-    inp,chan = get_chan(inp,chan)
     targets = inp.split(" ")
     for target in targets:
         notice(u"Attempting to {} {} in {}...".format(text, target, chan))
@@ -432,7 +460,6 @@ def mode_cmd(mode, text, inp, chan, conn, notice):
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 def bans(inp, notice=None, bot=None, chan=None, db=None):
     """bans -- Lists bans on channel."""
-    inp,chan = get_chan(inp,chan)
     bans = database.get(db,'channels','bans','chan',chan)
     if bans: notice(u"[{}]: Bans are: {}".format(chan,bans))
     else: notice(u"[{}]: No nicks/hosts are in the banlist.".format(chan))
@@ -447,7 +474,7 @@ def ban(inp, conn=None, chan=None, notice=None, db=None, nick=None):
     the channel the command was used in."""
     mode = "+b"
     reason = "#rekt"
-    inp,chan = get_chan(inp,chan)
+    # inp,chan = get_chan(inp,chan)
     split = inp.split(" ")
     inp_nick = split[0]
 
@@ -458,7 +485,10 @@ def ban(inp, conn=None, chan=None, notice=None, db=None, nick=None):
         return
 
     if len(split) > 1: reason = " ".join(split[1:])
-    target = user.get_hostmask(inp_nick,db)
+    
+    if not '@' in inp_nick: target = user.get_hostmask(inp_nick,db)
+    else: target = inp_nick
+
     if '@' in target and not '!' in target: target = '*!*{}'.format(target)
     timer = scheduler.check_for_timers(inp)
     if timer > 0: reason = "{} Come back in {} seconds!!!".format(reason,timer)
@@ -484,10 +514,11 @@ def unban(inp, conn=None, chan=None, notice=None, db=None):
     If [channel] is blank the bot will unban <user> in
     the channel the command was used in."""
     #mode_cmd("-b", "unban", inp, chan, conn, notice)
-    inp,chan = get_chan(inp,chan)
+    # inp,chan = get_chan(inp,chan)
     split = inp.split(" ")
     nick = split[0]
-    target = user.get_hostmask(nick,db)
+    if not '@' in nick: target = user.get_hostmask(nick,db)
+    else: target = nick
     if '@' in target and not '!' in target: target = '*!*{}'.format(target)
     notice(u"Attempting to unban {} in {}...".format(nick, chan))
     conn.send(u"MODE {} -b {}".format(chan, target))
@@ -495,6 +526,7 @@ def unban(inp, conn=None, chan=None, notice=None, db=None):
     banlist = " ".join(banlist.replace(target,'').strip().split())
     database.set(db,'channels','bans',banlist,'chan',chan)
     return
+
 
 
 @hook.command('k',channeladminonly=True)
@@ -505,7 +537,8 @@ def kick(inp, chan=None, conn=None, notice=None, nick=None):
     If [channel] is blank the bot will kick the <user> in
     the channel the command was used in."""
     reason = "bye bye"
-    inp,chan = get_chan(inp,chan)
+    print inp
+    # inp,chan = get_chan(inp,chan)
     split = inp.split()
     target = split[0]
     if len(split) > 1: reason = " ".join(split[1:])
@@ -576,28 +609,27 @@ def devoice(inp, conn=None, chan=None, notice=None):
     return
 
 
-@hook.command(permissions=["op_quiet", "op"], channeladminonly=True)
-def quiet(inp, conn=None, chan=None, notice=None):
-    """quiet [channel] <user> -- Makes the bot quiet <user> in [channel].
-    If [channel] is blank the bot will quiet <user> in
-    the channel the command was used in."""
-    mode_cmd("+q", "quiet", inp, chan, conn, notice)
-    return
+# @hook.command(permissions=["op_quiet", "op"], channeladminonly=True)
+# def quiet(inp, conn=None, chan=None, notice=None):
+#     """quiet [channel] <user> -- Makes the bot quiet <user> in [channel].
+#     If [channel] is blank the bot will quiet <user> in
+#     the channel the command was used in."""
+#     mode_cmd("+q", "quiet", inp, chan, conn, notice)
+#     return
 
 
-@hook.command(permissions=["op_quiet", "op"], channeladminonly=True)
-def unquiet(inp, conn=None, chan=None, notice=None):
-    """unquiet [channel] <user> -- Makes the bot unquiet <user> in [channel].
-    If [channel] is blank the bot will unquiet <user> in
-    the channel the command was used in."""
-    mode_cmd("-q", "unquiet", inp, chan, conn, notice)
-    return
+# @hook.command(permissions=["op_quiet", "op"], channeladminonly=True)
+# def unquiet(inp, conn=None, chan=None, notice=None):
+#     """unquiet [channel] <user> -- Makes the bot unquiet <user> in [channel].
+#     If [channel] is blank the bot will unquiet <user> in
+#     the channel the command was used in."""
+#     mode_cmd("-q", "unquiet", inp, chan, conn, notice)
+#     return
 
 
 @hook.command(permissions=["op_rem", "op"], channeladminonly=True)
 def remove(inp, chan=None, conn=None):
     """remove [channel] <user> [message] -- Force a user to part from a channel."""
-    inp,chan = get_chan(inp,chan)
     message = " ".join(inp)
     conn.send(u"REMOVE {} :{}".format(chan, message))
     return

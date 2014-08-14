@@ -64,7 +64,7 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
             data = old_data + ' and ' + new_data
 
     db.execute("replace into mem(word, data, nick) values"
-               " (lower(?),?,?)", (word, data, nick))
+               " (lower(?),?,?)", (word, data.replace('<py>',''), nick))
     db.commit()
 
     if old_data:

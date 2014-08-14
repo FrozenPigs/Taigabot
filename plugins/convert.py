@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 headers = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_1) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.215 Safari/535.1"};
 
 @hook.command
-def gconvert(inp,conn=None,chan=None):
+def convert(inp,conn=None,chan=None):
     "gconvert <val1> <val2> -- converts a measurement or currency"\
     "gconvert 1000 usd to yen"\
     "gconvert 100 miles to km"
