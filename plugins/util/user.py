@@ -34,7 +34,6 @@ def is_globaladmin(hostmask,chan,bot):
 
 def is_channeladmin(hostmask,chan,db):
     channeladmins = database.get(db,'channels','admins','chan',chan)
-    # except: channeladmins = database.get(db,'channels','admins','chan',chan)
     if channeladmins: return compare_hostmasks(hostmask,channeladmins)
     return False
 
