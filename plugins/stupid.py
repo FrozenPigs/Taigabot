@@ -218,7 +218,7 @@ def woah(inp, nick=None):
         return woahs[random.randint(0, len(woahs) - 1)].replace('woah',inp.group(1))
 
 
-@hook.regex(r'.*(?<!gnu/)(l+i+n+u+x).*', re.I)
+@hook.regex(r'.*(?<!gnu[/+])(l+i+n+u+x)(?! kernel).*', re.I)
 def interject(inp, nick=None):
     if random.randint(0, 12) == 0:
         return "I'd Just Like To Interject For A Moment. What you're referring to as Linux, is in fact, GNU/Linux, or as I've recently taken to calling it, GNU plus Linux. Linux is not an operating system unto itself, but rather another free component of a fully functioning GNU system made useful by the GNU corelibs, shell utilities and vital system components comprising a full OS as defined by POSIX. \n " 
