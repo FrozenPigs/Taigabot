@@ -47,6 +47,7 @@
   "ignored": [
     "ignored nick here"
   ], 
+  "owner": "infinity",
   "plugins": {
     "factoids": {
       "prefix": false
