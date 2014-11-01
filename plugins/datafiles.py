@@ -1,7 +1,7 @@
 from util import hook, textgen, text
 import random
 from random import randint
-import json, time
+import json
 
 color_codes = {
     "<r>": "\x02\x0305",
@@ -35,13 +35,7 @@ with open("plugins/data/lewd.txt") as f:
 with open("plugins/data/slogans.txt") as f:
     slogans = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
-db_ready = False
 
-def db_init(db):
-	"check to see that our db has the fortune table and returns a connection."
-	db.execute("CREATE TABLE IF NOT EXISTS fortune(name unique, date, fortune)")
-	db.commit()
-	db_ready = True
 
 def get_generator(_json, variables):
     data = json.loads(_json)
@@ -209,7 +203,7 @@ def add(inp,notice=None, channeladminonly=True):
     file.close()
     return
 
-def process_text(inp,name,notice, position=True):
+def process_text(inp,name,notice):
     # if not inp or inp is int:
     if 'add' in inp:
         add(inp,name,notice)
@@ -224,9 +218,7 @@ def process_text(inp,name,notice, position=True):
         if num > linecount or num < 0: 
             return "Theres nothing there baka"
 
-	reply='{}'.format(lines[num],).decode('utf-8')
-	if position:
-		reply='\x02[{}/{}]\x02 {}'.format(num+1,linecount+1,reply).decode('utf-8')
+        reply='\x02[{}/{}]\x02 {}'.format(num+1,linecount+1,lines[num]).decode('utf-8')
 
         file.close()
         lines = []
@@ -289,36 +281,10 @@ def troll(inp, say=None,notice=None):
     return
 
 @hook.command(autohelp=False)
-def fortune(inp,nick=None,db=None):
-	"fortune <nick> -- Gets a fortune for a user, with caching"
-
-	if not db_ready: db_init(db)
-
-	if inp:
-		target=inp
-	else:
-		target=nick
-
-	fortune = db.execute("SELECT date, fortune FROM fortune WHERE name LIKE ?", (target,)).fetchone()
-	if fortune == None or fortune[0] != time.strftime("%Y-%m-%d"):
-		fortune=getnewfortune(target, db)
-	else:
-		fortune=fortune[1]
-	
-	clearoldfortunes(db)
-
-	return u"{}'s fortune for today is: {}".format(target,fortune)
-
-def getnewfortune (target, db, notice=None):
-	fortune = process_text('', "fortunes", notice, False)
-	db.execute("INSERT OR REPLACE INTO fortune(name, date, fortune) values(?,?,?)", (target, time.strftime("%Y-%m-%d"), fortune))
-	db.commit()
-	return fortune
-
-def clearoldfortunes (db):
-	db.execute("DELETE FROM fortune WHERE date IS NOT ?", (time.strftime("%Y-%m-%d"),))
-	db.commit()
-	return
+def fortune(inp,say=None,notice=None):
+    """fortune -- Fortune cookies on demand."""
+    say(process_text(inp,"fortunes",notice))
+    return
 
 @hook.command("kek", autohelp=False)
 @hook.command(autohelp=False)
