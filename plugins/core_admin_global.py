@@ -167,11 +167,15 @@ def part(inp, conn=None, chan=None, notice=None, bot=None):
     for target in targets.split(" "):
         if not target.startswith("#"):
             target = "#{}".format(target)
-        notice(u"Attempting to leave {}...".format(target))
-        conn.part(target)
-        channellist.remove(target.lower().strip())
+	if target in conn.channels:
+	    notice(u"Attempting to leave {}...".format(target))
+	    conn.part(target)
+	    channellist.remove(target.lower().strip())
+	    print 'Deleted {} from channel list.'.format(target)
+	else:
+	    notice(u"Not in {}!".format(target))
+
     json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
-    print 'Deleted {} from channel list.'.format(target)
     return
 
 
