@@ -35,8 +35,8 @@ def wiki(inp):
 
     title = paren_re.sub('', title)
 
-    if title.lower() not in desc.lower():
-        desc = title + desc
+#    if title.lower() not in desc.lower():
+#        desc = title + desc
 
     desc = re.sub('\s+', ' ', desc).strip()  # remove excess spaces
 
