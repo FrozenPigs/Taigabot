@@ -118,6 +118,7 @@ def tv(inp):
     ".tv <series> -- get info for the <series>"
     return get_series_info(inp)
 
+@hook.command('next')
 @hook.command
 def tv_next(inp):
     ".tv_next <series> -- get the next episode of <series>"
@@ -166,6 +167,8 @@ def tv_next(inp):
 
 @hook.command
 @hook.command('tv_prev')
+@hook.command('prev')
+@hook.command('last')
 def tv_last(inp):
     ".tv_last <series> -- gets the most recently aired episode of <series>"
     episodes = get_episodes_for_series(inp)
