@@ -56,7 +56,7 @@ def search_thread(results_deque, thread_num, search_specifics):
     Searches every post in thread thread_num on board board for the
     string provided. Returns a list of matching post numbers.
     """
-    json_url = "https://a.4cdn.org/{0}/res/{1}.json".format(search_specifics["board"], thread_num)
+    json_url = "https://a.4cdn.org/{0}/thread/{1}.json".format(search_specifics["board"], thread_num)
     thread_json = get_json_data(json_url)
 
     if thread_json is not None:
@@ -84,7 +84,7 @@ def process_results(board, string, results_deque):
     board = sanitise(board)
     message = ""
     urllist = []
-    post_template = "https://boards.4chan.org/{0}/res/{1}"
+    post_template = "https://boards.4chan.org/{0}/thread/{1}"
     if len(results_deque) <= 0:
         message = "No results for {0}".format(string)
     elif len(results_deque) > max_num_urls_fetch:
