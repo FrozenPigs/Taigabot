@@ -127,7 +127,7 @@ def metacritic(inp):
         release = None
 
     try:
-        score = result.find_class('metascore')[0].text_content()
+        score = result.find_class('metascore_w')[0].text_content()
     except IndexError:
         score = None
 
