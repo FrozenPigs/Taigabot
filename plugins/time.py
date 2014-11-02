@@ -3,8 +3,8 @@ import time
 from util.text import capitalize_first
 
 @hook.command('t', autohelp=False)
-@hook.command(autohelp=False)
-def time(inp, nick="", reply=None, db=None, notice=None):
+@hook.command('time', autohelp=False)
+def timefunction(inp, nick="", reply=None, db=None, notice=None):
     "time [location] [dontsave] | [@ nick] -- Gets time for <location>."
 
     save = True
