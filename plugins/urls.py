@@ -250,7 +250,8 @@ def unmatched_url(match,chan,db):
 
             # return re.match(r'^\W+(\w.*)', body.xpath('//title/text()')[0]).group(1)
         else:
-            if 'filesize' in disabled_commands: return
+	    if disabled_commands:
+                if 'filesize' in disabled_commands: return
             try:
                 if r.headers['Content-Length']:
                     length = int(r.headers['Content-Length'])
