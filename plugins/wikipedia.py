@@ -35,11 +35,11 @@ def wiki(inp):
 
     title = paren_re.sub('', title)
 
-    if title.lower() not in desc.lower():
-        desc = title + desc
+#    if title.lower() not in desc.lower():
+#        desc = title + desc
 
     desc = re.sub('\s+', ' ', desc).strip()  # remove excess spaces
 
     #desc = text.truncate_str(desc, 200)
 
-    return u'{} :: {}'.format(http.quote(url, ':/'),desc)
+    return u'{} :: {}'.format(http.quote(url.replace('en.wikipedia.org/wiki','enwp.org'), ':/'),desc)
