@@ -13,7 +13,9 @@ def get_hostmask(inp,db):
     if '@' in inp or '.' in inp: return inp
     nick = inp.strip().replace('~','').lower()
     db_host = database.get(db,'users','mask','nick',nick)
-    if nick is db_host: db_host = database.get(db,'seen','host','name',nick)
+    if db_host is False: db_host = database.get(db,'seen','host','name',nick)
+    if db_host is False: db_host = nick
+
     return format_hostmask(db_host)
     # return db_host
 
