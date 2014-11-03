@@ -49,10 +49,9 @@ def googleimage(inp):
     return random.choice(parsed['responseData']['results'][:10])['unescapedUrl']
 
 
-@hook.command('gcalc')
 @hook.command
 def gcalc(inp):
-    "calc <term> -- Calculate <term> with Google Calc."
+    "gcalc <term> -- Calculate <term> with Google Calc."
     soup = http.get_soup('http://www.google.com/search', q=inp)
 
     result = soup.find('span', {'class': 'cwcot'})
