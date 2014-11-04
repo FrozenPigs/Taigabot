@@ -106,6 +106,34 @@ def onnick(paraml, conn=None, raw=None):
         print "Bot nick changed from '{}' to '{}'.".format(old_nick, new_nick)
 
 
+@hook.event("MODE")
+def onmode(paraml, input=None, conn=None, raw=None, chan=None, db=None, bot=None):
+    if '#defect' in chan.lower(): 
+        if not user.is_admin(input.mask,chan,db,bot):
+            fixed_modes = []
+            params = []
+            param_num = 2
+            accepted_modes = 'vhoaql'
+            doesnt_require_param = 'cntspmiBCMNRSzO'
+            requires_param = 'klvhoaqbeI'
+            modes = list(str(paraml[1]))
+            for mode in modes:
+                if mode is '+': fixed_modes.append(mode.replace('+','-'))
+                elif mode is '-': fixed_modes.append(mode.replace('-','+'))
+                else:
+                    if mode not in accepted_modes:
+                        if mode in doesnt_require_param: 
+                            fixed_modes.append(mode)
+                        elif mode in requires_param:
+                            fixed_modes.append(mode)
+                            if mode not in 'kl': params.append(paraml[param_num])
+                            param_num+=1
+                    else: 
+                        if mode in requires_param: param_num+=1
+
+            if len(fixed_modes) > 1: conn.send(u'MODE {} {} {}'.format(chan, ''.join(fixed_modes), ' '.join(params)))
+
+
 @hook.singlethread
 @hook.event('004')
 def keep_alive(paraml, conn=None):

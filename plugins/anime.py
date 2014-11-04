@@ -159,6 +159,13 @@ def nyaa(inp):
 
 
 @hook.command
+def sn(inp):
+    "sukebei nyaa <query> - sukebei NYAA Search"
+    search_url = 'http://sukebei.nyaa.se/?page=search&filter=0&term=%s' % (inp.replace(' ','+'))
+    return u'%s' % (search_url)
+
+
+@hook.command
 def vndb(inp):
     "vndb <query> - Visual Novel Search"
     search_url = 'http://vndb.org/v/all?sq=%s' % (inp.replace(' ','+'))
@@ -203,7 +210,7 @@ def destiny(inp):
 
 @hook.command(autohelp=False)
 def iphone(inp):
-    return get_time_until('2014-09-09 10:00:00')
+    return get_time_until('2014-09-10 2:00:00')
 
 @hook.command(autohelp=False)
 def halo(inp):

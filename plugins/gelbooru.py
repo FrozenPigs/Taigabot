@@ -12,7 +12,7 @@ def refresh_cache(inp):
     search = inp.replace(' ','+').replace('explicit','rating:explicit').replace('nsfw','rating:explicit').replace('safe','rating:safe').replace('sfw','rating:safe')
     # score:>100
     #print 'http://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=20&tags={}'.format(search)
-    soup = http.get_soup('http://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=20&tags={}'.format(search))
+    soup = http.get_soup(u'http://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=20&tags={}'.format(search))
     posts = soup.find_all('post')
 
     while num < len(posts):

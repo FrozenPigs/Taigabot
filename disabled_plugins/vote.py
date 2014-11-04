@@ -30,7 +30,7 @@ def process_vote(target,action,chan,mask,db,notice,conn):
     chan = chan.lower()
     target = target.lower()
     voter = user.format_hostmask(mask)
-    voters = db.execute("SELECT voters FROM votes where chan=? and action=? and target like ?", (chan, action, target)).fetchone()
+    oters = db.execute("SELECT voters FROM votes where chan='{}' and action='{}' and target like '{}'".format(chan,action,target)).fetchone()
 
     if conn.nick.lower() in target: return "I dont think so Tim."
 
@@ -59,7 +59,7 @@ def process_vote(target,action,chan,mask,db,notice,conn):
             conn.send("MODE {} +b {}".format(chan, user.get_hostmask(target,db)))
             conn.send("KICK {} {} :".format(chan, target, "You have been voted off the island."))
     
-    if votefinished: db.execute("DELETE FROM votes where chan=? and action=? and target like ?", (chan, action, target))
+    if votefinished: db.execute("DELETE FROM votes where chan='{}' and action='{}' and target like '{}'".format(chan,action,target))
     else: db.execute("insert or replace into votes(chan, action, target, voters, time) values(?,?,?,?,?)", (chan, action, target, voters, time.time()))
         
     db.commit()

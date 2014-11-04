@@ -24,11 +24,7 @@ class Input(dict):
                 conn.msg(chan, msg)
             else:
                 #conn.msg(chan, '(' + nick + ') ' + msg)
-                
-                # try: conn.msg(chan, re.match(r'^\W+(\w.*)',msg).group(1))
-                
                 try: conn.msg(chan, re.match(r'\.*(\w+.*)',msg).group(1))
-                # try: conn.msg(chan, re.match(r'^(?:[^a-zA-Z0-9:\\\[^]+)?(.+)',msg).group(1))
                 except: conn.msg(chan,msg)
 
         def me(msg):
