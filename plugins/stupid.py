@@ -102,11 +102,13 @@ def vendingmachine(inp, nick=None, me=None):
 
 
 # MISC
+@hook.command('daki', autohelp=False)
 @hook.command(autohelp=False)
 def hug(inp, nick=None):
     "hug <nick> -- hugs someone"
     if not inp: inp = nick
     return '\x02\x034♥♡❤♡♥\x03 {} \x034♥♡❤♡♥\x03\x02'.format(inp).decode('UTF-8')
+
 
 @hook.command(autohelp=False)
 def kiss(inp, nick=None):
@@ -115,7 +117,6 @@ def kiss(inp, nick=None):
     return '(づ｡◕‿‿◕｡)づ\x02\x034。。・゜゜・。。・゜❤ {} ❤\x03\x02 '.format(inp).decode('UTF-8')
 
     
-
 
 @hook.regex(r'^\[(.*)\]$')
 @hook.command(autohelp=False)
