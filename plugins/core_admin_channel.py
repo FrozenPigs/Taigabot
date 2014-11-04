@@ -468,7 +468,7 @@ def bans(inp, notice=None, bot=None, chan=None, db=None):
 
 @hook.command('kb', permissions=["op_ban", "op"], channeladminonly=True)
 @hook.command(permissions=["op_ban", "op"], channeladminonly=True)
-def ban(inp, conn=None, chan=None, notice=None, db=None, nick=None):
+def ban(inp, conn=None, chan=None, notice=None, db=None, nick=None, bot=None):
     """ban [channel] <user> [reason] [timer] -- Makes the bot ban <user> in [channel].
     If [channel] is blank the bot will ban <user> in
     the channel the command was used in."""
@@ -478,9 +478,9 @@ def ban(inp, conn=None, chan=None, notice=None, db=None, nick=None):
     split = inp.split(" ")
     inp_nick = split[0]
 
-    if conn.nick in inp_nick or 'infinity' in inp_nick: 
+    if conn.nick in inp_nick or bot.config['owner'] == inp_nick: 
         target = nick
-        reason = "Youre silly onii-chan."
+        reason = "Your attitude is not conducive to the desired environment"
         conn.send(u"KICK {} {} :{}".format(chan, target, reason))
         return
 
@@ -532,7 +532,7 @@ def unban(inp, conn=None, chan=None, notice=None, db=None):
 @hook.command('k',channeladminonly=True)
 @hook.command('kal',channeladminonly=True)
 @hook.command(permissions=["op_kick", "op"], channeladminonly=True)
-def kick(inp, chan=None, conn=None, notice=None, nick=None):
+def kick(inp, chan=None, conn=None, notice=None, nick=None, bot=None):
     """kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel]
     If [channel] is blank the bot will kick the <user> in
     the channel the command was used in."""
@@ -543,10 +543,10 @@ def kick(inp, chan=None, conn=None, notice=None, nick=None):
     target = split[0]
     if len(split) > 1: reason = " ".join(split[1:])
 
-    if conn.nick in target or 'infinity' in target: 
+    if conn.nick in target or bot.config['owner'] == target: 
         target = nick
-        reason = "Youre silly onii-chan."
-    
+        reason = "Your attitude is not conducive to the desired environment"
+
     notice(u"Attempting to kick {} from {}...".format(target, chan))
     conn.send(u"KICK {} {} :{}".format(chan, target, reason))
     return
@@ -650,4 +650,3 @@ def testdamnit(inp,bot=None, conn=None):
     #channellist.remove(inp.lower().strip())
     #print channellist
     #json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
-    
