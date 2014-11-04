@@ -157,12 +157,6 @@ def wikipedia_url(match):
     return http.process_text("\x02Wikipedia.org: {}\x02 - {}...".format(title,post[:trimlength]))
 
 
-##################################################
-# Username and Password
-# username = "jooshed"
-# password = "Cuntal0p3"
-##################################################
-
 
 # hentai_re = (r'(http.+hentai.org/.+)', re.I)
 # @hook.regex(*hentai_re)
