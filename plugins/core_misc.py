@@ -55,6 +55,7 @@ def onkick(paraml, conn=None, chan=None, bot=None):
     if paraml[1] == conn.nick:
         auto_rejoin = conn.conf.get('auto_rejoin', False)
         if auto_rejoin:
+            time.sleep(5)
             conn.join(paraml[0])
         else:
             channellist = bot.config["connections"][conn.name]["channels"]
