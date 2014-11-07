@@ -3,6 +3,7 @@ from util import hook, http, text
 base_url = 'http://www.urbandictionary.com/iphone/search/define'
 
 @hook.command('u')
+@hook.command('ud')
 @hook.command('nig')
 @hook.command('ebonics')
 @hook.command
