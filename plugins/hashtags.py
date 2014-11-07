@@ -162,3 +162,18 @@ def hashtag(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
                 say("\x02[%s]:\x02 %s" % (factoid_id, result))
             else:
                 say("\x02%s\x02 %s" % (factoid_id, result))
+
+@hook.command(r'keys')
+@hook.command(r'key')
+@hook.command(autohelp=False)
+def hashes(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
+    "hashes -- Shows hash names for all known hashes."
+
+    search = "SELECT word FROM mem"
+    if inp: search = "{} WHERE word LIKE '%{}%'".format(search, inp)
+    search = "{} ORDER BY word".format(search)
+
+    rows = db.execute(search).fetchall()
+
+    if rows: return ", ".join(tuple(x[0] for x in rows))
+    else: return "No results."
