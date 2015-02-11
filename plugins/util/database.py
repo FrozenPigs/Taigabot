@@ -5,7 +5,7 @@ channel_columns = ['chan NOT NULL',
 		   'admins', 'permissions', 'ops', 'bans', 'disabled', 'ignored', 'badwords', 'flood', 'cmdflood', 'trimlength', 'autoop', 'votekick', 'voteban',
 		   'primary key(chan)']
 user_columns	= ['nick NOT NULL', 
-		   'mask', 'version', 'location', 'lastfm', 'fines', 'battlestation', 'desktop', 'horoscope', 'greeting', 'waifu', 'husbando', 'birthday', 'homescreen', 'snapchat', 'mal', 'selfie', 'steam'
+		   'mask', 'version', 'location', 'lastfm', 'fines', 'battlestation', 'desktop', 'horoscope', 'greeting', 'waifu', 'husbando', 'birthday', 'homescreen', 'snapchat', 'mal', 'selfie', 'steam',
 		   'primary key(nick)']
 
 db_ready = False
@@ -41,6 +41,12 @@ def set(db, table, field, value, matchfield, matchvalue):
     if value is None: value = ''
     matchvalue = matchvalue.encode('utf-8').lower()
     if type(value) is str: value = value.replace("'","").replace('\"', "").encode('utf-8')
+
+    try:
+	db.execute("ALTER TABLE {} ADD COLUMN {};".format(table, field))
+    except:
+        pass
+
     try:
         if field_exists(db,table,matchfield,matchvalue):
             db.execute("UPDATE {} SET {} = '{}' WHERE {} = '{}';".format(table,field,value,matchfield,matchvalue))
