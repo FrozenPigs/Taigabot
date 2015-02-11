@@ -1,14 +1,21 @@
 from util import hook
 import log
 
+channel_columns = ['chan NOT NULL',
+		   'admins', 'permissions', 'ops', 'bans', 'disabled', 'ignored', 'badwords', 'flood', 'cmdflood', 'trimlength', 'autoop', 'votekick', 'voteban',
+		   'primary key(chan)']
+user_columns	= ['nick NOT NULL', 
+		   'mask', 'version', 'location', 'lastfm', 'fines', 'battlestation', 'desktop', 'horoscope', 'greeting', 'waifu', 'husbando', 'birthday', 'homescreen', 'snapchat', 'mal', 'selfie',
+		   'primary key(nick)']
+
 db_ready = False
 
 def init(db):
     global db_ready
     if not db_ready: 
         # db.execute("CREATE TABLE if not exists seen(name, time, quote, chan, host, primary key(name, chan))")
-        db.execute("CREATE TABLE if not exists channels(chan NOT NULL, admins, permissions, ops, bans, disabled, ignored, badwords, flood, cmdflood, trimlength, autoop, votekick, voteban, primary key(chan));")
-        db.execute("CREATE TABLE if not exists users(nick NOT NULL, mask, version, location, lastfm, fines, battlestation, desktop, horoscope, greeting, waifu, husbando, birthday, homescreen, snapchat, mal, selfie, primary key(nick));")
+        db.execute("CREATE TABLE if not exists channels({});".format(", ".join(channel_columns)))
+        db.execute("CREATE TABLE if not exists users({});".format(", ".join(user_columns)))
         db.commit()
         db_ready = True
 
