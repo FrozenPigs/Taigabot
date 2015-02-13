@@ -34,8 +34,6 @@ def sudos(inp):
     return 'Sudos has said "honk" {} times today.'.format(sudos_counter)
 
 
-warnings = ["Sorry, I cant let you do that {nick}", "Check your privileges {nick}"]
-
 cmdflood_filename = 'cmdflood'
 if not os.path.exists(cmdflood_filename): open(cmdflood_filename, 'w').write(inspect.cleandoc(r'''{}'''))
 
@@ -113,16 +111,19 @@ def sieve_suite(bot, input, func, kind, args):
     if disabled_commands and not fn.group(1).lower().strip() == 'log':
         # check for disabled modules
         if fn and re.search(r"\b{}\b".format(fn.group(1).lower().strip()), disabled_commands):
-            #print("[{}]: {} is disabled.".format(input.chan,fn.group(1)))
+	    if user.is_globaladmin(input.mask, chan, bot):
+		print("[{}]: {} is disabled.".format(input.chan,fn.group(1)))
             return None
         # check for disabled commands
         if kind == "command" and re.search(r"\b{}\b".format(input.trigger.lower().strip()), disabled_commands):
-            input.notice("[{}]: {} is disabled.".format(input.chan,input.trigger))
+	    if user.is_globaladmin(input.mask, chan, bot):
+		input.notice("[{}]: {} is disabled.".format(input.chan,input.trigger))
+	    print("[{}]: {} is disabled.".format(input.chan,input.trigger))
             return None
         # check for disabled regex
         if kind == "regex" and re.search(r"\b{}\b".format(func.__name__.lower().strip()), disabled_commands):
-            #input.notice("[{}]: {} is disabled.".format(input.chan,func.__name__))
-            print "[{}]: {} is disabled.".format(input.chan,func.__name__)
+	    if user.is_globaladmin(input.mask, chan, bot):
+		print("[{}]: {} is disabled.".format(input.chan,func.__name__))
             return None
 
     # print fn.group(1)
@@ -160,16 +161,12 @@ def sieve_suite(bot, input, func, kind, args):
   
     globaladmin = user.is_globaladmin(input.mask, chan, bot) 
     if args.get('adminonly', False):
-        if not globaladmin:
-            input.notice(random.choice(warnings).replace("{nick}",input.nick))
-            return None
+        if not globaladmin: return None
     if globaladmin: return input   
 
     channeladmin = user.is_channeladmin(input.mask, chan, db)
     if args.get('channeladminonly', False): 
-        if not channeladmin and not globaladmin:
-            input.notice(random.choice(warnings).replace("{nick}",input.nick))
-            return None
+        if not channeladmin and not globaladmin: return None
     if channeladmin: return input   
 
     #badwords
