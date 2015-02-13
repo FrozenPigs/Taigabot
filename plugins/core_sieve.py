@@ -34,8 +34,6 @@ def sudos(inp):
     return 'Sudos has said "honk" {} times today.'.format(sudos_counter)
 
 
-warnings = ["Sorry, I cant let you do that {nick}", "Check your privileges {nick}"]
-
 cmdflood_filename = 'cmdflood'
 if not os.path.exists(cmdflood_filename): open(cmdflood_filename, 'w').write(inspect.cleandoc(r'''{}'''))
 
@@ -160,16 +158,12 @@ def sieve_suite(bot, input, func, kind, args):
   
     globaladmin = user.is_globaladmin(input.mask, chan, bot) 
     if args.get('adminonly', False):
-        if not globaladmin:
-            input.notice(random.choice(warnings).replace("{nick}",input.nick))
-            return None
+        if not globaladmin: return None
     if globaladmin: return input   
 
     channeladmin = user.is_channeladmin(input.mask, chan, db)
     if args.get('channeladminonly', False): 
-        if not channeladmin and not globaladmin:
-            input.notice(random.choice(warnings).replace("{nick}",input.nick))
-            return None
+        if not channeladmin and not globaladmin: return None
     if channeladmin: return input   
 
     #badwords
