@@ -318,8 +318,7 @@ def wolframalpha(inp, bot=None):
             waesp = Subpod(subpod)
             plaintext = waesp.Plaintext()
             results.append(plaintext)
-    print(results[0][0].rstrip())
-    print(results)
+
     try:
         return u'[\x02{}\x02]: {}'.format(re.sub(' (?:\||) +', ' ', ' '.join(results[0][0].splitlines())).strip(),results[1][0])
     except: 
