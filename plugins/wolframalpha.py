@@ -381,7 +381,7 @@ def wolframalpha(inp, bot=None):
 
     # return u'\x02[{}]\x02 {}'.format(results[0][0],results[1][0])
     try:
-        return u'{}'.format(results[1][0].replace('Wolfram|Alpha','Uguu~~'))
+        return u'{}'.format(results[1][0])
     except: 
         return errors[random.randint(0, len(errors) - 1)]
     
