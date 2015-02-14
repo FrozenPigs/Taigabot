@@ -364,7 +364,7 @@ def wolframalpha(inp, bot=None):
     waeo.FormatTimeout = formattimeout
     waeo.Async = async
 
-    query = waeo.CreateQuery(inp)
+    query = waeo.CreateQuery(http.quote_plus(inp))
     result = waeo.PerformQuery(query)
     waeqr = WolframAlphaQueryResult(result)
     # xmlresult = waeqr.XmlResult
