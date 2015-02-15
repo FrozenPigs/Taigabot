@@ -324,6 +324,27 @@ def selfie(inp, nick=None, conn=None, chan=None,db=None, notice=None):
         if not '@' in inp: notice(selfie.__doc__)
         return 'No selfie saved for {}.'.format(nick)
 
+@hook.command(autohelp=False)
+def steam(inp, nick=None, conn=None, chan=None,db=None, notice=None):
+    "steam <steam | @ person> -- Shows a users steam information."
+
+    if not inp or '@' in inp:
+        if '@' in inp: nick = inp.split('@')[1].strip()
+        result = database.get(db,'users','steam','nick',nick)
+        if result:
+            return '{}: {}'.format(nick,result)
+        else:
+            if not '@' in inp: notice(steam.__doc__)
+            return 'No steam information saved for {}.'.format(nick)
+    elif 'del' in inp:
+        database.set(db,'users','steam','','nick',nick)
+        notice("Deleted your steam information.")
+    else:
+        database.set(db,'users','steam','{} '.format(inp.strip().encode('utf8')),'nick',nick)
+        notice("Saved your steam information.")
+    return
+
+
     ###Old
     #result = unicode(result, "utf8").replace('flight ','')
 
