@@ -8,9 +8,9 @@ def eden(inp, say=False):
     url = 'http://www.edenofthewest.com/'
     if 'url' in inp: return url+'edennew/'
     tree = lxml.html.parse(url)
-    dj = tree.xpath("//td[@id='status-dj']/text()")[0]
-    song = tree.xpath("//td[@id='status-current-song']/text()")[0]
-    listeners = tree.xpath("//td[@id='status-listeners']/text()")[0]
+    dj = tree.xpath("//div[@id='status-dj']/text()")[0]
+    song = tree.xpath("//div[@id='status-current-song']/text()")[0]
+    listeners = tree.xpath("//div[@id='status-listeners']/text()")[0]
     try: song_formatted = text.fix_bad_unicode(song)
     except: song_formatted = song
     return "[Eden] (%s) \x02%s\x02 : %s" % (listeners, dj, song_formatted)
@@ -22,9 +22,9 @@ def aradio(inp, say=False):
     url = 'http://r-a-d.io/'
     if 'url' in inp: return url
     tree = lxml.html.parse(url)
-    dj = tree.xpath("//span[@id='dj']/text()")[0]
-    song = tree.xpath("//div[@class='nowplaying']/h2/text()")[0]
-    listeners = tree.xpath("//div[contains(@class,'listeners')]/span/text()")[0]
+    dj = tree.xpath("//h4[@id='dj-name']/text()")[0]
+    song = re.sub('\s+',' ',tree.xpath(".//h2[@id='current-song']/span/text()")[0])
+    listeners = tree.xpath("//span[@id='listeners']/text()")[0]
     try: song_formatted = text.fix_bad_unicode(song)
     except: song_formatted = song
     return "[R/a/dio] (%s) \x02%s\x02 : %s" % (listeners, dj, song_formatted)

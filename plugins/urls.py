@@ -240,7 +240,10 @@ def unmatched_url(match,chan,db):
         
         if content_type.find("html") != -1: # and content_type is not 'gzip':
             body = html.fromstring(r.text)
-            return body.xpath('//title/text()')[0]
+            try: title_formatted = text.fix_bad_unicode(body.xpath('//title/text()')[0])
+            except: title_formatted = body.xpath('//title/text()')[0]
+            return title_formatted
+#             return body.xpath('//title/text()')[0]
 
             # return re.match(r'^\W+(\w.*)', body.xpath('//title/text()')[0]).group(1)
         else:

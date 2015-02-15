@@ -141,6 +141,7 @@ def munge(inp):
 
 
 # colors - based on code by Reece Selwood - <https://github.com/hitzler/homero>
+@hook.command("gay")
 @hook.command
 def rainbow(inp):
     inp = unicode(inp)

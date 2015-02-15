@@ -206,7 +206,7 @@ def mal(inp):
 
 @hook.command(autohelp=False)
 def destiny(inp):
-    return get_time_until('2014-09-08 22:59:00')
+    return get_time_until('2014-12-09 22:59:00')
 
 @hook.command(autohelp=False)
 def iphone(inp):

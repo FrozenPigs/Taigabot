@@ -177,7 +177,7 @@ def sieve_suite(bot, input, func, kind, args):
         badwordlist = database.get(db,'channels','badwords','chan',chan)
         if badwordlist:
             for badword in badwordlist.split(' '):
-                if len(badword) > 2 and badword.lower().strip() in input.msg.lower(): 
+                if len(badword) > 2 and badword.lower() is not chan.lower() and badword.lower().strip() in input.msg.lower(): 
                     input.conn.send(u"KICK {} {} :{}".format(input.chan, input.nick, 'Used bad word: {}'.format(badword)))
                     return
 

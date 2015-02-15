@@ -41,8 +41,46 @@ def timefunction(inp, nick="", reply=None, db=None, notice=None):
 
 
 
-api_url = 'http://api.wolframalpha.com/v2/query?format=plaintext'
+@hook.command('ttest', autohelp=False)
+def timefunction2(inp, nick="", reply=None, db=None, notice=None):
+    "time [location] [dontsave] | [@ nick] -- Gets time for <location>."
 
+    save = True
+    
+    if '@' in inp:
+        nick = inp.split('@')[1].strip()
+        location = database.get(db,'users','location','nick',nick)
+        if not location: return "No location stored for {}.".format(nick.encode('ascii', 'ignore'))
+    else:
+        location = database.get(db,'users','location','nick',nick)
+        if not inp:
+            if not location:
+                notice(time.__doc__)
+                return
+        else:
+            # if not location: save = True
+            if " dontsave" in inp: save = False
+            location = inp.split()[0]
+
+    # now, to get the actual time
+    try:
+        url = "https://time.is/%s" % location.replace(' ','+').replace(' save','')
+        html = http.get_html(url)
+        prefix = html.xpath("//div[@id='msgdiv']/h1/a/text()")[0].strip()
+        curtime = html.xpath("//div[contains(@id,'twd')]/text()")[0].strip()
+        ampm = html.xpath("//div[contains(@id,'twd')]/span/text()")[0].strip()
+        date = html.xpath("//h2[contains(@id,'dd')]/text()")[0].strip()
+    except IndexError:
+        return "Could not get time for that location."
+
+    if location and save: database.set(db,'users','location',location,'nick',nick)
+
+    return u'Time in {} is \x02{} {}\x02 [{}]'.format(prefix, curtime, ampm.upper(), date)
+
+
+
+
+api_url = 'http://api.wolframalpha.com/v2/query?format=plaintext'
 
 def watime(inp, bot=None):
     """time <area> -- Gets the time in <area>"""

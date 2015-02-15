@@ -113,7 +113,7 @@ def info(inp, notice=None, db=None):
         notice("Unknown Factoid.")
 
 # @hook.regex(r'^(\b\S+\b)\?$')
-@hook.regex(r'\#(\b\S+\b)')
+@hook.regex(r'^\#(\b\S+\b)')
 @hook.regex(r'^\? ?(.+)')
 def hashtag(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
     "<word>? -- Shows what data is associated with <word>."
