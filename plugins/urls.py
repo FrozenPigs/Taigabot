@@ -8,7 +8,7 @@ import urllib2
 import gelbooru
 
 class urlopener(FancyURLopener):
-    version = "Mozilla/5.0 (X11; Linux x86_64; rv:14.0) Gecko/20100101 Firefox/14.0.1"
+    version = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
 
 opener = urlopener()
 
@@ -213,7 +213,7 @@ import requests
 from lxml import html
 import md5
 
-user_agent = 'python-requests/1.2.3 CPython/3.3.2 Darwin/12.5.0'
+user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
 # cookies = dict(cookies_are='working')
 cookies = dict()
 headers = {
