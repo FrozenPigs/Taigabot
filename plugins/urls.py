@@ -26,14 +26,7 @@ def process_url(match,bot=None,input=None,chan=None,db=None, reply=None):
     try: trimlength = int(trimlength)
     except: trimlength = trimlength
 
-    if 'lrsp' == input.nick.lower(): 
-        reply('\x02\x034^^^ WARNING!!!\x03\x02 This link probably contains pedo.')
-        #reply(gelbooru.gelbooru("furry nsfw"))
-        return
-
     if '.html' in url.lower(): return
-
-    if 'lolihub.tk' in url.lower(): return "http://lolihub.com <- themadman is a thief. Stealing OC from Nymovyn is the lowest of the low."
 
     if   'youtube.com'       in url.lower(): return                         #handled by youtube plugin: exiting
     elif 'youtu.be'          in url.lower(): return                         #handled by youtube plugin: exiting
