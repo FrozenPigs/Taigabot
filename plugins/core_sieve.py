@@ -44,7 +44,7 @@ if not os.path.exists(flood_filename): open(flood_filename, 'w').write(inspect.c
 @hook.sieve
 def ignoresieve(bot, input, func, type, args):
     """ blocks input from ignored channels/nicks/hosts """
-    globalignorelist = bot.config["ignored"]
+    globalignorelist = " ".join(bot.config["ignored"])
 
     db = bot.get_db_connection(input.conn)
     mask = input.mask.lower()
@@ -56,20 +56,9 @@ def ignoresieve(bot, input, func, type, args):
 
     # if user.is_admin(mask,chan,db,bot): return input
 
-    if ignorelist and user.format_hostmask(mask) in ignorelist: return None
-    if globalignorelist and user.format_hostmask(mask) in globalignorelist: return None
-        #print "[{}]: {} is ignored.".format(input.chan,mask)
-        
+    if ignorelist and user.compare_hostmasks(mask, ignorelist): return None
+    if ignorelist and user.compare_hostmasks(mask, globalignorelist): return None
 
-
-
-    # if input.chan.lower() in ignorelist \
-    #    or input.nick.lower().replace('~','') in ignorelist \
-    #    or input.mask.lower().replace('~','').lower() in ignorelist:
-    #     if input.command == "PRIVMSG" and input.lastparam[1:] == "unignore":
-    #         return input
-    #     else:
-    #         return None
     return input
 
 
