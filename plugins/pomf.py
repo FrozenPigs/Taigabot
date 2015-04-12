@@ -20,16 +20,6 @@ def pomf(url):
 
 	return "pomf: {}".format(upload(url))
 
-@hook.command("p")
-@hook.command
-def pomf(inp, chan=None, nick=None, say=None, db=None, notice=None):
-	"pomf <url> -- Downloads file, uploads it and returns the url"
-
-    	# word, url = inp.split(None, 1)
-	pomfurl = upload(inp)
-	return pomfurl
-	# notice("{} remembered as {}".format(word, pomfurl))
-
 
 @hook.command("pr")
 @hook.command("premember")
