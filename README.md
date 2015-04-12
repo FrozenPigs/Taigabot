@@ -96,6 +96,10 @@ UguuBot is **licensed** under the **GPL v3** license. The terms are as follows.
     You should have received a copy of the GNU General Public License
     along with UguuBot.  If not, see <http://www.gnu.org/licenses/>.
 
+## Contact
+
+Need to contact someone? Head on over to #uguubot at irc.rizon.net for assistance or any other needs.
+
 ## Notes
 
 ³ eventually
