@@ -13,34 +13,45 @@ import hashtags, datafiles
 from mimetypes import guess_extension, guess_type
 from util import hook, http
 
-@hook.command("pomftube", adminonly=True)
-@hook.command(adminonly=True)
+@hook.command("pomftube")
+@hook.command
 def pomf(url):
 	"pomf <url> -- Downloads file and uploads it"
 
 	return "pomf: {}".format(upload(url))
 
-@hook.command("pr", adminonly=True)
-@hook.command("premember", adminonly=True)
-@hook.command(adminonly=True)
-def pomfremember(inp, chan=None, nick=None, say=None, db=None, adminonly=True):
+@hook.command("p")
+@hook.command
+def pomf(inp, chan=None, nick=None, say=None, db=None, notice=None):
+	"pomf <url> -- Downloads file, uploads it and returns the url"
+
+    	# word, url = inp.split(None, 1)
+	pomfurl = upload(inp)
+	return pomfurl
+	# notice("{} remembered as {}".format(word, pomfurl))
+
+
+@hook.command("pr")
+@hook.command("premember")
+@hook.command
+def pomfremember(inp, chan=None, nick=None, say=None, db=None, notice=None):
 	"pomfremember <word> <url> -- Downloads file, uploads it and adds it to the dictionary"
 
         word, url = inp.split(None, 1)
 	pomfurl = upload(url)
 	strsave = "{} {}".format(word, pomfurl)
-	say("{} remembered as {}".format(word, pomfurl))
+	notice("{} remembered as {}".format(word, pomfurl))
 	hashtags.remember(strsave, nick, db)
 
-@hook.command("padd", adminonly=True)
-@hook.command(adminonly=True)
-def pomfadd(inp, chan=None, nick=None, notice=None, db=None, say=None):
+@hook.command("padd")
+@hook.command
+def pomfadd(inp, chan=None, nick=None, say=None, db=None, notice=None):
 	"pomfadd <word> <url> -- Downloads file, uploads it and adds it to the dictionary"
 
         dfile, url = inp.split(None, 1)
 	pomfurl = upload(url)
 	strsave = "{} {}".format(dfile, pomfurl)
-	say("{} added to {}".format(pomfurl, dfile))
+	notice("{} added to {}".format(pomfurl, dfile))
 	datafiles.add(strsave, notice)
 
 def upload(url):
