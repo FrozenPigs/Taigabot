@@ -492,7 +492,7 @@ def ban(inp, conn=None, chan=None, notice=None, db=None, nick=None, bot=None):
     if '@' in target and not '!' in target: target = '*!*{}'.format(target)
     timer = scheduler.check_for_timers(inp)
     if timer > 0: reason = "{} Come back in {} seconds!!!".format(reason,timer)
-    notice(u"Attempting to ban {} in {}...".format(nick, chan))
+    notice(u"Attempting to ban {} in {}...".format(target, chan))
     conn.send(u"MODE {} {} {}".format(chan, mode, target))
     conn.send(u"KICK {} {} :{}".format(chan, inp_nick, reason))
 
@@ -520,7 +520,7 @@ def unban(inp, conn=None, chan=None, notice=None, db=None):
     if not '@' in nick: target = user.get_hostmask(nick,db)
     else: target = nick
     if '@' in target and not '!' in target: target = '*!*{}'.format(target)
-    notice(u"Attempting to unban {} in {}...".format(nick, chan))
+    notice(u"Attempting to unban {} in {}...".format(target, chan))
     conn.send(u"MODE {} -b {}".format(chan, target))
     banlist = database.get(db,'channels','bans','chan',chan)
     banlist = " ".join(banlist.replace(target,'').strip().split())
