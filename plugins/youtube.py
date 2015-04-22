@@ -3,13 +3,10 @@ import time
 
 from util import hook, http, timeformat
 
-
 youtube_re = (r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)'
-              '([-_a-zA-Z0-9]+)', re.I)
-
+              '([-_a-zA-Z0-9]+)', re.I) 
 
 base_url = 'https://www.googleapis.com/youtube/v3/'
-key = 'YOUTUBE API KEY HERE'
 search_api_url = base_url + 'search?part=id,snippet'
 api_url = base_url + 'videos?part=snippet,statistics,contentDetails'
 video_url = "http://youtu.be/%s"
@@ -19,7 +16,7 @@ def plural(num=0, text=''):
     return "{:,} {}{}".format(num, text, "s"[num==1:])
 
 
-def get_video_description(video_id):
+def get_video_description(key,video_id):
     request = http.get_json(api_url, key=key, id=video_id)
 
     if request.get('error'):
@@ -71,14 +68,18 @@ def get_video_description(video_id):
 
 
 @hook.regex(*youtube_re)
-def youtube_url(match):
-    return get_video_description(match.group(1))
+def youtube_url(match,bot=None):
+    key = bot.config.get("api_keys", {}).get("youtube")
+
+    return get_video_description(key,match.group(1))
 
 
 @hook.command('yt')
 @hook.command
-def youtube(inp):
+def youtube(inp, bot=None):
     """youtube <query> -- Returns the first YouTube search result for <query>."""
+    key = bot.config.get("api_keys", {}).get("youtube")
+
     request = http.get_json(search_api_url, key=key, q=inp, type='video')
 
     if 'error' in request:
@@ -89,13 +90,14 @@ def youtube(inp):
 
     video_id = request['items'][0]['id']['videoId']
 
-    return get_video_description(video_id) + u" - " + video_url % video_id
+    return get_video_description(key,video_id) + u" - " + video_url % video_id
 
 
 @hook.command('ytime')
 @hook.command
-def youtime(inp):
+def youtime(inp, bot=None):
     """youtime <query> -- Gets the total run time of the first YouTube search result for <query>."""
+    key = bot.config.get("api_keys", {}).get("youtube")
     request = http.get_json(search_api_url, key=key, q=inp, type='video')
 
     if 'error' in request:

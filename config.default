@@ -20,7 +20,8 @@
     "twitter_consumer_key": "", 
     "twitter_consumer_secret": "", 
     "wolframalpha": "", 
-    "yahoo": ""
+    "yahoo": "",
+    "youtube":""
   }, 
   "censored_strings": [
     "censored", 
