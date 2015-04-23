@@ -32,8 +32,12 @@ def get_video_description(key,video_id):
         return out
 
     length = data['contentDetails']['duration']
-    timelist = length[2:-1].split('M')
-    seconds = 60*int(timelist[0]) + int(timelist[1])
+    timelist = re.split('[HMS]', length[2:-1])
+    seconds = int(timelist.pop())
+    if timelist:
+        seconds += 60*int(timelist.pop())
+    if timelist:
+        seconds += 60*60*int(timelist.pop())
 
     out += u' - length \x02{}\x02'.format(timeformat.format_time(seconds, simple=True))
 
