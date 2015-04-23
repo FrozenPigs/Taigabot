@@ -1,4 +1,4 @@
-from util import hook, http, database, urlnorm
+from util import hook, http, database, urlnorm, formatting
 from bs4 import BeautifulSoup
 import re
 
@@ -225,10 +225,8 @@ def unmatched_url(match,chan,db):
             try:
                 if r.headers['Content-Length']:
                     length = int(r.headers['Content-Length'])
-                    if length > 1048576: length = str("{0:.2f}".format(round((float(length) / 1048576),2))) + ' MiB'
-                    elif length > 1024: length = str("{0:.2f}".format(round((float(length) / 1024),2))) + ' KiB'
-                    elif length < 0: length = 'Unknown size'
-                    else: length = str(length) + ' B'
+                    if length < 0: length = 'Unknown size'
+                    else: length = formatting.filesize(length)
                 else: 
                     length = "Unknown size"
             except:
