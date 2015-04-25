@@ -1,6 +1,6 @@
 import re
 
-from util import hook, http, text, web
+from util import hook, http, text, web, formatting
 import random
 
 #
@@ -288,7 +288,7 @@ def wolframalpha(inp, bot=None):
     api_key = bot.config.get("api_keys", {}).get("wolframalpha", None)
 
     if not api_key:
-        return "error: missing api key"
+        return formatting.output('WolframAlpha', ['error: missing api key'])
 
     import time
     start = time.clock()
@@ -322,6 +322,6 @@ def wolframalpha(inp, bot=None):
     try:
 	waquery = re.sub(' (?:\||) +', ' ', ' '.join(results[0][0].splitlines())).strip()
 	waresult = ' '.join(results[1][0].splitlines())
-	return u'[\x02{}\x02]: {}'.format(waquery, waresult)
+	return formatting.output('WolframAlpha', [waquery, waresult])
     except: 
-	return random.choice(errors)
+	return formatting.output('WolframAlpha', [random.choice(errors)])
