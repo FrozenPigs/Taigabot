@@ -6,4 +6,4 @@ def filesize(num, suffix='B'):
 	return '{0:.1f}{}{}'.format(num, 'Yi', suffix)
 
 def output(scriptname, fields=[], color=11):
-	return '\x0F\x02{}\x02: {}'.format(scriptname, ' \x03{}\x02|\x02\x03 '.format(color).join(fields))
+	return '[{}] {}'.format(scriptname, ' - '.join(fields))
