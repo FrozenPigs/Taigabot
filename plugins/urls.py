@@ -204,7 +204,7 @@ def unmatched_url(match,chan,db):
     try:
 	r = requests.get(match, headers=headers,allow_redirects=True, stream=True)
     except Exception as e:
-	return 'Error: {}'.format(e)
+	return formatting.output('URL', ['Error: {}'.format(e)])
 
     if r.status_code != 404:
         content_type = r.headers['Content-Type']
