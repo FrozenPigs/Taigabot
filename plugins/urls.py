@@ -1,5 +1,6 @@
 from util import hook, http, database, urlnorm, formatting
 from bs4 import BeautifulSoup
+from urlparse import urlparse
 import re
 
 from urllib import FancyURLopener
@@ -206,6 +207,8 @@ def unmatched_url(match,chan,db):
     except Exception as e:
 	return formatting.output('URL', ['Error: {}'.format(e)])
 
+    domain = urlparse(match).netloc
+
     if r.status_code != 404:
         content_type = r.headers['Content-Type']
         try: encoding = r.headers['content-encoding']
@@ -220,11 +223,11 @@ def unmatched_url(match,chan,db):
             body = html.fromstring(data)
 
             try: title = body.xpath('//title/text()')[0]
-	    except: return formatting.output('URL', ['No Title'])
+	    except: return formatting.output('URL', ['No Title ({})'.format(domain)])
 
             try: title_formatted = text.fix_bad_unicode(body.xpath('//title/text()')[0])
             except: title_formatted = body.xpath('//title/text()')[0]
-            return formatting.output('URL', [title_formatted])
+            return formatting.output('URL', ['{} ({})'.format(title_formatted, domain)])
         else:
 	    if disabled_commands:
                 if 'filesize' in disabled_commands: return
@@ -239,5 +242,5 @@ def unmatched_url(match,chan,db):
                 length = "Unknown size"
             if "503 B" in length: length = ""
             if length is None: length = ""
-	    return formatting.output('URL', ['{} Size: {}'.format(content_type, length)])
+	    return formatting.output('URL', ['{} Size: {} ({})'.format(content_type, length, domain)])
     return
