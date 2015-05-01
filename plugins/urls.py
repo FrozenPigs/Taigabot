@@ -1,5 +1,6 @@
-from util import hook, http, database, urlnorm
+from util import hook, http, database, urlnorm, formatting
 from bs4 import BeautifulSoup
+from urlparse import urlparse
 import re
 
 from urllib import FancyURLopener
@@ -74,16 +75,6 @@ def fourchanthread_url(match):
     author = post.find_all('span', {'class': 'nameBlock'})[1]
     return http.process_text("\x02{}\x02 - posted by \x02{}\x02: {}".format(title, author, comment[:trimlength]))
 
-
-# .replace('boards.4chan.org', 'a.4cdn.org')
-# result = http.get_soup("http://m.hulu.com/search?dp_identifier=hulu&{}&items_per_page=1&page=1".format(urlencode({'query': inp})))
-    # data = result.find('results').find('videos').find('video')
-    # showname = data.find('show').find('name').text
-    # title = data.find('title').text
-    # duration = timeformat.format_time(int(float(data.find('duration').text)))
-    # description = data.find('description').text
-    # rating = data.find('rating').text
-    # return "\x02{}:\x02 {} - {} - {} \x02({})\x02 {}".format(showname, title, description, duration, rating, "http://www.hulu.com/watch/" + str(data.find('id').text))
 
 
 #fourchan_quote_re = (r'>>(\D\/\d+)', re.I)
@@ -171,7 +162,7 @@ def hentai_url(match,bot):
     coo=resp.info().getheader('Set-Cookie')#获得cookie串
     cooid=re.findall('ipb_member_id=(.*?);',coo)[0]
     coopw=re.findall('ipb_pass_hash=(.*?);',coo)[0]
-    # print cooid,coopw
+
     headers = {'Cookie': 'ipb_member_id='+cooid+';ipb_pass_hash='+coopw,'User-Agent':"User-Agent':'Mozilla/5.2 (compatible; MSIE 8.0; Windows NT 6.2;)"}
 
     request = urllib2.Request(url, None, headers)
@@ -191,13 +182,6 @@ def hentai_url(match,bot):
         return '\x02{}\x02 - \x02\x034{}\x03\x02 - {}'.format(title,stars,date).decode('utf-8')
     except:
         return u'{}'.format(soup.title.string)
-
-    #print len(content)
-    #print re.findall('.+son',content)
-
-
-
-
 # amiami, hobby search and nippon yasan
 
 import urllib
@@ -218,147 +202,45 @@ headers = {
 def unmatched_url(match,chan,db):
     disabled_commands = database.get(db,'channels','disabled','chan',chan)
     
-    r = requests.get(match, headers=headers,allow_redirects=True, stream=True)
-    # print r.headers
-    # print r.status_code
-    # print r.request.headers
+    try:
+	r = requests.get(match, headers=headers,allow_redirects=True, stream=True)
+    except Exception as e:
+	return formatting.output('URL', ['Error: {}'.format(e)])
+
+    domain = urlparse(match).netloc
+
     if r.status_code != 404:
-        # image_hash = md5.new(r.content).hexdigest()
-        # print image_hash
         content_type = r.headers['Content-Type']
         try: encoding = r.headers['content-encoding']
         except: encoding = ''
-        # try: 
-        # r.raise_for_status()
         
         if content_type.find("html") != -1: # and content_type is not 'gzip':
-            body = html.fromstring(r.text)
+	    data = ''
+	    for chunk in r.iter_content(chunk_size=1024):
+		data += chunk
+		if len(data) > 48336: break
+
+            body = html.fromstring(data)
+
+            try: title = body.xpath('//title/text()')[0]
+	    except: return formatting.output('URL', ['No Title ({})'.format(domain)])
+
             try: title_formatted = text.fix_bad_unicode(body.xpath('//title/text()')[0])
             except: title_formatted = body.xpath('//title/text()')[0]
-            return title_formatted
-#             return body.xpath('//title/text()')[0]
-
-            # return re.match(r'^\W+(\w.*)', body.xpath('//title/text()')[0]).group(1)
+            return formatting.output('URL', ['{} ({})'.format(title_formatted, domain)])
         else:
 	    if disabled_commands:
                 if 'filesize' in disabled_commands: return
             try:
                 if r.headers['Content-Length']:
                     length = int(r.headers['Content-Length'])
-                    if length > 1048576: length = str("{0:.2f}".format(round((float(length) / 1048576),2))) + ' MiB'
-                    elif length > 1024: length = str("{0:.2f}".format(round((float(length) / 1024),2))) + ' KiB'
-                    elif length < 0: length = 'Unknown size'
-                    else: length = str(length) + ' B'
+                    if length < 0: length = 'Unknown size'
+                    else: length = formatting.filesize(length)
                 else: 
                     length = "Unknown size"
             except:
                 length = "Unknown size"
             if "503 B" in length: length = ""
             if length is None: length = ""
-            return u"[{}] {}".format(content_type, length)
-    else: 
-        return 
-
+	    return formatting.output('URL', ['{} Size: {} ({})'.format(content_type, length, domain)])
     return
-
-
-    # except: 
-        # return "Error: {}".format(r.status_code)
-
-
-    
-
-
-
-
-
-
-
-    # page = urllib2.urlopen(match)
-    # print "Response:", page
-    # print "This gets the code: ", page.code
-    # print "The Headers are: ", page.info()
-
-    # html = response.read()
-    # print "Get all data: ", html
-
-    # Get only the length
-    # print "Get the length :", len(html)
-
-    # try: 
-    #     content_type = page.info()['Content-Type'].split(';')[0]
-    # except: 
-    #     return
-
-    # if content_type.find("html") != -1:    
-    #     html = response.read()
-    #     # print "Get all data: ", html
-    #     try: title = html.title.renderContents().strip()
-    #     except: return
-    #     #if len(title) > 300: title = soup.find('meta', {'name' : 'description'})['content']
-    #     if not title: return #"Could not find title."
-    #     return http.process_text("{}".format(title[:trimlength]))
-    # else:
-    #     if 'filesizes' in disabled_commands: return
-    #     try:
-    #         if page.info()['Content-Length']:
-    #             length = int(page.info()['Content-Length'])
-    #             if length > 1048576: length = str("{0:.2f}".format(round((float(length) / 1048576),2))) + ' MiB'
-    #             elif length > 1024: length = str("{0:.2f}".format(round((float(length) / 1024),2))) + ' KiB'
-    #             elif length < 0: length = 'Unknown size'
-    #             else: length = str(length) + ' B'
-    #         else: 
-    #             length = "Unknown size"
-    #     except:
-    #         length = "Unknown size"
-
-    #     if length != None: return u"[{}] {}".format(content_type, length)
-    # return
-
-
-
-    # return "Infinity is touching my insides. Parsing back soon!"
-    # page = opener.open(match) #urllib.urlopen(match)
-    # page.info()
-
-    # try: 
-    #     content_type = page.info()['Content-Type'].split(';')[0]
-    #     print content_type
-    # except: 
-    #     return
-
-    # if content_type.find("html") != -1:
-    #     soup = BeautifulSoup(page)
-    #     # print soup
-    #     try: title = soup.title.renderContents().strip()
-    #     except: return
-    #     #if len(title) > 300: title = soup.find('meta', {'name' : 'description'})['content']
-    #     if not title: return #"Could not find title."
-    #     return http.process_text("{}".format(title[:trimlength]))
-    # else:
-    #     if 'filesizes' in disabled_commands: return
-    #     try:
-    #         if page.info()['Content-Length']:
-    #             length = int(page.info()['Content-Length'])
-    #             if length > 1048576: length = str("{0:.2f}".format(round((float(length) / 1048576),2))) + ' MiB'
-    #             elif length > 1024: length = str("{0:.2f}".format(round((float(length) / 1024),2))) + ' KiB'
-    #             elif length < 0: length = 'Unknown size'
-    #             else: length = str(length) + ' B'
-    #         else: 
-    #             length = "Unknown size"
-    #     except:
-    #         length = "Unknown size"
-
-    #     if length != None: return u"[{}] {}".format(content_type, length)
-    # return
-
-
-
-    # import httplib
-    # matches = re.search('.*\/\/(.*?)(\/.*)', match)
-    
-    # conn = httplib.HTTPConnection(matches.group(1))
-    # conn.request("HEAD",matches.group(2))
-    # res = conn.getresponse()
-    # print res.status, res.reason
-    # print res.getheaders()
