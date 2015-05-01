@@ -70,8 +70,10 @@ def run(func, input):
     else:
         out = func(input.inp)
     if out is not None:
-        input.reply(unicode(out))
-
+        try:
+            input.reply(out.decode('utf8'))
+        except UnicodeEncodeError:
+            input.reply(unicode(out))
 
 def do_sieve(sieve, bot, input, func, type, args):
     try:

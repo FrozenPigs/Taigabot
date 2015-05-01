@@ -210,7 +210,7 @@ def horoscope(inp, db=None, notice=None, nick=None):
         result = http.get_soup(url)
         title = result.find_all('h1', {'class': 'h1b'})[1].text
         horoscopetxt = result.find('div', {'id': 'textline'}).text
-    except: return "Could not get the horoscope for {}.".format(sign)
+    except: return "Could not get the horoscope for {}.".format(sign.encode('utf8'))
 
     if sign and save: database.set(db,'users','horoscope',sign,'nick',nick)
     
