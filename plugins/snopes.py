@@ -1,6 +1,6 @@
 import re
 
-from util import hook, http
+from util import hook, http, formatting
 
 
 search_url = "http://search.atomz.com/search/?sp_a=00062d45-sp00000000"
@@ -31,4 +31,4 @@ def snopes(inp):
     claim = re.sub(r"[\s\xa0]+", " ", claim)   # compress whitespace
     status = re.sub(r"[\s\xa0]+", " ", status)
 
-    return "{} {} {}".format(claim, status, result_urls[0])
+    return formatting.output('Snopes', ['{} {} {}'.format(claim, status, result_urls[0])])
