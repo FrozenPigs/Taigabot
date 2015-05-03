@@ -1,4 +1,4 @@
-from util import hook
+from util import hook, formatting
 import os.path
 import pygeoip
 import json
@@ -35,4 +35,4 @@ def geoip(inp):
     data["cc"] = record["country_code"] or "N/A"
     data["country"] = record["country_name"] or "Unknown"
     data["city"] = record["city"] or "Unknown"
-    return "\x02Country:\x02 {country} ({cc}), \x02City:\x02 {city}{region}".format(**data)
+    return formatting.output('GeoIP', ['\x02Country:\x02 {country} ({cc}) \x02City:\x02 {city}{region}'.format(**data)])
