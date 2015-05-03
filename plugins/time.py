@@ -1,4 +1,4 @@
-from util import hook, http, database
+from util import hook, http, database, formatting
 import time
 from util.text import capitalize_first
 
@@ -37,7 +37,7 @@ def timefunction(inp, nick="", reply=None, db=None, notice=None):
 
     if location and save: database.set(db,'users','location',location,'nick',nick)
 
-    return u'{} is \x02{}\x02 [{} {}]'.format(prefix, curtime, day, date)
+    return formatting.output('Time', [u'{} is \x02{}\x02 [{} {}]'.format(prefix, curtime, day, date)])
 
 
 
@@ -133,4 +133,4 @@ def beats(inp):
     if beat > 1000:
         beat -= 1000
 
-    return "Swatch Internet Time: @%06.2f" % beat
+    return formatting.output('Swatch Internet Time', ['@{0:.2f}'.format(beat)])
