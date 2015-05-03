@@ -30,7 +30,7 @@ def get(db,table,field,matchfield,matchvalue):
     matchvalue = matchvalue.encode('utf-8').lower()
     try:
         result = db.execute("SELECT {} FROM {} WHERE {}='{}';".format(field,table,matchfield,matchvalue)).fetchone()
-        if result: return result[0]
+        if result: return result[0].encode('utf-8')
         else: return False
     except:
         log.log("***ERROR: SELECT {} FROM {} WHERE {}='{}';".format(field,table,matchfield,matchvalue))
@@ -39,8 +39,8 @@ def get(db,table,field,matchfield,matchvalue):
 def set(db, table, field, value, matchfield, matchvalue):
     init(db)
     if value is None: value = ''
-    matchvalue = matchvalue.encode('utf-8').lower()
-    if type(value) is str: value = value.replace("'","").replace('\"', "").encode('utf-8')
+    matchvalue = matchvalue.decode('utf-8').lower()
+    if type(value) is str: value = value.replace("'","").replace('\"', "")
 
     try:
 	db.execute("ALTER TABLE {} ADD COLUMN {};".format(table, field))
