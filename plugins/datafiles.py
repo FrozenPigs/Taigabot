@@ -54,7 +54,7 @@ def send_phrase(inp,attack,nick,conn,cmd,notice):
     # if the user is trying to make the bot slap itself, slap them
     if target.lower() == conn.nick.lower() or target.lower() == "itself": target = nick
 
-    values = {"user": target,"nick": conn.nick} #"channel": conn.chan
+    values = {"user": target,"upperuser": target.upper(),"nick": conn.nick} #"channel": conn.chan
     #if inp.split(" ")[-1].isdigit: phrase = attack[int(inp.split(" ")[-1].strip())-1]
     #else: 
     phrase = random.choice(attack)
