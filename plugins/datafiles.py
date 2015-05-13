@@ -44,7 +44,7 @@ def get_generator(_json, variables):
     return textgen.TextGenerator(data["templates"], data["parts"], variables=variables)
 
 
-def send_phrase(inp,attack,nick,conn,me,notice):
+def send_phrase(inp,attack,nick,conn,cmd,notice):
     target = inp.strip()
 
     if " " in target: 
@@ -59,7 +59,7 @@ def send_phrase(inp,attack,nick,conn,me,notice):
     #else: 
     phrase = random.choice(attack)
     # act out the message
-    me(phrase.format(**values).decode('utf-8', "ignore"))
+    cmd(phrase.format(**values).decode('utf-8', "ignore"))
     return
 
 
@@ -80,16 +80,16 @@ def lart(inp, me=None, nick=None, conn=None, notice=None):
 
 
 @hook.command
-def insult(inp, me=None, nick=None, conn=None, notice=None):
+def insult(inp, say=None, nick=None, conn=None, notice=None):
     """insult <user> -- Makes the bot insult <user>."""
-    send_phrase(inp,insults,nick,conn,me,notice)
+    send_phrase(inp,insults,nick,conn,say,notice)
     return
 
 
 @hook.command
-def flirt(inp, me=None, nick=None, conn=None, notice=None):
+def flirt(inp, say=None, nick=None, conn=None, notice=None):
     """flirt <user> -- Makes the bot flirt <user>."""
-    send_phrase(inp,flirts,nick,conn,me,notice)
+    send_phrase(inp,flirts,nick,conn,say,notice)
     return
 
 
