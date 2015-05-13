@@ -43,8 +43,7 @@ def get_generator(_json, variables):
     data = json.loads(_json)
     return textgen.TextGenerator(data["templates"], data["parts"], variables=variables)
 
-
-def send_phrase(inp,attack,nick,conn,cmd,notice,chan):
+def get_phrase(inp,attack,nick,conn,notice,chan):
     target = inp.strip()
 
     if " " in target: 
@@ -57,9 +56,14 @@ def send_phrase(inp,attack,nick,conn,cmd,notice,chan):
     values = {"user": target,"user_uppercase": target.upper(),"nick": conn.nick,"channel": chan}
     #if inp.split(" ")[-1].isdigit: phrase = attack[int(inp.split(" ")[-1].strip())-1]
     #else: 
-    phrase = random.choice(attack)
+    print(random.choice(attack))
+    return random.choice(attack).format(**values).decode('utf-8', "ignore")
+
+
+def send_phrase(inp,attack,nick,conn,cmd,notice,chan):
+    phrase = get_phrase(inp,attack,nick,conn,notice,chan)
     # act out the message
-    cmd(phrase.format(**values).decode('utf-8', "ignore"))
+    cmd(phrase)
     return
 
 
