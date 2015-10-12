@@ -119,7 +119,7 @@ def reload(init=False):
                             # output += '</module>'
                             # with open('index.txt', 'a') as file:
                                 # file.write(u'{}\n'.format(output).encode('utf-8'))
-        
+
 
 
     if changed:
@@ -165,5 +165,8 @@ def reload(init=False):
                 continue
             print '    {}:'.format(kind)
             for plug in plugs:
-                print format_plug(plug, kind=kind, lpad=6)
+                try:
+                    print format_plug(plug, kind=kind, lpad=6)
+                except UnicodeEncodeError:
+                    pass
         print
