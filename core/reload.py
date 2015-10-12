@@ -165,7 +165,6 @@ def reload(init=False):
                 continue
             print '    {}:'.format(kind)
             for plug in plugs:
-                # Printing jap characters broke BKA's bot
                 try:
                     print format_plug(plug, kind=kind, lpad=6)
                 except UnicodeEncodeError:
