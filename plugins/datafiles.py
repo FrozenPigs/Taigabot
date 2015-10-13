@@ -46,7 +46,6 @@ def get_generator(_json, variables):
 
 def send_phrase(inp,attack,nick,conn,me,notice,chan):
     target = inp.strip()
-
     if " " in target:
         notice("Invalid username!")
         return
@@ -54,7 +53,7 @@ def send_phrase(inp,attack,nick,conn,me,notice,chan):
     # if the user is trying to make the bot slap itself, slap them
     if target.lower() == conn.nick.lower() or target.lower() == "itself": target = nick
 
-    values = {"user": target,"nick": conn.nick, "channel": chan}
+    values = {"user": target,"nick": conn.nick, "channel": chan, "yiffer": nick}
     #if inp.split(" ")[-1].isdigit: phrase = attack[int(inp.split(" ")[-1].strip())-1]
     #else:
     phrase = random.choice(attack)
