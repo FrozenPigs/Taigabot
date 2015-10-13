@@ -44,19 +44,19 @@ def get_generator(_json, variables):
     return textgen.TextGenerator(data["templates"], data["parts"], variables=variables)
 
 
-def send_phrase(inp,attack,nick,conn,me,notice):
+def send_phrase(inp,attack,nick,conn,me,notice,chan):
     target = inp.strip()
 
-    if " " in target: 
+    if " " in target:
         notice("Invalid username!")
         return
 
     # if the user is trying to make the bot slap itself, slap them
     if target.lower() == conn.nick.lower() or target.lower() == "itself": target = nick
 
-    values = {"user": target,"nick": conn.nick} #"channel": conn.chan
+    values = {"user": target,"nick": conn.nick, "channel": chan}
     #if inp.split(" ")[-1].isdigit: phrase = attack[int(inp.split(" ")[-1].strip())-1]
-    #else: 
+    #else:
     phrase = random.choice(attack)
     # act out the message
     me(phrase.format(**values).decode('utf-8', "ignore"))
@@ -94,9 +94,9 @@ def flirt(inp, me=None, nick=None, conn=None, notice=None):
 
 
 @hook.command(autohelp=False)
-def yiff(inp, me=None, nick=None, conn=None, notice=None):
+def yiff(inp, me=None, nick=None, conn=None, notice=None, chan=None):
     """yiff <user> -- yiffs <user>."""
-    send_phrase(inp,yiffs,nick,conn,me,notice)
+    send_phrase(inp,yiffs,nick,conn,me,notice, chan)
     return
 
 
@@ -105,7 +105,7 @@ def lewd(inp, me=None, nick=None, conn=None, notice=None):
     """lewd <user> -- lewd <user>."""
     if len(inp) == 0:
         return 'ヽ(◔ ◡ ◔)ノ.･ﾟ*｡･+☆LEWD☆'.decode('UTF-8')
-    else:    
+    else:
         send_phrase(inp,lewds,nick,conn,me,notice)
     return
 
@@ -186,7 +186,7 @@ def get_filename(action,notice):
     elif 'troll' in action: action = 'troll'
     elif 'gain' in action: action = 'gainz'
     elif 'nsfw' in action: action = 'nsfw'
-    else: 
+    else:
         notice('Invalid action')
         return
     return action
@@ -210,7 +210,7 @@ def process_text(inp,name,notice):
     # if not inp or inp is int:
     if 'add' in inp:
         add(inp,name,notice)
-    else:    
+    else:
         with open("plugins/data/{}.txt".format(name)) as file:
             lines = [line.strip() for line in file.readlines() if not line.startswith("//")]
         linecount = len(lines) - 1
@@ -218,7 +218,7 @@ def process_text(inp,name,notice):
         if inp and inp.isdigit(): num = int(inp) - 1
         else: num = randint(0,linecount)
 
-        if num > linecount or num < 0: 
+        if num > linecount or num < 0:
             return "Theres nothing there baka"
 
         reply='\x02[{}/{}]\x02 {}'.format(num+1,linecount+1,lines[num]).decode('utf-8')
@@ -245,7 +245,7 @@ def process_text(inp,name,notice):
 
 #         if action.isdigit(): num = int(action) - 1
 #         elif text.isdigit(): num = int(text) - 1
-        
+
 #         elif 'add' in action:
 #             if 'http:' in text:
 #                 with open('plugins/data/{}.txt'.format(name), 'a') as file:
@@ -253,7 +253,7 @@ def process_text(inp,name,notice):
 #                 notice('{} added.'.format(action))
 #                 file.close()
 #                 return
-#             else: 
+#             else:
 #                 notice('No image to add.')
 #                 return
 #         elif 'del' in action:
@@ -264,14 +264,14 @@ def process_text(inp,name,notice):
 #                 lines = lines.replace(lines[num],'')
 #             print "deleting"
 
-        
+
 #     with open("plugins/data/{}.txt".format(name)) as file:
 #         lines = [line.strip() for line in file.readlines() if not line.startswith("//")]
 #     linecount = len(lines) - 1
 #     if num < 0: num = randint(0,linecount)
 #     reply='\x02[{}/{}]\x02 {}'.format(num+1,linecount+1,lines[num]).decode('utf-8')
 
-    
+
 #     file.close()
 #     lines =[]
 #     return reply
@@ -334,7 +334,7 @@ def bender(inp,say=None):
     say(random.choice(benders))
     benders = []
     return
-    
+
 @hook.command('gains', autohelp=False)
 @hook.command(autohelp=False)
 def gainz(inp, say=None,notice=None):
