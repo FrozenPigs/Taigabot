@@ -52,7 +52,7 @@ def gadmin(inp, notice=None, bot=None, config=None, db=None):
 
 @hook.command(permissions=["op_lock", "op"], adminonly=True, autohelp=False)
 def gignored(inp, notice=None, bot=None, chan=None, db=None):
-    """ignored [channel]-- Lists ignored channels/nicks/hosts."""    
+    """ignored [channel]-- Lists ignored channels/nicks/hosts."""
     if bot.config["ignored"]:
         notice(u"Global ignores are: %s." % ", ".join(bot.config["ignored"]))
     else:
@@ -65,7 +65,7 @@ def gignore(inp, notice=None, bot=None, chan=None, db=None):
     """gignore <nick|host> -- Makes the bot ignore nick|host."""
     ignorelist = bot.config["ignored"]
     targets = inp.split()
-    for target in targets:  
+    for target in targets:
         target = user.get_hostmask(target,db)
         if (user.is_globaladmin(target,db,bot)):
             notice(u"[Global]: {} is an admin and cannot be ignored.".format(inp))
@@ -93,7 +93,7 @@ def gunignore(inp, notice=None, bot=None, chan=None, db=None):
     """unignore [channel] <nick|host> -- Makes the bot listen to <nick|host>."""
     ignorelist = bot.config["ignored"]
     targets = inp.split()
-    for target in targets:  
+    for target in targets:
         target = user.get_hostmask(target,db)
         if ignorelist and target in ignorelist:
             bot.config["ignored"].remove(target)
@@ -256,7 +256,7 @@ def me(inp, conn=None, chan=None):
         message = message[:-1]
         out = u"PRIVMSG {} :\x01ACTION {}\x01".format(chan, message)
     conn.send(out)
-     
+
 
 @hook.command(channeladminonly=True)
 def set(inp, conn=None, chan=None, db=None, notice=None):
@@ -288,17 +288,26 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
                 'battlestation' in field or\
                 'birthday' in field or\
                 'waifu' in field or\
+                'imouto' in field or\
+                'husbando' in field or\
+                'daughteru' in field or\
+                'horoscope' in field or\
+                'homescreen' in field or\
+                'myanime' in field or\
+                'mymanga' in field or\
+                'selfie' in field or\
+                'steam' in field or\
                 'greeting' in field or\
                 'snapchat' in field:
                 #if type(value) is list: value = value[0]
-                if value.lower() is 'none': database.set(db,'users',field, '','nick',nick) 
-                else: database.set(db,'users',field, value,'nick',nick) 
+                if value.lower() is 'none': database.set(db,'users',field, '','nick',nick)
+                else: database.set(db,'users',field, value,'nick',nick)
                 notice(u"Set {} for {} to {}.".format(field, nick, value))
                 return
 
     notice(u"Could not set {}.".format(field))
     return
-    
+
 
 @hook.command(adminonly=True, autohelp=False)
 def db(inp,db=None):
@@ -308,7 +317,7 @@ def db(inp,db=None):
         result = db.execute("create table if not exists users(nick primary key, host, location, greeting, lastfm, fines, battlestation, desktop, horoscope, version)")
         db.commit()
         return result
-    elif "addcol" in action: 
+    elif "addcol" in action:
         table = split[1]
         col = split[2]
         if table is not None and col is not None:
