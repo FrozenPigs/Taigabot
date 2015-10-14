@@ -1,5 +1,5 @@
 # Written by Scaevolus 2010
-from util import hook, http, text, execute
+from util import hook, http, text, execute, database
 import string
 import sqlite3
 import re
@@ -115,53 +115,58 @@ def info(inp, notice=None, db=None):
 # @hook.regex(r'^(\b\S+\b)\?$')
 @hook.regex(r'^\#(\b\S+\b)')
 @hook.regex(r'^\? ?(.+)')
-def hashtag(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
+def hashtag(inp, say=None, db=None, bot=None, me=None, conn=None, input=None, chan=None):
     "<word>? -- Shows what data is associated with <word>."
-    try:
-        prefix_on = bot.config["plugins"]["factoids"].get("prefix", False)
-    except KeyError:
-        prefix_on = False
-
-    db_init(db)
-
-    # split up the input
+    disabledhashes = database.get(db,'channels','disabledhashes','chan',chan)
     split = inp.group(1).strip().split(" ")
-    factoid_id = split[0]
-
-    if len(split) >= 1:
-        arguments = " ".join(split[1:])
+    if split[0] in disabledhashes:
+        pass
     else:
-        arguments = ""
+        try:
+            prefix_on = bot.config["plugins"]["factoids"].get("prefix", False)
+        except KeyError:
+            prefix_on = False
 
-    data = get_memory(db, factoid_id)
+        db_init(db)
 
-    if data:
-        # factoid preprocessors
-        if data.startswith("<py>"):
-            code = data[4:].strip()
-            variables = 'input="""%s"""; nick="%s"; chan="%s"; bot_nick="%s";' % (arguments.replace('"', '\\"'),
-                         input.nick, input.chan, input.conn.nick)
-            result = execute.eval_py(variables + code)
-        elif data.startswith("<url>"):
-            url = data[5:].strip()
-            try:
-                result = http.get(url)
-            except http.HttpError:
-                result = "Could not fetch URL."
+        # split up the input
+        split = inp.group(1).strip().split(" ")
+        factoid_id = split[0]
+
+        if len(split) >= 1:
+            arguments = " ".join(split[1:])
         else:
-            result = data
+            arguments = ""
 
-        # factoid postprocessors
-        result = text.multiword_replace(result, shortcodes)
+        data = get_memory(db, factoid_id)
 
-        if result.startswith("<act>"):
-            result = result[5:].strip()
-            me(result)
-        else:
-            if prefix_on:
-                say("\x02[%s]:\x02 %s" % (factoid_id, result))
+        if data:
+            # factoid preprocessors
+            if data.startswith("<py>"):
+                code = data[4:].strip()
+                variables = 'input="""%s"""; nick="%s"; chan="%s"; bot_nick="%s";' % (arguments.replace('"', '\\"'),
+                            input.nick, input.chan, input.conn.nick)
+                result = execute.eval_py(variables + code)
+            elif data.startswith("<url>"):
+                url = data[5:].strip()
+                try:
+                    result = http.get(url)
+                except http.HttpError:
+                    result = "Could not fetch URL."
             else:
-                say("\x02%s\x02 %s" % (factoid_id, result))
+                result = data
+
+            # factoid postprocessors
+            result = text.multiword_replace(result, shortcodes)
+
+            if result.startswith("<act>"):
+                result = result[5:].strip()
+                me(result)
+            else:
+                if prefix_on:
+                    say("\x02[%s]:\x02 %s" % (factoid_id, result))
+                else:
+                    say("\x02%s\x02 %s" % (factoid_id, result))
 
 @hook.command(r'keys')
 @hook.command(r'key')
