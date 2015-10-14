@@ -115,16 +115,16 @@ def info(inp, notice=None, db=None):
 # @hook.regex(r'^(\b\S+\b)\?$')
 @hook.regex(r'^\#(\b\S+\b)')
 @hook.regex(r'^\? ?(.+)')
-def hashtag(inp, say=None, db=None, bot=None, me=None, conn=None, input=None, chan=None):
+def hashtag(inp, say=None, db=None, bot=None, me=None, conn=None, input=None, chan=None, notice=None):
     "<word>? -- Shows what data is associated with <word>."
     disabledhashes = database.get(db,'channels','disabledhashes','chan',chan)
     split = inp.group(1).strip().split(" ")
-    print chan[0]
 
     try:
         if chan[0] != '#':
             pass
         elif split[0] in disabledhashes:
+            notice('{} is disabled.'.format(split[0]))
             return
     except TypeError:
         pass
