@@ -209,12 +209,13 @@ def disable(inp, notice=None, bot=None, chan=None, db=None):
 
     disabledcommands = database.get(db,'channels','disabled','chan',chan)
     targets = inp.split()
-    print targets
     for target in targets:
         if disabledcommands and target in disabledcommands:
             notice(u"[{}]: {} is already disabled.".format(chan,target))
         else:
-            if 'disable' in target or 'enable' in target:
+            if 'disable' in target or 'enable' in target or\
+                    'core_admin_channel' in target or\
+                    'core_admin_global' in target:
                  notice(u"[{}]: {} cannot be disabled.".format(chan,target))
             else:
                 disabledcommands = '{} {}'.format(target,disabledcommands)
