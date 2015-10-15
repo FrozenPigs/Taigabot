@@ -209,6 +209,7 @@ def disable(inp, notice=None, bot=None, chan=None, db=None):
 
     disabledcommands = database.get(db,'channels','disabled','chan',chan)
     targets = inp.split()
+    print targets
     for target in targets:
         if disabledcommands and target in disabledcommands:
             notice(u"[{}]: {} is already disabled.".format(chan,target))
@@ -244,8 +245,8 @@ def enable(inp, notice=None, bot=None, chan=None, db=None):
 
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 def disablehash(inp, notice=None, bot=None, chan=None, db=None):
-    """disable [#channel] <commands> -- Disables commands for a channel.
-    (you can disable multiple commands at once)"""
+    """disablehash [#channel] <hashtah> -- Disables hashtah for a channel.
+    (you can disable multiple hastags at once, don't put # before the hashtag)"""
 
     disabledhashes = database.get(db,'channels','disabledhashes','chan',chan)
     targets = inp.split()
@@ -263,7 +264,7 @@ def disablehash(inp, notice=None, bot=None, chan=None, db=None):
 
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 def disabledhashes(inp, notice=None, bot=None, chan=None, db=None):
-    """disabled [#channel] -- Lists disabled commands/."""
+    """disabledhashes [#channel] -- Lists disabled hashtags."""
     disabledhashes = database.get(db,'channels','disabledhashes','chan',chan)
     if disabledhashes: notice(u"[{}]: Disabled hashtags: {}".format(chan,disabledhashes))
     else: notice(u"[{}]: No hashtags are currently disabled.".format(chan))
@@ -271,8 +272,8 @@ def disabledhashes(inp, notice=None, bot=None, chan=None, db=None):
 
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 def enablehash(inp, notice=None, bot=None, chan=None, db=None):
-    """enable [#channel] <commands|all> -- Enables commands for a channel.
-    (you can enable multiple commands at once)"""
+    """enablehash [#channel] <hashtag|all> -- Enables hashtags for a channel.
+    (you can enable multiple hashtags at once, don't put # before the hashtag)"""
 
     disabledhashes = database.get(db,'channels','disabledhashes','chan',chan)
     targets = inp.split()
