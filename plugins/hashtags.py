@@ -1,5 +1,5 @@
 # Written by Scaevolus 2010
-from util import hook, http, text, execute
+from util import hook, http, text, execute, database
 import string
 import sqlite3
 import re
@@ -115,8 +115,20 @@ def info(inp, notice=None, db=None):
 # @hook.regex(r'^(\b\S+\b)\?$')
 @hook.regex(r'^\#(\b\S+\b)')
 @hook.regex(r'^\? ?(.+)')
-def hashtag(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
+def hashtag(inp, say=None, db=None, bot=None, me=None, conn=None, input=None, chan=None, notice=None):
     "<word>? -- Shows what data is associated with <word>."
+    disabledhashes = database.get(db,'channels','disabledhashes','chan',chan)
+    split = inp.group(1).strip().split(" ")
+
+    try:
+        if chan[0] != '#':
+            pass
+        elif split[0] in disabledhashes:
+            notice('{} is disabled.'.format(split[0]))
+            return
+    except TypeError:
+        pass
+
     try:
         prefix_on = bot.config["plugins"]["factoids"].get("prefix", False)
     except KeyError:
@@ -140,7 +152,7 @@ def hashtag(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
         if data.startswith("<py>"):
             code = data[4:].strip()
             variables = 'input="""%s"""; nick="%s"; chan="%s"; bot_nick="%s";' % (arguments.replace('"', '\\"'),
-                         input.nick, input.chan, input.conn.nick)
+                        input.nick, input.chan, input.conn.nick)
             result = execute.eval_py(variables + code)
         elif data.startswith("<url>"):
             url = data[5:].strip()
