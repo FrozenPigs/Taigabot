@@ -470,7 +470,7 @@ def mute(inp, conn=None, chan=None, notice=None):
 
 @hook.command(permissions=["op_mute", "op"], channeladminonly=True, autohelp=False)
 def unmute(inp, conn=None, chan=None, notice=None):
-    """mute [channel] -- Makes the bot mute a channel..
+    """unmute [channel] -- Makes the bot unmute a channel..
     If [channel] is blank the bot will mute
     the channel the command was used in."""
     mode_cmd_channel("-m", "unmute", inp, chan, conn, notice)
