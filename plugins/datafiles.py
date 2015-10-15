@@ -74,21 +74,21 @@ def eightball(input, me=None):
 @hook.command
 def lart(inp, me=None, nick=None, conn=None, notice=None, chan=None):
     """lart <user> -- LARTs <user>."""
-    send_phrase(inp,yiffs,nick,conn,me,notice, chan)
+    send_phrase(inp,larts,nick,conn,me,notice, chan)
     return
 
 
 @hook.command
 def insult(inp, me=None, nick=None, conn=None, notice=None, chan=None):
     """insult <user> -- Makes the bot insult <user>."""
-    send_phrase(inp,yiffs,nick,conn,me,notice, chan)
+    send_phrase(inp,insults,nick,conn,me,notice, chan)
     return
 
 
 @hook.command
 def flirt(inp, me=None, nick=None, conn=None, notice=None, chan=None):
     """flirt <user> -- Makes the bot flirt <user>."""
-    send_phrase(inp,yiffs,nick,conn,me,notice, chan)
+    send_phrase(inp,flirts,nick,conn,me,notice, chan)
     return
 
 
@@ -105,7 +105,7 @@ def lewd(inp, me=None, nick=None, conn=None, notice=None, chan=None):
     if len(inp) == 0:
         return 'ヽ(◔ ◡ ◔)ノ.･ﾟ*｡･+☆LEWD☆'.decode('UTF-8')
     else:
-        send_phrase(inp,yiffs,nick,conn,me,notice, chan)
+        send_phrase(inp,lewds,nick,conn,me,notice, chan)
     return
 
 
