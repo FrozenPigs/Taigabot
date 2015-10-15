@@ -326,7 +326,7 @@ def db(inp,db=None):
             return "Added Column"
 
 
-@hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
+@hook.command(adminonly=True, autohelp=False)
 def genable(inp, notice=None, bot=None, chan=None, db=None):
     """genable [#channel] <commands|all> -- Enables commands for a channel.
     (you can enable multiple commands at once)"""
