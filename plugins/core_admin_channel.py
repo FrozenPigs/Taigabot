@@ -140,6 +140,8 @@ def autoop(inp, notice=None, bot=None, chan=None, db=None):
                 notice(u"[{}]: {} is no longer an auto op.".format(chan,nick))
             else:
                 notice(u"[{}]: {} is not an auto op.".format(chan,nick))
+    elif 'list' in command:
+        notice(u'{}'.format(autoops))
     return
 
 
