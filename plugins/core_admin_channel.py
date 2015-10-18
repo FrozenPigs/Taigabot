@@ -140,6 +140,8 @@ def autoop(inp, notice=None, bot=None, chan=None, db=None):
                 notice(u"[{}]: {} is no longer an auto op.".format(chan,nick))
             else:
                 notice(u"[{}]: {} is not an auto op.".format(chan,nick))
+    elif 'list' in command:
+        notice(u'[{}]: {}'.format(chan, autoops))
     return
 
 
@@ -209,12 +211,13 @@ def disable(inp, notice=None, bot=None, chan=None, db=None):
 
     disabledcommands = database.get(db,'channels','disabled','chan',chan)
     targets = inp.split()
-    print targets
     for target in targets:
         if disabledcommands and target in disabledcommands:
             notice(u"[{}]: {} is already disabled.".format(chan,target))
         else:
-            if 'disable' in target or 'enable' in target:
+            if 'disable' in target or 'enable' in target or\
+                    'core_admin_channel' in target or\
+                    'core_admin_global' in target:
                  notice(u"[{}]: {} cannot be disabled.".format(chan,target))
             else:
                 disabledcommands = '{} {}'.format(target,disabledcommands)
@@ -459,7 +462,7 @@ def mute(inp, conn=None, chan=None, notice=None):
 
 @hook.command(permissions=["op_mute", "op"], channeladminonly=True, autohelp=False)
 def unmute(inp, conn=None, chan=None, notice=None):
-    """mute [channel] -- Makes the bot mute a channel..
+    """unmute [channel] -- Makes the bot unmute a channel..
     If [channel] is blank the bot will mute
     the channel the command was used in."""
     mode_cmd_channel("-m", "unmute", inp, chan, conn, notice)

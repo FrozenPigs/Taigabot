@@ -324,3 +324,24 @@ def db(inp,db=None):
             db.execute("ALTER TABLE {} ADD COLUMN {}".format(table,col))
             db.commit
             return "Added Column"
+
+
+@hook.command(adminonly=True, autohelp=False)
+def genable(inp, notice=None, bot=None, chan=None, db=None):
+    """genable [#channel] <commands|all> -- Enables commands for a channel.
+    (you can enable multiple commands at once)"""
+
+    disabledcommands = database.get(db,'channels','disabled','chan',chan)
+    targets = inp.split()
+    if 'all' in targets or '*' in targets:
+        database.set(db,'channels','disabled','','chan',chan)
+        notice(u"[{}]: All commands are now enabled.".format(chan))
+    else:
+        for target in targets:
+            if disabledcommands and target in disabledcommands:
+                disabledcommands = " ".join(disabledcommands.replace(target,'').strip().split())
+                database.set(db,'channels','disabled',disabledcommands,'chan',chan)
+                notice(u"[{}]: {} is now enabled.".format(chan,target))
+            else:
+                notice(u"[{}]: {} is not disabled.".format(chan,target))
+    return
