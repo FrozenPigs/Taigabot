@@ -141,7 +141,7 @@ def autoop(inp, notice=None, bot=None, chan=None, db=None):
             else:
                 notice(u"[{}]: {} is not an auto op.".format(chan,nick))
     elif 'list' in command:
-        notice(u'{}'.format(autoops))
+        notice(u'[{}]: {}'.format(chan, autoops))
     return
 
 
