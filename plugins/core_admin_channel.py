@@ -440,16 +440,6 @@ def mode_cmd_channel(mode, text, inp, chan, conn, notice):
         notice(u"Attempting to {} {}...".format(text, channel))
         conn.send(u"MODE {} {}".format(channel, mode))
 
-@hook.command
-def invite(inp, conn=None, chan=None, notice=None):
-    """invite [channel] <user> -- Makes the bot invite <user> to [channel].
-    If [channel] is blank the bot will invite <user> to
-    the channel the command was used in."""
-    users = inp.split()
-    for user in users:
-        conn.send(u"INVITE {} {}".format(user,chan))
-        notice(u"Inviting {} to {}...".format(user, chan))
-
 
 @hook.command(permissions=["op_topic", "op"], channeladminonly=True)
 def topic(inp, conn=None, chan=None):
@@ -655,6 +645,16 @@ def devoice(inp, conn=None, chan=None, notice=None):
     mode_cmd("-v", "devoice", inp, chan, conn, notice)
     return
 
+
+@hook.command(permissions=["op_voice", "op"], channeladminonly=True)
+def invite(inp, conn=None, chan=None, notice=None, ):
+    """invite [channel] <user> -- Makes the bot invite <user> to [channel].
+    If [channel] is blank the bot will invite <user> to
+    the channel the command was used in."""
+    users = inp.split()
+    for user in users:
+        conn.send(u"INVITE {} {}".format(user,chan))
+        notice(u"Inviting {} to {}...".format(user, chan))
 
 # @hook.command(permissions=["op_quiet", "op"], channeladminonly=True)
 # def quiet(inp, conn=None, chan=None, notice=None):
