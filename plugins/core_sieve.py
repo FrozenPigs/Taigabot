@@ -94,6 +94,11 @@ def sieve_suite(bot, input, func, kind, args):
     # ignore plugins disabled in the config
     # print input
     if fn and fn.group(1).lower() in bot.config.get('disabled_plugins', []): return None
+
+    if fn and fn.group(1).lower() in bot.config.get('disabled_commands', []): 
+        print("[{}]: {} is disabled.".format(input.chan,fn.group(1)))
+        return None
+
     #print 'fn: {} | fn.group: {}'.format(fn,fn.group(1))
     # ignore plugins disabled in the channel
     disabled_commands = database.get(db,'channels','disabled','chan',chan)

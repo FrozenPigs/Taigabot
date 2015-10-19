@@ -47,6 +47,57 @@ def gadmin(inp, notice=None, bot=None, config=None, db=None):
                 notice(u"%s is not a global admin." % target)
         return
 
+
+
+#################################
+### GDisable/GEnable Commands ###
+
+@hook.command(permissions=["op_lock", "op"], adminonly=True, autohelp=False)
+def gdisabled(inp, notice=None, bot=None, chan=None, db=None):
+    """gignored -- Lists globally disabled commands."""
+    if bot.config["disabled_commands"]:
+        notice(u"Globally disabled commands are: %s." % ", ".join(bot.config["disabled_commands"]))
+    else:
+        notice(u"There are no globally disabled commands.")
+    return
+
+
+@hook.command(permissions=["op_lock", "op"], adminonly=True)
+def gdisable(inp, notice=None, bot=None, chan=None, db=None):
+    """gdisable <commands> -- Makes the bot globally disable a command."""
+    disabledcommands = bot.config["disabled_commands"]
+    targets = inp.split()
+    for target in targets:
+        if "gdisable" in target or "genable" in target: 
+            notice(u"[Global]: {} cannot be disabled.".format(target))
+        elif disabledcommands and target in disabledcommands:
+            notice(u"[Global]: {} is already disabled.".format(target))
+        else:
+            bot.config["disabled_commands"].append(target)
+            bot.config["disabled_commands"].sort()
+            json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+            notice(u"[Global]: {} has been disabled.".format(target))
+    return
+
+
+@hook.command(permissions=["op_lock", "op"], adminonly=True)
+def genable(inp, notice=None, bot=None, chan=None, db=None):
+    """genable <commands] -- Enables currently globally disabled commands"""
+    disabledcommands = bot.config["disabled_commands"]
+    targets = inp.split()
+    for target in targets:
+        if disabledcommands and target in disabledcommands:
+            bot.config["disabled_commands"].remove(target)
+            bot.config["disabled_commands"].sort()
+            json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+            notice(u"[Global]: {} has been enabled.".format(target))
+        else:
+            notice(u"[Global]: {} is not disabled.".format(target))
+    return
+
+# if 'all' in targets or '*' in targets:
+
+
 ################################
 ### Ignore/Unignore Commands ###
 
@@ -141,6 +192,7 @@ def clearlogs(inp, input=None):
 @hook.command(autohelp=False, permissions=["botcontrol"], adminonly=True)
 def join(inp, conn=None, notice=None, bot=None):
     """join <channel> -- Joins <channel>."""
+    if "0,0" in inp: return
     for target in inp.split(" "):
         if not target.startswith("#"):
             target = "#{}".format(target)
@@ -324,24 +376,3 @@ def db(inp,db=None):
             db.execute("ALTER TABLE {} ADD COLUMN {}".format(table,col))
             db.commit
             return "Added Column"
-
-
-@hook.command(adminonly=True, autohelp=False)
-def genable(inp, notice=None, bot=None, chan=None, db=None):
-    """genable [#channel] <commands|all> -- Enables commands for a channel.
-    (you can enable multiple commands at once)"""
-
-    disabledcommands = database.get(db,'channels','disabled','chan',chan)
-    targets = inp.split()
-    if 'all' in targets or '*' in targets:
-        database.set(db,'channels','disabled','','chan',chan)
-        notice(u"[{}]: All commands are now enabled.".format(chan))
-    else:
-        for target in targets:
-            if disabledcommands and target in disabledcommands:
-                disabledcommands = " ".join(disabledcommands.replace(target,'').strip().split())
-                database.set(db,'channels','disabled',disabledcommands,'chan',chan)
-                notice(u"[{}]: {} is now enabled.".format(chan,target))
-            else:
-                notice(u"[{}]: {} is not disabled.".format(chan,target))
-    return
