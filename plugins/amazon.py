@@ -37,15 +37,15 @@ def amazon(inp):
     results = http.get_html(href)
     # title = results.xpath('//title/text()')[0]
     try:
-        title = results.xpath("//div[@id='result_0']/h3/a/span/text()")[0]
-        url = results.xpath("//div[@id='result_0']/h3/a/@href")[0]
-        price = results.xpath("//div[@id='result_0']//li[@class='newp']/div/a/span/text()")[0]
-        rating = results.xpath("//div[@id='result_0']//span[@class='asinReviewsSummary']/a/@alt")[0]
+        title = results.xpath("//li[@id='result_0']/div/div/div/div/div/a/h2/text()")[0]
+        url = results.xpath("//li[@id='result_0']/div/div/div/div/div/a/@href")[0]
+        price = results.xpath("//li[@id='result_0']/div/div/div/div/div/div/div/a/span/text()")[0]
+        rating = results.xpath("//li[@id='result_0']/div/div/div/div/div/div/div/span/span/a/i/span/text()")[0]
     except:
-        title = results.xpath("//div[@id='result_1']/h3/a/span/text()")[0]
-        url = results.xpath("//div[@id='result_1']/h3/a/@href")[0]
-        price = results.xpath("//div[@id='result_1']//li[@class='newp']/div/a/span/text()")[0]
-        rating = results.xpath("//div[@id='result_1']//span[@class='asinReviewsSummary']/a/@alt")[0]
+        title = results.xpath("//li[@id='result_1']/div/div/div/div/div/a/h2/text()")[0]
+        url = results.xpath("//li[@id='result_1']/div/div/div/div/div/a/@href")[0]
+        price = results.xpath("//li[@id='result_1']/div/div/div/div/div/div/div/a/span/text()")[0]
+        rating = results.xpath("//li[@id='result_1']/div/div/div/div/div/div/div/span/span/a/i/span/text()")[0]
 
     azid = re.match(r'^.*\/dp\/([\w]+)\/.*',url).group(1)
 

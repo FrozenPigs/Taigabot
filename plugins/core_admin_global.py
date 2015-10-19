@@ -68,7 +68,7 @@ def gdisable(inp, notice=None, bot=None, chan=None, db=None):
     disabledcommands = bot.config["disabled_commands"]
     targets = inp.split()
     for target in targets:
-        if "gdisable" in target or "genable" in target: 
+        if "gdisable" in target or "genable" in target or "core_admin" in target: 
             notice(u"[Global]: {} cannot be disabled.".format(target))
         elif disabledcommands and target in disabledcommands:
             notice(u"[Global]: {} is already disabled.".format(target))

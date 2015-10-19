@@ -198,9 +198,11 @@ def unignore(inp, notice=None, bot=None, chan=None, db=None):
 def disabled(inp, notice=None, bot=None, chan=None, db=None):
     """disabled [#channel] -- Lists disabled commands/."""
     disabledcommands = database.get(db,'channels','disabled','chan',chan)
-    if disabledcommands: notice(u"[{}]: Disabled commands: {}".format(chan,disabledcommands))
+    disabledglobalcommands = " ".join(bot.config["disabled_commands"])
+    if disabledcommands: notice(u"[{}]: Disabled commands: {} {}".format(chan,disabledcommands,disabledglobalcommands))
     else: notice(u"[{}]: No commands are currently disabled.".format(chan))
     return
+
 
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 def disable(inp, notice=None, bot=None, chan=None, db=None):
@@ -209,18 +211,18 @@ def disable(inp, notice=None, bot=None, chan=None, db=None):
 
     disabledcommands = database.get(db,'channels','disabled','chan',chan)
     targets = inp.split()
-    print targets
     for target in targets:
         if disabledcommands and target in disabledcommands:
             notice(u"[{}]: {} is already disabled.".format(chan,target))
         else:
-            if 'disable' in target or 'enable' in target:
+            if 'disable' in target or 'enable' in target or 'core_admin' in target:
                  notice(u"[{}]: {} cannot be disabled.".format(chan,target))
             else:
                 disabledcommands = '{} {}'.format(target,disabledcommands)
                 database.set(db,'channels','disabled',disabledcommands,'chan',chan)
                 notice(u"[{}]: {} has been disabled.".format(chan,target))
     return
+
 
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 def enable(inp, notice=None, bot=None, chan=None, db=None):
@@ -239,7 +241,10 @@ def enable(inp, notice=None, bot=None, chan=None, db=None):
                 database.set(db,'channels','disabled',disabledcommands,'chan',chan)
                 notice(u"[{}]: {} is now enabled.".format(chan,target))
             else:
-                notice(u"[{}]: {} is not disabled.".format(chan,target))
+                if target in " ".join(bot.config["disabled_commands"]):
+                    notice(u"[{}]: {} is globally disabled. Use .genable {} to enable.".format(chan,target,target))
+                else:
+                    notice(u"[{}]: {} is not disabled.".format(chan,target))
     return
 
 
