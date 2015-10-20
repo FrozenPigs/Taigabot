@@ -263,7 +263,7 @@ def snapchat(inp, nick=None, conn=None, chan=None,db=None, notice=None):
 @hook.command('soc', autohelp=False)
 @hook.command(autohelp=False)
 def socialmedia(inp, nick=None, conn=None, chan=None,db=None, notice=None):
-    "socialmedia <socialmedianames | @ person> -- Shows a users social medias name."
+    "socialmedia <socialmedianames | @ person> -- Shows a users social medias names."
 
     if not inp or '@' in inp:
         if '@' in inp: nick = inp.split('@')[1].strip()
