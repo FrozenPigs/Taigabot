@@ -350,6 +350,7 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
                 'selfie' in field or\
                 'steam' in field or\
                 'greeting' in field or\
+                'socialmedias' in field or\
                 'snapchat' in field:
                 #if type(value) is list: value = value[0]
                 if value.lower() is 'none': database.set(db,'users',field, '','nick',nick)
