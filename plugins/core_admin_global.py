@@ -68,7 +68,7 @@ def gdisable(inp, notice=None, bot=None, chan=None, db=None):
     disabledcommands = bot.config["disabled_commands"]
     targets = inp.split()
     for target in targets:
-        if "gdisable" in target or "genable" in target or "core_admin" in target: 
+        if "gdisable" in target or "genable" in target or "core_admin" in target:
             notice(u"[Global]: {} cannot be disabled.".format(target))
         elif disabledcommands and target in disabledcommands:
             notice(u"[Global]: {} is already disabled.".format(target))
@@ -310,7 +310,7 @@ def me(inp, conn=None, chan=None):
     conn.send(out)
 
 
-@hook.command(channeladminonly=True)
+@hook.command(adminonly=True)
 def set(inp, conn=None, chan=None, db=None, notice=None):
     "set <field> <nick> <value> -- Admin override for setting database values. " \
     "Example: set location infinity 80210 - " \
