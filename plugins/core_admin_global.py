@@ -38,6 +38,7 @@ def gadmin(inp, notice=None, bot=None, config=None, db=None):
         return
     elif 'del' in command:
         for target in targets:
+            target = user.get_hostmask(target, db)
             if target in bot.config["admins"]:
                 notice(u"%s is no longer a global admin." % target)
                 bot.config["admins"].remove(target)
