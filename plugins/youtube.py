@@ -24,7 +24,12 @@ def get_video_description(key,video_id):
 
     data = request['items'][0]
 
-    out = u'\x02{}\x02'.format(data['snippet']['title'])
+    title = data['snippet']['title'].strip()
+    title = title.split(' ')
+    title = filter(None, title)
+    title = map(lambda s: s.strip(), title)
+    title = ' '.join(title)
+    out = u'\x02{}\x02'.format(title)
 
     try:
         data['contentDetails'].get('duration')
