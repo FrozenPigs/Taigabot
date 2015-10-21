@@ -1,6 +1,7 @@
 from util import hook, http, database, formatting
 import time
 from util.text import capitalize_first
+from datetime import datetime
 
 @hook.command('t', autohelp=False)
 @hook.command('time', autohelp=False)
@@ -8,7 +9,7 @@ def timefunction(inp, nick="", reply=None, db=None, notice=None):
     "time [location] [dontsave] | [@ nick] -- Gets time for <location>."
 
     save = True
-    
+
     if '@' in inp:
         nick = inp.split('@')[1].strip()
         location = database.get(db,'users','location','nick',nick)
@@ -22,22 +23,31 @@ def timefunction(inp, nick="", reply=None, db=None, notice=None):
         else:
             # if not location: save = True
             if " dontsave" in inp: save = False
-            location = inp.split()[0]
+            location = inp
 
     # now, to get the actual time
     try:
-        url = "https://www.google.com/search?q=time+in+%s" % location.replace(' ','+').replace(' save','')
+        url = "https://www.time.is/{}".format(location.replace(' ','_').replace(' save',''))
         html = http.get_html(url)
-        prefix = html.xpath("//div[contains(@class,'vk_c vk_gy')]//span[@class='vk_gy vk_sh']/text()")[0].strip()
-        curtime = html.xpath("//div[contains(@class,'vk_c vk_gy')]//div[@class='vk_bk vk_ans']/text()")[0].strip()
-        day = html.xpath("//div[contains(@class,'vk_c vk_gy')]//div[@class='vk_gy vk_sh']/text()")[0].strip()
-        date = html.xpath("//div[contains(@class,'vk_c vk_gy')]//div[@class='vk_gy vk_sh']/span/text()")[0].strip()
+
+
+        prefix = html.xpath("id('msgdiv')/h1/text()")[0].strip()[:-4]
+
+        time = html.xpath("id('twd')/text()")[0].strip()[:-3]
+        d = datetime.strptime(time, "%H:%M")
+        curtime = d.strftime("%I:%M %p")
+
+        date = html.xpath("id('dd')/text()")[0].strip().split(" ")
+        date = date[:-2]
+        date = " ".join(date)
+        date = date[:-1]
+
     except IndexError:
         return "Could not get time for that location."
 
     if location and save: database.set(db,'users','location',location,'nick',nick)
 
-    return formatting.output('Time', [u'{} is \x02{}\x02 [{} {}]'.format(prefix, curtime, day, date)])
+    return formatting.output('Time', [u'{} is \x02{}\x02 [{}]'.format(prefix, curtime, date)])
 
 
 
@@ -46,7 +56,7 @@ def timefunction2(inp, nick="", reply=None, db=None, notice=None):
     "time [location] [dontsave] | [@ nick] -- Gets time for <location>."
 
     save = True
-    
+
     if '@' in inp:
         nick = inp.split('@')[1].strip()
         location = database.get(db,'users','location','nick',nick)

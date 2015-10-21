@@ -38,6 +38,7 @@ def gadmin(inp, notice=None, bot=None, config=None, db=None):
         return
     elif 'del' in command:
         for target in targets:
+            target = user.get_hostmask(target, db)
             if target in bot.config["admins"]:
                 notice(u"%s is no longer a global admin." % target)
                 bot.config["admins"].remove(target)
@@ -68,7 +69,7 @@ def gdisable(inp, notice=None, bot=None, chan=None, db=None):
     disabledcommands = bot.config["disabled_commands"]
     targets = inp.split()
     for target in targets:
-        if "gdisable" in target or "genable" in target or "core_admin" in target: 
+        if "gdisable" in target or "genable" in target or "core_admin" in target:
             notice(u"[Global]: {} cannot be disabled.".format(target))
         elif disabledcommands and target in disabledcommands:
             notice(u"[Global]: {} is already disabled.".format(target))
@@ -310,7 +311,7 @@ def me(inp, conn=None, chan=None):
     conn.send(out)
 
 
-@hook.command(channeladminonly=True)
+@hook.command(adminonly=True)
 def set(inp, conn=None, chan=None, db=None, notice=None):
     "set <field> <nick> <value> -- Admin override for setting database values. " \
     "Example: set location infinity 80210 - " \
@@ -350,6 +351,7 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
                 'selfie' in field or\
                 'steam' in field or\
                 'greeting' in field or\
+                'socialmedias' in field or\
                 'snapchat' in field:
                 #if type(value) is list: value = value[0]
                 if value.lower() is 'none': database.set(db,'users',field, '','nick',nick)

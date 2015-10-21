@@ -4,7 +4,7 @@ import time
 from util import hook, http, timeformat
 
 youtube_re = (r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)'
-              '([-_a-zA-Z0-9]+)', re.I) 
+              '([-_a-zA-Z0-9]+)', re.I)
 
 base_url = 'https://www.googleapis.com/youtube/v3/'
 search_api_url = base_url + 'search?part=id,snippet'
@@ -24,7 +24,9 @@ def get_video_description(key,video_id):
 
     data = request['items'][0]
 
-    out = u'\x02{}\x02'.format(data['snippet']['title'])
+    title = filter(None, data['snippet']['title'].split(' '))
+    title = ' '.join(map(lambda s: s.strip(), title))
+    out = u'\x02{}\x02'.format(title)
 
     try:
         data['contentDetails'].get('duration')
@@ -50,10 +52,15 @@ def get_video_description(key,video_id):
         return out
 
     stats = data['statistics']
-    likes = plural(int(stats['likeCount']), "like")
-    dislikes = plural(int(stats['dislikeCount']), "dislike")
+    try:
+        likes = plural(int(stats['likeCount']), "like")
+        dislikes = plural(int(stats['dislikeCount']), "dislike")
+        percent = 100 * float(stats['likeCount'])/(int(stats['likeCount'])+int(stats['dislikeCount']))
+    except KeyError:
+        likes = 'likes disabled'
+        dislikes = 'dislikes disabled'
+        percent = 0
 
-    percent = 100 * float(stats['likeCount'])/(int(stats['likeCount'])+int(stats['dislikeCount']))
     out += u' - {}, {} (\x02{:.1f}\x02%)'.format(likes, dislikes, percent)
 
     views = int(stats['viewCount'])
