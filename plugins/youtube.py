@@ -24,7 +24,7 @@ def get_video_description(key,video_id):
 
     data = request['items'][0]
 
-    title = filter(None, data['snippet']['title'].strip().split(' '))
+    title = filter(None, data['snippet']['title'].split(' '))
     title = ' '.join(map(lambda s: s.strip(), title))
     out = u'\x02{}\x02'.format(title)
 
