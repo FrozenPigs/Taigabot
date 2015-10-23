@@ -55,7 +55,10 @@ def get_video_description(key,video_id):
     try:
         likes = plural(int(stats['likeCount']), "like")
         dislikes = plural(int(stats['dislikeCount']), "dislike")
-        percent = 100 * float(stats['likeCount'])/(int(stats['likeCount'])+int(stats['dislikeCount']))
+        try:
+            percent = 100 * float(stats['likeCount'])/(int(stats['likeCount'])+int(stats['dislikeCount']))
+        except ZeroDivisionError:
+            percent = 0
     except KeyError:
         likes = 'likes disabled'
         dislikes = 'dislikes disabled'
