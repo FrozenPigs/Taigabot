@@ -46,7 +46,7 @@ def haste(text, ext='txt'):
     """ pastes text to a hastebin server """
     page = http.get(paste_url + "/documents", post_data=text)
     data = json.loads(page)
-    return ("%s/%s.%s" % (paste_url, data['key'], ext))
+    return ("%s/raw/%s.%s" % (paste_url, data['key'], ext))
 
 
 def query(query, params={}):

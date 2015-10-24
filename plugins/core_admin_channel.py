@@ -237,9 +237,17 @@ def enable(inp, notice=None, bot=None, chan=None, db=None):
     else:
         for target in targets:
             if disabledcommands and target in disabledcommands:
-                disabledcommands = " ".join(disabledcommands.replace(target,'').strip().split())
-                database.set(db,'channels','disabled',disabledcommands,'chan',chan)
-                notice(u"[{}]: {} is now enabled.".format(chan,target))
+                disabledcommands = disabledcommands.split(" ")
+                for commands in disabledcommands:
+                    if target == commands:
+                        disabledcommands = " ".join(disabledcommands)
+                        disabledcommands = " ".join(disabledcommands.replace(target,'').strip().split())
+                        database.set(db,'channels','disabled',disabledcommands,'chan',chan)
+                        notice(u"[{}]: {} is now enabled.".format(chan,target))
+                        return
+                    else:
+                        notice(u"[{}]: {} is not disabled.".format(chan,target))
+                        return
             else:
                 if target in " ".join(bot.config["disabled_commands"]):
                     notice(u"[{}]: {} is globally disabled. Use .genable {} to enable.".format(chan,target,target))
