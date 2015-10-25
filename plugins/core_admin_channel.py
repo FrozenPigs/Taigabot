@@ -246,8 +246,7 @@ def enable(inp, notice=None, bot=None, chan=None, db=None):
                         notice(u"[{}]: {} is now enabled.".format(chan,target))
                         return
                     else:
-                        notice(u"[{}]: {} is not disabled.".format(chan,target))
-                        return
+                        pass
             else:
                 if target in " ".join(bot.config["disabled_commands"]):
                     notice(u"[{}]: {} is globally disabled. Use .genable {} to enable.".format(chan,target,target))
