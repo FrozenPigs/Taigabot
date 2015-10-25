@@ -236,12 +236,9 @@ def enable(inp, notice=None, bot=None, chan=None, db=None):
         notice(u"[{}]: All commands are now enabled.".format(chan))
     else:
         for target in targets:
-            print targets
             if disabledcommands and target in disabledcommands:
                 disabledcommands = disabledcommands.split(" ")
-                print disabledcommands
                 for commands in disabledcommands:
-                    print commands
                     if target == commands:
                         disabledcommands = " ".join(disabledcommands)
                         disabledcommands = " ".join(disabledcommands.replace(target,'').strip().split())
