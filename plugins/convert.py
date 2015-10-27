@@ -18,39 +18,30 @@ def convert(inp,conn=None,chan=None):
         convert_ltc(inp,conn,chan)
         return None
     
-    conv_left = None
-    conv_right = None
-    result = None
-    url = "http://www.google.com/search?q=convert+%s&num=100&hl=en&start=0" % (urllib.quote_plus(inp))
+    url = "http://www.google.com/search?q=convert+{}".format(urllib.quote_plus(inp))
+
     request = urllib2.Request(url, None, headers)
     page = urllib2.urlopen(request).read()
-    soup = BeautifulSoup(page)
-    #soup = soup.find('div', attrs={'id': re.compile('ires')})
+    soup = BeautifulSoup(page,'lxml')
+
+
+    soup = soup.find('div', attrs={'id': re.compile('ires')})
     is_currency = soup.find('li', attrs={'class': re.compile('currency')})
     if is_currency:
-      conv_left = soup.find('input', id='pair_base_input')
-      conv_right = soup.find('input', id='pair_targ_input')
-      if not (conv_left is None or conv_right is None):
-        left_value = conv_left['value'].strip()
-        left_unit = conv_left.findNext('option').renderContents().strip()
-        right_value = conv_right['value'].strip()
-        right_unit = conv_right.findNext('option').renderContents().strip()
+        conv_inp = http.strip_html(soup.find('div', attrs={'class': re.compile('vk_sh')}).renderContents().strip())
+        conv_out = http.strip_html(soup.find('div', attrs={'class': re.compile('vk_ans')}).renderContents().strip())
+        return "{} {}".format(conv_inp.replace("equals","="),conv_out)
     else:
-      conv_left = soup.find('input', id='ucw_lhs_d')
-      conv_right = soup.find('input', id='ucw_rhs_d')
-      if not (conv_left is None or conv_right is None):
-        left_value = conv_left['value'].strip()
-        left_unit = conv_left.findNext('option').renderContents().strip()
-        right_value = conv_right['value'].strip()
-        right_unit = conv_right.findNext('option').renderContents().strip()
+        conv_inp = soup.find('div', attrs={'id': re.compile('_Aif')})
+        inp_value = conv_inp.find('input', attrs={'class': re.compile('_eif')})['value'].strip()
+        inp_unit = http.strip_html(conv_inp.find('select', attrs={'class': re.compile('_dif')}).find_all('option', selected=True)[0])
 
-    try:
-      result = left_value + " " + left_unit + "s = " + right_value + " " + right_unit + "s"
-    except StandardError:
-      pass
+        conv_out = soup.find('div', attrs={'id': re.compile('_Cif')})
+        out_value = conv_out.find('input', attrs={'class': re.compile('_eif')})['value'].strip()
+        out_unit = http.strip_html(conv_out.find('select', attrs={'class': re.compile('_dif')}).find_all('option', selected=True)[0])
 
-    if result:
-        return result
+
+    return "{} {}s = {} {}s".format(inp_value, inp_unit, out_value, out_unit)
 
 def convert_btc(inp,conn=None,chan=None):
     inp = inp.lower().replace(',','').split()
