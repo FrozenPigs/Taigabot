@@ -42,6 +42,7 @@ def timefunction(inp, nick="", reply=None, db=None, notice=None):
         curtime = time[0]
         day = time[1]
         date = ' '.join(time[2:4])
+        date = '{}st {}'.format(time[2], time[3])
     except IndexError:
         return "Could not get time for that location."
 
