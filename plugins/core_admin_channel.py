@@ -1,6 +1,7 @@
 # Plugin made by Infinity, Lukeroge and neersighted
 from util import hook, scheduler, user, database
 import re
+from time import sleep
 
 # \binfinity@[^\s]*like.lolis\b
 @hook.command(autohelp=False,adminonly=True)
@@ -657,15 +658,39 @@ def devoice(inp, conn=None, chan=None, notice=None):
     return
 
 
-@hook.command(permissions=["op_voice", "op"], adminonly=True)
+#@hook.command(permissions=["op_voice", "op"], adminonly=True)
+@hook.command
 def invite(inp, conn=None, chan=None, notice=None, ):
     """invite [channel] <user> -- Makes the bot invite <user> to [channel].
     If [channel] is blank the bot will invite <user> to
     the channel the command was used in."""
     users = inp.split()
-    for user in users:
+    throttle = 0
+
+    def nestedinvite(user, throttle, sleeptime, users):
         conn.send(u"INVITE {} {}".format(user,chan))
         notice(u"Inviting {} to {}...".format(user, chan))
+        sleep(sleeptime)
+        users.pop(users.index(user))
+        throttle += 1
+        return users, throttle
+
+    for user in users:
+        # slows down legit invites but better than getting uguu kicked
+        # still possible to get uguu kicked but much harder
+        if throttle <= 10:
+            sleeptime = len(users)/3
+            # just an extra fuck you to people who do huge invites
+            if len(users) >= 20:
+                sleeptime += len(users)
+            print sleeptime
+            users, throttle = nestedinvite(user, throttle, sleeptime, users)
+        else:
+            print 'sleeping'
+            sleep(10)
+            throttle = 0
+            nestedinvite(users, throttle)
+
 
 # @hook.command(permissions=["op_quiet", "op"], channeladminonly=True)
 # def quiet(inp, conn=None, chan=None, notice=None):
