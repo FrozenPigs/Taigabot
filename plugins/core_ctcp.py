@@ -119,25 +119,25 @@ def pingip(inp, reply=None):
 @hook.event('*')
 def ctcp_event(paraml, input=None, bot=None, conn=None):
     inpkind = input.msg.split(" ")[0].strip()
-    if re.search("VERSION", inpkind, re.I) or re.search("PING", inpkind, re.I):     
-        inpnick = input.nick
+    if re.search("VERSION", inpkind, re.I) or re.search("PING", inpkind, re.I):
+        inpnick = filter(None, input.nick)
         inpresult = input.msg.replace(inpkind,'').replace('\x01','').strip()
         if ctcpcache:
             for x in ctcpcache:
                 kind,nick,channel = (x[0], x[1], x[2]) #"VERSION",nick, chan
                 # print "{} {} {}".format(kind,nick,channel )
-                if re.search(kind, inpkind, re.I) and re.search(nick, inpnick, re.I): #.replace('[','\[').replace(']','\]')
+                if re.search(kind, inpkind, re.I) and re.search(re.escape(nick), inpnick, re.I): #.replace('[','\[').replace(']','\]')
                     ctcpcache.remove(x)
                     if kind == "VERSION":
                         conn.send(u"PRIVMSG {} :[{}] {}: {}".format(channel, kind, nick, inpresult))
                         return
                     elif kind == "PING":
-                        
+
                         curtime = time.time()
                         senttime = re.search(r'\d+\.\d+',inpresult)
-                        if senttime: 
+                        if senttime:
                             diff = (curtime - float(senttime.group(0)))
-                            if diff <= 1:    
+                            if diff <= 1:
                                 conn.send(u"PRIVMSG {} :[{}] {}: {} ms".format(channel, kind, nick, diff*1000))
                             else:
                                 conn.send(u"PRIVMSG {} :[{}] {}: {} seconds".format(channel, kind, nick, diff))
@@ -145,14 +145,14 @@ def ctcp_event(paraml, input=None, bot=None, conn=None):
                         else:
                             #conn.send(u"PRIVMSG {} :[{}] {}: Infinite. Enable CTCP Responses you baka.".format(channel, kind, nick))
                             return
-                        #diff.seconds/60 
+                        #diff.seconds/60
 
 
 
                         # diff = (curtime - float(re.search(r'\d+\.\d+',inpresult).group(0)))
                         # conn.send(u"PRIVMSG {} :[{}] {}: {}ms".format(channel, kind, nick, diff))
                         # return
-                        #diff.seconds/60 
+                        #diff.seconds/60
     return
 
 
@@ -172,7 +172,7 @@ def fhost(inp, nick=None, conn=None, db=None):
 
 
 
- 
+
 @hook.command
 def trolltest(inp, msg=None, nick=None):
     if nick == "Havixil":
@@ -206,7 +206,7 @@ def trolltest(inp, msg=None, nick=None):
 #     if db_host.count('.') == 2:
 #         hostmatch = re.search(r"^(.+@)(.+\.)(.+\.)(.+)$", db_host, re.I)
 #         userhost = '{}{}{}{}'.format(hostmatch.group(1),hostmatch.group(2),hostmatch.group(3),hostmatch.group(4))
-#     elif db_host.count('.') >= 3:    
+#     elif db_host.count('.') >= 3:
 #         # ^(.+@).*\b(\w+\.)(\w+\.)(\w+)$
 #         hostmatch = re.search(r"^(.+@).+\.(.+\.)(.+\.)(.+)$", db_host, re.I)
 #         userhost = '{}*{}{}{}'.format(hostmatch.group(1),hostmatch.group(2),hostmatch.group(3),hostmatch.group(4))
