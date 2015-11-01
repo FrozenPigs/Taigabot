@@ -683,10 +683,8 @@ def invite(inp, conn=None, chan=None, notice=None, ):
             # just an extra fuck you to people who do huge invites
             if len(users) >= 20:
                 sleeptime += len(users)
-            print sleeptime
             users, throttle = nestedinvite(user, throttle, sleeptime, users)
         else:
-            print 'sleeping'
             sleep(10)
             throttle = 0
             nestedinvite(users, throttle)
