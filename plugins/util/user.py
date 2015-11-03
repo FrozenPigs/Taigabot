@@ -41,7 +41,7 @@ def is_channeladmin(hostmask,chan,db):
 
 
 def is_admin(inp,chan,db,bot):
-    if is_globaladmin(inp,chan,bot): return True  
+    if is_globaladmin(inp,chan,bot): return True
     if is_channeladmin(inp,chan,db): return True
     return False
 
