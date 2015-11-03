@@ -12,7 +12,6 @@ def define(inp):
     url = 'http://ninjawords.com/'
 
     h = http.get_html(url + http.quote_plus(inp))
-    print h
 
     definition = h.xpath('//dd[@class="article"] | '
                          '//div[@class="definition"]')

@@ -42,6 +42,7 @@ def timefunction(inp, nick="", reply=None, db=None, notice=None):
         curtime = time[0]
         day = time[1]
         date = ' '.join(time[2:4])
+    except IndexError:
         return "Could not get time for that location."
 
     if location and save: database.set(db,'users','location',location,'nick',nick)
