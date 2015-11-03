@@ -12,10 +12,10 @@ def define(inp):
     url = 'http://ninjawords.com/'
 
     h = http.get_html(url + http.quote_plus(inp))
+    print h
 
     definition = h.xpath('//dd[@class="article"] | '
-                         '//div[@class="definition"] |'
-                         '//div[@class="example"]')
+                         '//div[@class="definition"]')
 
     if not definition:
         return 'No results for ' + inp + ' :('
