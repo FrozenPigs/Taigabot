@@ -123,7 +123,7 @@ def hashtag(inp, say=None, db=None, bot=None, me=None, conn=None, input=None, ch
     try:
         if chan[0] != '#':
             pass
-        elif split[0] in disabledhashes:
+        elif split[0].lower() in disabledhashes.lower():
             notice('{} is disabled.'.format(split[0]))
             return
     except TypeError:
