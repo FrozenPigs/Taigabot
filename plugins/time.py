@@ -1,7 +1,11 @@
 from util import hook, http, database, formatting
 import time
 from util.text import capitalize_first
-from datetime import datetime
+from bs4 import BeautifulSoup
+import urllib2
+import re
+
+headers = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_1) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.215 Safari/535.1"};
 
 @hook.command('t', autohelp=False)
 @hook.command('time', autohelp=False)
@@ -23,31 +27,27 @@ def timefunction(inp, nick="", reply=None, db=None, notice=None):
         else:
             # if not location: save = True
             if " dontsave" in inp: save = False
-            location = inp
+            location = inp.split()[0]
 
     # now, to get the actual time
     try:
-        url = "https://www.time.is/{}".format(location.replace(' ','_').replace(' save',''))
-        html = http.get_html(url)
+        url = "https://www.google.com/search?q=time+in+{}".format(location.replace(' ','+').replace(' save',''))
+        request = urllib2.Request(url, None, headers)
+        page = urllib2.urlopen(request).read()
+        soup = BeautifulSoup(page, 'lxml')
+        soup = soup.find('div', attrs={'id': re.compile('ires')})
 
-
-        prefix = html.xpath("id('msgdiv')/h1/text()")[0].strip()[:-4]
-
-        time = html.xpath("id('twd')/text()")[0].strip()[:-3]
-        d = datetime.strptime(time, "%H:%M")
-        curtime = d.strftime("%I:%M %p")
-
-        date = html.xpath("id('dd')/text()")[0].strip().split(" ")
-        date = date[:-2]
-        date = " ".join(date)
-        date = date[:-1]
-
+        time = filter(None, http.strip_html(soup.find('div', attrs={'class': re.compile('vk_gy')}).renderContents().strip()).split(' '))
+        prefix = ' '.join(time[6:])
+        curtime = time[0]
+        day = time[1]
+        date = ' '.join(time[2:4])
     except IndexError:
         return "Could not get time for that location."
 
     if location and save: database.set(db,'users','location',location,'nick',nick)
 
-    return formatting.output('Time', [u'{} is \x02{}\x02 [{}]'.format(prefix, curtime, date)])
+    return formatting.output('Time', [u'{} is \x02{}\x02 [{} {}]'.format(prefix, curtime, day, date)])
 
 
 

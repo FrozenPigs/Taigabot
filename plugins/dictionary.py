@@ -14,8 +14,7 @@ def define(inp):
     h = http.get_html(url + http.quote_plus(inp))
 
     definition = h.xpath('//dd[@class="article"] | '
-                         '//div[@class="definition"] |'
-                         '//div[@class="example"]')
+                         '//div[@class="definition"]')
 
     if not definition:
         return 'No results for ' + inp + ' :('
