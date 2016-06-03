@@ -70,11 +70,9 @@ def eightball(input, me=None):
     me("shakes the magic 8 ball... {}".format(magic))
     return
 
-
 @hook.command
 def lart(inp, me=None, nick=None, conn=None, notice=None, chan=None):
     """lart <user> -- LARTs <user>."""
-    send_phrase(inp,larts,nick,conn,me,notice, chan)
     return
 
 

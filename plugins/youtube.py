@@ -64,15 +64,15 @@ def get_video_description(key,video_id):
         dislikes = 'dislikes disabled'
         percent = 0
 
-    out += u' - {}, {} (\x02{:.1f}\x02%)'.format(likes, dislikes, percent)
+    #out += u' - {}, {} (\x02{:.1f}\x02%)'.format(likes, dislikes, percent)
 
     views = int(stats['viewCount'])
-    out += u' - \x02{:,}\x02 {}{}'.format(views, 'view', "s"[views==1:])
+    #out += u' - \x02{:,}\x02 {}{}'.format(views, 'view', "s"[views==1:])
 
-    uploader = data['snippet']['channelTitle']
+    #uploader = data['snippet']['channelTitle']
 
-    upload_time = time.strptime(data['snippet']['publishedAt'], "%Y-%m-%dT%H:%M:%S.000Z")
-    out += u' - \x02{}\x02 on \x02{}\x02'.format(uploader, time.strftime("%Y.%m.%d", upload_time))
+#    upload_time = time.strptime(data['snippet']['publishedAt'], "%Y-%m-%dT%H:%M:%S.000Z")
+ #   out += u' - \x02{}\x02 on \x02{}\x02'.format(uploader, time.strftime("%Y.%m.%d", upload_time))
 
     try:
         data['contentDetails']['contentRating']

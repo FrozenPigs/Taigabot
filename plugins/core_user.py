@@ -204,16 +204,17 @@ def horoscope(inp, db=None, notice=None, nick=None):
             if " save" in inp: save = True
             sign = inp.split()[0]
 
+    import urllib
     url = "http://my.horoscope.com/astrology/free-daily-horoscope-%s.html" % sign
     try:
-        result = http.get_soup(url)
-        title = result.find_all('h1', {'class': 'h1b'})[1].text
-        horoscopetxt = result.find('div', {'id': 'textline'}).text
+        response = urllib.urlopen(url)
+        result = response.read()
+        horoscopetxt = result.find('div', {'class': 'block-horoscope-text f16 l20'}).text
     except: return "Could not get the horoscope for {}.".format(sign.encode('utf8'))
 
     if sign and save: database.set(db,'users','horoscope',sign,'nick',nick)
 
-    return u"\x02{}\x02 {}".format(title, horoscopetxt)
+    return u"\x02{}\x02 {}".format(sign, horoscopetxt)
 
 
 @hook.command(autohelp=False)

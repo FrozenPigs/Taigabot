@@ -46,6 +46,7 @@ def process_url(match,bot=None,input=None,chan=None,db=None, reply=None):
     elif 'gelbooru.com'      in url.lower(): return                         #handled by Gelbooru plugin: exiting
     elif 'craigslist.org'    in url.lower(): return craigslist_url(url)     #Craigslist
     elif 'ebay.com'          in url.lower(): return ebay_url(url,bot)       #Ebay
+    elif 'imgur.com'          in url.lower(): return imgur_url(url)       #Ebay
     elif 'wikipedia.org'     in url.lower(): return wikipedia_url(url)      #Wikipedia
     elif 'hentai.org'        in url.lower(): return hentai_url(url,bot)     #Hentai
     elif 'boards.4chan.org'  in url.lower():                                #4chan
@@ -138,7 +139,13 @@ def wikipedia_url(match):
     soup = http.get_soup(match)
     title = soup.find('h1', {'id': 'firstHeading'}).renderContents().strip()
     post = soup.find('p').renderContents().strip().replace('\n','').replace('\r','')
-    return http.process_text("\x02Wikipedia.org: {}\x02 - {}...".format(title,post[:trimlength]))
+    #return http.process_text("{} {}...".format(title, post[:15))
+
+def imgur_url(match):
+    soup = http.get_soup(match)
+    title = soup.find('h1', {'class': 'post-title font-opensans-bold'}).renderContents().strip()
+    return http.process_text("[IMGUR] {}".format(title))
+
 
 
 
@@ -227,20 +234,5 @@ def unmatched_url(match,chan,db):
 
             try: title_formatted = text.fix_bad_unicode(body.xpath('//title/text()')[0])
             except: title_formatted = body.xpath('//title/text()')[0]
-            return formatting.output('URL', ['{} ({})'.format(title_formatted, domain)])
-        else:
-	    if disabled_commands:
-                if 'filesize' in disabled_commands: return
-            try:
-                if r.headers['Content-Length']:
-                    length = int(r.headers['Content-Length'])
-                    if length < 0: length = 'Unknown size'
-                    else: length = formatting.filesize(length)
-                else: 
-                    length = "Unknown size"
-            except:
-                length = "Unknown size"
-            if "503 B" in length: length = ""
-            if length is None: length = ""
-	    return formatting.output('URL', ['{} Size: {} ({})'.format(content_type, length, domain)])
+            return formatting.output('URL', ['{}'.format(title_formatted)])
     return

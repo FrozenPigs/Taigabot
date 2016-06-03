@@ -75,10 +75,10 @@ def upload(url):
 		fh = open(file, "rb")
 		fh.seek(0)
 
-		content = requests.post(url="http://pomf.se/upload.php", files={"files[]":fh})
+		content = requests.post(url="http://mixtape.moe/upload.php", files={"files[]":fh})
 		if not content.status_code // 100 == 2:
 			raise Exception("Unexpected response {}".format(content))
-		return "http://a.pomf.se/{}".format(content.json()["files"][0]["url"])
+		return "http://my.mixtape.moe/{}".format(content.json()["files"][0]["url"])
 	except Exception as e:
 		return "Error: {}".format(e)
 
