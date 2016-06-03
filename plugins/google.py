@@ -3,15 +3,18 @@ from util import hook, http, text, database, web
 import re
 from urllib import urlencode
 import random
-api_url = "https://www.googleapis.com/customsearch/v1?"
 
+api_url = "https://www.googleapis.com/customsearch/v1?"
 
 @hook.command('search')
 @hook.command('g')
 @hook.command
-def google(inp,db=None,chan=None):
+def google(inp,db=None,chan=None, bot=None):
     """google <query> -- Returns first google search result for <query>."""
-    data = http.get_json(api_url + urlencode({'q': inp, 'key': 'AIzaSyD3yR5dKGgSIIv48_bXa2EE7xOD-No76Do', 'cx': '005404525366513796695:hqf8yrjutte', 'safe': 'off'}))
+    key = bot.config.get("api_keys", {}).get("youtube")
+    cx = bot.config.get("api_keys", {}).get("cx")
+
+    data = http.get_json(api_url + urlencode({'q': inp, 'key': key, 'cx': cx, 'safe': 'off'}))
 
 
     return u'{} -- \x02{}\x02"'.format(data["items"][0]["link"], data["items"][0]["title"])
@@ -22,10 +25,12 @@ def google(inp,db=None,chan=None):
 @hook.command('gi')
 @hook.command('image')
 @hook.command
-def googleimage(inp):
+def googleimage(inp, bot=None):
     """gis <query> -- Returns first Google Image result for <query>."""
-    data = http.get_json(api_url + urlencode({'q': inp, 'key': 'AIzaSyD3yR5dKGgSIIv48_bXa2EE7xOD-No76Do', 'cx': '005404525366513796695:hqf8yrjutte', 'searchType': 'image', 'safe': 'off'}))
 
+    key = bot.config.get("api_keys", {}).get("youtube")
+    cx = bot.config.get("api_keys", {}).get("cx")
+    data = http.get_json(api_url + urlencode({'q': inp, 'key': key, 'cx': cx, 'searchType': 'image', 'safe': 'off'}))
 	
     ran = random.randint(0, 10)
 
