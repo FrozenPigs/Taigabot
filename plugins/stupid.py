@@ -2,7 +2,6 @@ from util import hook,http, database
 from urllib import urlencode
 import re
 import random
-import random
 import urllib
 
 # HONK HONK
@@ -385,50 +384,3 @@ def spit(inp, nick=None, me=None):
 #     #COMPARE TO DB
 #     image = http.unquote(re.search('.+?imgurl=(.+)&imgrefurl.+', link).group(1))
 #     return image
-
-import random
-import soundcloud
-
-@hook.command('track', autohelp=False)
-@hook.command('tracks', autohelp=False)
-@hook.command(autohelp=False)
-def randomtrack(inp, nick=None, conn=None, chan=None,db=None, paraml=None):
-
-	client = soundcloud.Client(client_id='8ed65737035558f88eadc0b3eb5e6c9e', client_secret= 'f7453b60f542d4f58fbc1262a5a09972')
-
-	try:	
-		tracks = client.get('/tracks', genres = inp)
-		track = random.choice(tracks)
-		return "\x02{}\x02, genre: {}, url: {}".format(track.title, track.genre, track.permalink_url).decode('UTF-8') 
-	except (IndexError, ValueError):
-		return 'Error no tracks found'
-
-
-@hook.command('stracks', autohelp=False)
-@hook.command('strack', autohelp=False)
-@hook.command(autohelp=False)
-def searchtracks(inp, nick=None, conn=None, chan=None,db=None, paraml=None):
-
-	client = soundcloud.Client(client_id='8ed65737035558f88eadc0b3eb5e6c9e', client_secret= 'f7453b60f542d4f58fbc1262a5a09972')
-
-	try:	
-		tracks = client.get('/tracks', q = inp)
-		track = tracks[0] 
-		return "\x02{}\x02, genre: {}, url: {}".format(track.title, track.genre, track.permalink_url).decode('UTF-8') 
-	except (IndexError, ValueError):
-		return 'Error no tracks found'
-
-@hook.command('rtracks', autohelp=False)
-@hook.command('rtrack', autohelp=False)
-@hook.command(autohelp=False)
-def randomsearchtracks(inp, nick=None, conn=None, chan=None,db=None, paraml=None):
-
-	client = soundcloud.Client(client_id='8ed65737035558f88eadc0b3eb5e6c9e', client_secret= 'f7453b60f542d4f58fbc1262a5a09972')
-
-	try:	
-		tracks = client.get('/tracks', q = inp)
-		track = random.choice(tracks) 
-		return "\x02{}\x02, genre: {}, url: {}".format(track.title, track.genre, track.permalink_url).decode('UTF-8') 
-	except (IndexError, ValueError):
-		return 'Error no tracks found'
-
