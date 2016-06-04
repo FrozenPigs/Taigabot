@@ -14,7 +14,7 @@ def google(inp,db=None,chan=None, bot=None):
     key = bot.config.get("api_keys", {}).get("youtube")
     cx = bot.config.get("api_keys", {}).get("cx")
 
-    data = http.get_json(api_url + urlencode({'q': inp, 'key': key, 'cx': cx, 'safe': 'off'}))
+    data = http.get_json(api_url + urlencode({'q': inp, 'key': key, 'cx': cx}))
 
 
     return u'{} -- \x02{}\x02"'.format(data["items"][0]["link"], data["items"][0]["title"])
@@ -30,7 +30,7 @@ def googleimage(inp, bot=None):
 
     key = bot.config.get("api_keys", {}).get("youtube")
     cx = bot.config.get("api_keys", {}).get("cx")
-    data = http.get_json(api_url + urlencode({'q': inp, 'key': key, 'cx': cx, 'searchType': 'image', 'safe': 'off'}))
+    data = http.get_json(api_url + urlencode({'q': inp, 'key': key, 'cx': cx, 'searchType': 'image'}))
 
     ran = random.randint(0, 10)
 
