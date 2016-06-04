@@ -4,10 +4,10 @@ import urllib
 
 base_url = 'https://query.yahooapis.com/v1/public/yql?'
 def query(query):
-        url = base_url + urllib.urlencode(query)
-        response = urllib.urlopen(url)
-        data = response.read()
-	return data 
+    url = base_url + urllib.urlencode(query)
+    response = urllib.urlopen(url)
+    data = response.read()
+    return data
 
 @hook.command('w', autohelp=False)
 @hook.command('we', autohelp=False)
