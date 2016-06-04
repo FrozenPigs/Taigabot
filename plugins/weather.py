@@ -14,7 +14,7 @@ def query(query):
 @hook.command(autohelp=False)
 def weather(inp, nick=None, reply=None, db=None, notice=None):
     "weather | <location> [save] | <@ user> -- Gets weather data for <location>."
-    save = True
+    save = False 
     
     if '@' in inp:
         save = False
@@ -29,9 +29,9 @@ def weather(inp, nick=None, reply=None, db=None, notice=None):
                 return
         else:
             # if not loc: save = True
-            if " dontsave" in inp: 
-                inp = inp.replace(' dontsave','')
-                save = False
+            if " save" in inp: 
+                inp = inp.replace(' save','')
+                save = True 
             loc = inp.replace(' ','_') #.split()[0]
 
     location = http.quote_plus(loc)
