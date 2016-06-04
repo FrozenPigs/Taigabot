@@ -12,7 +12,6 @@ sndsc_re = (r'(.*:)//(www.)?(snd.sc)(.*)', re.I)
 
 def soundcloudData(url, api_key):
     data = http.get_json(api_url + '/resolve.json?' + urlencode({'url': url, 'client_id': api_key}))
-    print data
 
     desc = ""
     if data['description']: desc = u": {} ".format(text.truncate_str(data['description'], 50))
@@ -82,40 +81,40 @@ def randomtrack(inp, nick=None, conn=None, chan=None,db=None, paraml=None, bot=N
 @hook.command('strack', autohelp=False)
 @hook.command(autohelp=False)
 def searchtracks(inp, nick=None, conn=None, chan=None,db=None, paraml=None, bot=None):
-	api_key = bot.config.get("api_keys", {}).get("soundcloud")
-	api_secret = bot.config.get("api_keys", {}).get("soundcloud_secret")
+    api_key = bot.config.get("api_keys", {}).get("soundcloud")
+    api_secret = bot.config.get("api_keys", {}).get("soundcloud_secret")
 
-	if not api_key or not api_secret:
-		print "Error: no api key set"
-		return None
+    if not api_key or not api_secret:
+        print "Error: no api key set"
+        return None
 
-	client = soundcloud.Client(client_id= api_key, client_secret= api_secret)
+    client = soundcloud.Client(client_id= api_key, client_secret= api_secret)
 
-	try:	
-		tracks = client.get('/tracks', q = inp)
-		track = tracks[0] 
-		return "\x02{}\x02, genre: {}, url: {}".format(track.title, track.genre, track.permalink_url).decode('UTF-8') 
-	except (IndexError, ValueError):
-		return 'Error no tracks found'
+    try:	
+        tracks = client.get('/tracks', q = inp)
+        track = tracks[0] 
+        return "\x02{}\x02, genre: {}, url: {}".format(track.title, track.genre, track.permalink_url).decode('UTF-8') 
+    except (IndexError, ValueError):
+            return 'Error no tracks found'
 
 @hook.command('rtracks', autohelp=False)
 @hook.command('rtrack', autohelp=False)
 @hook.command(autohelp=False)
 def randomsearchtracks(inp, nick=None, conn=None, chan=None,db=None, paraml=None, bot=None):
-	api_key = bot.config.get("api_keys", {}).get("soundcloud")
-	api_secret = bot.config.get("api_keys", {}).get("soundcloud_secret")
+    api_key = bot.config.get("api_keys", {}).get("soundcloud")
+    api_secret = bot.config.get("api_keys", {}).get("soundcloud_secret")
 
-	if not api_key or not api_secret:
-		print "Error: no api key set"
-		return None
+    if not api_key or not api_secret:
+        print "Error: no api key set"
+        return None
 
-	client = soundcloud.Client(client_id= api_key, client_secret= api_secret)
+    client = soundcloud.Client(client_id= api_key, client_secret= api_secret)
 
 
-	try:	
-		tracks = client.get('/tracks', q = inp)
-		track = random.choice(tracks) 
-		return "\x02{}\x02, genre: {}, url: {}".format(track.title, track.genre, track.permalink_url).decode('UTF-8') 
-	except (IndexError, ValueError):
-		return 'Error no tracks found'
+    try:	
+        tracks = client.get('/tracks', q = inp)
+        track = random.choice(tracks) 
+        return "\x02{}\x02, genre: {}, url: {}".format(track.title, track.genre, track.permalink_url).decode('UTF-8') 
+    except (IndexError, ValueError):
+            return 'Error no tracks found'
 

@@ -31,7 +31,7 @@ def googleimage(inp, bot=None):
     key = bot.config.get("api_keys", {}).get("youtube")
     cx = bot.config.get("api_keys", {}).get("cx")
     data = http.get_json(api_url + urlencode({'q': inp, 'key': key, 'cx': cx, 'searchType': 'image', 'safe': 'off'}))
-	
+
     ran = random.randint(0, 10)
 
     return u'{}'.format(data["items"][ran]["link"])
@@ -59,7 +59,7 @@ def implying(inp):
     except: search = inp
     try: num = int(inp.group(3))
     except: num = 0
-    
+
     if 'http' in search: return
 
     parsed = api_get('images', search)
