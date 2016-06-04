@@ -71,6 +71,13 @@ def save(inp, nick=None, reply=None, db=None, notice=None):
     "weather | <location> [save] | <@ user> -- Gets weather data for <location>."
     save = True
     loc = database.get(db,'users','location','nick',nick)
+    if '@' in inp:
+        save = False
+        nick = inp.split('@')[1].strip()
+        loc = database.get(db,'users','location','nick',nick)
+        if not loc: return "No location stored for {}.".format(nick.encode('ascii', 'ignore'))
+    else:
+        loc = database.get(db,'users','location','nick',nick)
         if not inp:
             if not loc:
                 notice(weather.__doc__)
