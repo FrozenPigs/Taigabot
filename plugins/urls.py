@@ -235,4 +235,19 @@ def unmatched_url(match,chan,db):
             try: title_formatted = text.fix_bad_unicode(body.xpath('//title/text()')[0])
             except: title_formatted = body.xpath('//title/text()')[0]
             return formatting.output('URL', ['{}'.format(title_formatted)])
-    return
+	else:
+	    if disabled_commands:
+                if 'filesize' in disabled_commands: return
+            try:
+                if r.headers['Content-Length']:
+                    length = int(r.headers['Content-Length'])
+                    if length < 0: length = 'Unknown size'
+                    else: length = formatting.filesize(length)
+                else: 
+                    length = "Unknown size"
+            except:
+                length = "Unknown size"
+            if "503 B" in length: length = ""
+            if length is None: length = ""
+	    return formatting.output('URL', ['{} Size: {} ({})'.format(content_type, length, domain)])
+	return 
