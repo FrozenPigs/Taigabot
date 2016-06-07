@@ -42,4 +42,4 @@ def wiki(inp):
 
     desc = text.truncate_str(desc, 100)
 
-    return u'{} :: {}'.format(http.quote('en.wikipedia.org/wiki', ':/'), desc)
+    return u'{} :: {}'.format(url, desc)
