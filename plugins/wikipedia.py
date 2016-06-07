@@ -40,6 +40,6 @@ def wiki(inp):
 
     desc = re.sub('\s+', ' ', desc).strip()  # remove excess spaces
 
-    desc = text.truncate_str(desc, 100)
+    desc = text.truncate_str(desc, 140)
 
     return u'{} :: {}'.format(url, desc)
