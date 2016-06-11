@@ -11,11 +11,11 @@ api_url = "https://www.googleapis.com/customsearch/v1?"
 @hook.command
 def google(inp,db=None,chan=None, bot=None):
     """google <query> -- Returns first google search result for <query>."""
+
     key = bot.config.get("api_keys", {}).get("youtube")
     cx = bot.config.get("api_keys", {}).get("cx")
 
     data = http.get_json(api_url + urlencode({'q': inp, 'key': key, 'cx': cx}))
-
 
     return u'{} -- \x02{}\x02"'.format(data["items"][0]["link"], data["items"][0]["title"])
 
