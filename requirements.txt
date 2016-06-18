@@ -13,3 +13,4 @@ mygengo
 pytz>=2013b
 timezones
 pycrypto
+soundcloud

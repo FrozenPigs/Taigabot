@@ -1,36 +1,23 @@
 import random
 from util import hook, http, text, database, web
 import re
+from urllib import urlencode
+import random
 
-def api_get(kind, query):
-    """Use the RESTful Google Search API"""
-    url = 'http://ajax.googleapis.com/ajax/services/search/%s?' \
-          'v=1.0&safe=off'
-    return http.get_json(url % kind, q=query)
-
+api_url = "https://www.googleapis.com/customsearch/v1?"
 
 @hook.command('search')
 @hook.command('g')
 @hook.command
-def google(inp,db=None,chan=None):
+def google(inp,db=None,chan=None, bot=None):
     """google <query> -- Returns first google search result for <query>."""
-    trimlength = database.get(db,'channels','trimlength','chan',chan)
-    if not trimlength: trimlength = 9999 
 
-    parsed = api_get('web', inp)
-    if not 200 <= parsed['responseStatus'] < 300:
-        raise IOError('error searching for pages: {}: {}'.format(parsed['responseStatus'], ''))
-    if not parsed['responseData']['results']:
-        return 'No results found.'
+    key = bot.config.get("api_keys", {}).get("youtube")
+    cx = bot.config.get("api_keys", {}).get("cx")
 
-    result = parsed['responseData']['results'][0]
-    title = http.unescape(result['titleNoFormatting'])
-    content = http.unescape(result['content'])
+    data = http.get_json(api_url + urlencode({'q': inp, 'key': key, 'cx': cx}))
 
-    if not content: content = "No description available."
-    else: content = http.html.fromstring(content.replace('\n', '')).text_content()
-
-    return u'{} -- \x02{}\x02: "{}"'.format(result['unescapedUrl'], title, content)
+    return u'{} -- \x02{}\x02"'.format(data["items"][0]["link"], data["items"][0]["title"])
 
 
 # @hook.command('image')
@@ -38,15 +25,17 @@ def google(inp,db=None,chan=None):
 @hook.command('gi')
 @hook.command('image')
 @hook.command
-def googleimage(inp):
+def googleimage(inp, bot=None):
     """gis <query> -- Returns first Google Image result for <query>."""
 
-    parsed = api_get('images', inp)
-    if not 200 <= parsed['responseStatus'] < 300:
-        raise IOError('error searching for images: {}: {}'.format(parsed['responseStatus'], ''))
-    if not parsed['responseData']['results']:
-        return 'no images found'
-    return random.choice(parsed['responseData']['results'][:10])['unescapedUrl']
+    key = bot.config.get("api_keys", {}).get("youtube")
+    cx = bot.config.get("api_keys", {}).get("cx")
+    data = http.get_json(api_url + urlencode({'q': inp, 'key': key, 'cx': cx, 'searchType': 'image'}))
+
+    ran = random.randint(0, 10)
+
+    return u'{}'.format(data["items"][ran]["link"])
+
 
 
 @hook.command
@@ -70,7 +59,7 @@ def implying(inp):
     except: search = inp
     try: num = int(inp.group(3))
     except: num = 0
-    
+
     if 'http' in search: return
 
     parsed = api_get('images', search)
@@ -84,7 +73,6 @@ def implying(inp):
 
 
 @hook.command('nym')
-@hook.command('littleanon')
 @hook.command('gfy')
 @hook.command
 def lmgtfy(inp, bot=None):
