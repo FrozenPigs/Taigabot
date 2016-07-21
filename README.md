@@ -63,7 +63,7 @@ It will generate a default config for you.  Once you have edited the config, run
 
 `./uguubot start`
 
-This will start up your bot as a background process. To stop it, use `./uguubot stop`.)
+This will start up your bot as a background process. (To stop it, use `./uguubot stop`.)
 
 #### Manually
 
