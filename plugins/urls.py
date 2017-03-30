@@ -209,6 +209,7 @@ headers = {
 def unmatched_url(match,chan,db):
     disabled_commands = database.get(db,'channels','disabled','chan',chan)
     
+<<<<<<< HEAD
     try:
 	r = requests.get(match, headers=headers,allow_redirects=True, stream=True)
     except Exception as e:
@@ -216,6 +217,9 @@ def unmatched_url(match,chan,db):
 
     domain = urlparse(match).netloc
 
+=======
+    r = requests.get(match, headers=headers,allow_redirects=True, stream=True)
+>>>>>>> 19cc49a2bf56d7a420b529988a8c5638cce5e648
     if r.status_code != 404:
         content_type = r.headers['Content-Type']
         try: encoding = r.headers['content-encoding']
@@ -234,8 +238,13 @@ def unmatched_url(match,chan,db):
 
             try: title_formatted = text.fix_bad_unicode(body.xpath('//title/text()')[0])
             except: title_formatted = body.xpath('//title/text()')[0]
+<<<<<<< HEAD
             return formatting.output('URL', ['{}'.format(title_formatted)])
 	else:
+=======
+            return title_formatted
+        else:
+>>>>>>> 19cc49a2bf56d7a420b529988a8c5638cce5e648
 	    if disabled_commands:
                 if 'filesize' in disabled_commands: return
             try:
@@ -249,5 +258,13 @@ def unmatched_url(match,chan,db):
                 length = "Unknown size"
             if "503 B" in length: length = ""
             if length is None: length = ""
+<<<<<<< HEAD
 	    return formatting.output('URL', ['{} Size: {} ({})'.format(content_type, length, domain)])
 	return 
+=======
+            return u"[{}] {}".format(content_type, length)
+    else: 
+        return 
+
+    return
+>>>>>>> 19cc49a2bf56d7a420b529988a8c5638cce5e648

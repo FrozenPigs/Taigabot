@@ -153,10 +153,13 @@ def sieve_suite(bot, input, func, kind, args):
 
     ### channel configs
   
-    globaladmin = user.is_globaladmin(input.mask, chan, bot) 
+    globaladmin = user.is_globaladmin(input.prefix, chan, bot) 
     if args.get('adminonly', False):
+        print input
         if not globaladmin: return None
-    if globaladmin: return input   
+    if globaladmin: return input 
+        #input.notice("Flood detected. Please wait {} seconds.".format(cmdflood_duration))
+        #return None
 
     channeladmin = user.is_channeladmin(input.mask, chan, db)
     if args.get('channeladminonly', False): 
