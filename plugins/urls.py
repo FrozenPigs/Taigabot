@@ -2,6 +2,7 @@ from util import hook, http, database, urlnorm, formatting
 from bs4 import BeautifulSoup
 from urlparse import urlparse
 import re
+from time import time
 
 from urllib import FancyURLopener
 import urllib2
@@ -15,10 +16,15 @@ opener = urlopener()
 
 link_re = (r'((https?://([-\w\.]+)+(:\d+)?(/([\S/_\.]*(\?\S+)?)?)?))', re.I)
 
+cache = {}
+
 @hook.regex(*link_re)
 def process_url(match,bot=None,input=None,chan=None,db=None, reply=None):
     global trimlength
     url = match.group(1).replace('https:','http:')
+    if url in cache:
+      if (time() < (cache[url] + 60)): return
+    cache[url] = time()
 
     if '127.0.0.1' in url or 'localhost' in url.lower(): return
     
@@ -26,8 +32,6 @@ def process_url(match,bot=None,input=None,chan=None,db=None, reply=None):
     if not trimlength: trimlength = 9999
     try: trimlength = int(trimlength)
     except: trimlength = trimlength
-
-    if '.html' in url.lower(): return
 
     if   'youtube.com'       in url.lower(): return                         #handled by youtube plugin: exiting
     elif 'youtu.be'          in url.lower(): return                         #handled by youtube plugin: exiting
@@ -46,7 +50,6 @@ def process_url(match,bot=None,input=None,chan=None,db=None, reply=None):
     elif 'gelbooru.com'      in url.lower(): return                         #handled by Gelbooru plugin: exiting
     elif 'craigslist.org'    in url.lower(): return craigslist_url(url)     #Craigslist
     elif 'ebay.com'          in url.lower(): return ebay_url(url,bot)       #Ebay
-    elif 'imgur.com'          in url.lower(): return imgur_url(url)       #Ebay
     elif 'wikipedia.org'     in url.lower(): return wikipedia_url(url)      #Wikipedia
     elif 'hentai.org'        in url.lower(): return hentai_url(url,bot)     #Hentai
     elif 'boards.4chan.org'  in url.lower():                                #4chan
@@ -139,13 +142,7 @@ def wikipedia_url(match):
     soup = http.get_soup(match)
     title = soup.find('h1', {'id': 'firstHeading'}).renderContents().strip()
     post = soup.find('p').renderContents().strip().replace('\n','').replace('\r','')
-    #return http.process_text("{} {}...".format(title, post[:15))
-
-def imgur_url(match):
-    soup = http.get_soup(match)
-    title = soup.find('h1', {'class': 'post-title font-opensans-bold'}).renderContents().strip()
-    return http.process_text("[IMGUR] {}".format(title))
-
+    return http.process_text("\x02Wikipedia.org: {}\x02 - {}...".format(title,post[:trimlength]))
 
 
 
@@ -209,43 +206,35 @@ headers = {
 def unmatched_url(match,chan,db):
     disabled_commands = database.get(db,'channels','disabled','chan',chan)
     
-<<<<<<< HEAD
     try:
-	r = requests.get(match, headers=headers,allow_redirects=True, stream=True)
+        r = requests.get(match, headers=headers,allow_redirects=True, stream=True)
     except Exception as e:
-	return formatting.output('URL', ['Error: {}'.format(e)])
+        return formatting.output('URL', ['Error: {}'.format(e)])
 
     domain = urlparse(match).netloc
 
-=======
-    r = requests.get(match, headers=headers,allow_redirects=True, stream=True)
->>>>>>> 19cc49a2bf56d7a420b529988a8c5638cce5e648
     if r.status_code != 404:
         content_type = r.headers['Content-Type']
         try: encoding = r.headers['content-encoding']
         except: encoding = ''
         
         if content_type.find("html") != -1: # and content_type is not 'gzip':
-	    data = ''
-	    for chunk in r.iter_content(chunk_size=1024):
-		data += chunk
-		if len(data) > 48336: break
+            data = ''
+            for chunk in r.iter_content(chunk_size=1024):
+                data += chunk
+                if len(data) > 48336: break
 
             body = html.fromstring(data)
 
             try: title = body.xpath('//title/text()')[0]
-	    except: return formatting.output('URL', ['No Title ({})'.format(domain)])
+            except: return formatting.output('URL', ['No Title ({})'.format(domain)])
 
             try: title_formatted = text.fix_bad_unicode(body.xpath('//title/text()')[0])
             except: title_formatted = body.xpath('//title/text()')[0]
-<<<<<<< HEAD
-            return formatting.output('URL', ['{}'.format(title_formatted)])
-	else:
-=======
-            return title_formatted
+            title_formatted = title_formatted.strip(' \t\n\r')
+            return formatting.output('URL', [u'{} ({})'.format(title_formatted[:trimlength], domain)])
         else:
->>>>>>> 19cc49a2bf56d7a420b529988a8c5638cce5e648
-	    if disabled_commands:
+            if disabled_commands:
                 if 'filesize' in disabled_commands: return
             try:
                 if r.headers['Content-Length']:
@@ -258,13 +247,5 @@ def unmatched_url(match,chan,db):
                 length = "Unknown size"
             if "503 B" in length: length = ""
             if length is None: length = ""
-<<<<<<< HEAD
-	    return formatting.output('URL', ['{} Size: {} ({})'.format(content_type, length, domain)])
-	return 
-=======
-            return u"[{}] {}".format(content_type, length)
-    else: 
-        return 
-
+        return formatting.output('URL', ['{} Size: {} ({})'.format(content_type, length, domain)])
     return
->>>>>>> 19cc49a2bf56d7a420b529988a8c5638cce5e648

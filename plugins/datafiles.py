@@ -43,12 +43,7 @@ def get_generator(_json, variables):
     data = json.loads(_json)
     return textgen.TextGenerator(data["templates"], data["parts"], variables=variables)
 
-<<<<<<< HEAD
-
 def send_phrase(inp,attack,nick,conn,me,notice,chan):
-=======
-def get_phrase(inp,attack,nick,conn,notice,chan):
->>>>>>> fea5e18aa7fab824ea02c6a3027b25986e73fd91
     target = inp.strip()
     if " " in target:
         notice("Invalid username!")
@@ -57,24 +52,12 @@ def get_phrase(inp,attack,nick,conn,notice,chan):
     # if the user is trying to make the bot slap itself, slap them
     if target.lower() == conn.nick.lower() or target.lower() == "itself": target = nick
 
-<<<<<<< HEAD
     values = {"user": target,"nick": conn.nick, "channel": chan, "yiffer": nick}
     #if inp.split(" ")[-1].isdigit: phrase = attack[int(inp.split(" ")[-1].strip())-1]
     #else:
     phrase = random.choice(attack)
-=======
-    values = {"user": target,"user_uppercase": target.upper(),"nick": conn.nick,"channel": chan}
-    #if inp.split(" ")[-1].isdigit: phrase = attack[int(inp.split(" ")[-1].strip())-1]
-    #else: 
-    print(random.choice(attack))
-    return random.choice(attack).format(**values).decode('utf-8', "ignore")
-
-
-def send_phrase(inp,attack,nick,conn,cmd,notice,chan):
-    phrase = get_phrase(inp,attack,nick,conn,notice,chan)
->>>>>>> fea5e18aa7fab824ea02c6a3027b25986e73fd91
     # act out the message
-    cmd(phrase)
+    me(phrase.format(**values).decode('utf-8', "ignore"))
     return
 
 
@@ -89,47 +72,27 @@ def eightball(input, me=None):
 @hook.command
 def lart(inp, me=None, nick=None, conn=None, notice=None, chan=None):
     """lart <user> -- LARTs <user>."""
-<<<<<<< HEAD
-=======
-    send_phrase(inp,larts,nick,conn,me,notice,chan)
->>>>>>> fea5e18aa7fab824ea02c6a3027b25986e73fd91
     return
 
 
 @hook.command
-<<<<<<< HEAD
 def insult(inp, me=None, nick=None, conn=None, notice=None, chan=None):
     """insult <user> -- Makes the bot insult <user>."""
     send_phrase(inp,insults,nick,conn,me,notice, chan)
-=======
-def insult(inp, say=None, nick=None, conn=None, notice=None, chan=None):
-    """insult <user> -- Makes the bot insult <user>."""
-    send_phrase(inp,insults,nick,conn,say,notice,chan)
->>>>>>> fea5e18aa7fab824ea02c6a3027b25986e73fd91
     return
 
 
 @hook.command
-<<<<<<< HEAD
 def flirt(inp, me=None, nick=None, conn=None, notice=None, chan=None):
     """flirt <user> -- Makes the bot flirt <user>."""
     send_phrase(inp,flirts,nick,conn,me,notice, chan)
-=======
-def flirt(inp, say=None, nick=None, conn=None, notice=None, chan=None):
-    """flirt <user> -- Makes the bot flirt <user>."""
-    send_phrase(inp,flirts,nick,conn,say,notice,chan)
->>>>>>> fea5e18aa7fab824ea02c6a3027b25986e73fd91
     return
 
 
 @hook.command(autohelp=False)
 def yiff(inp, me=None, nick=None, conn=None, notice=None, chan=None):
     """yiff <user> -- yiffs <user>."""
-<<<<<<< HEAD
     send_phrase(inp,yiffs,nick,conn,me,notice, chan)
-=======
-    send_phrase(inp,yiffs,nick,conn,me,notice,chan)
->>>>>>> fea5e18aa7fab824ea02c6a3027b25986e73fd91
     return
 
 
@@ -138,18 +101,13 @@ def lewd(inp, me=None, nick=None, conn=None, notice=None, chan=None):
     """lewd <user> -- lewd <user>."""
     if len(inp) == 0:
         return 'ヽ(◔ ◡ ◔)ノ.･ﾟ*｡･+☆LEWD☆'.decode('UTF-8')
-<<<<<<< HEAD
     else:
         send_phrase(inp,lewds,nick,conn,me,notice, chan)
-=======
-    else:    
-        send_phrase(inp,lewds,nick,conn,me,notice,chan)
->>>>>>> fea5e18aa7fab824ea02c6a3027b25986e73fd91
     return
 
 
 @hook.command
-def kill(inp, me=None, nick=None, conn=None, notice=None, chan=None):
+def kill(inp, me=None, nick=None, conn=None, notice=None):
     """kill <user> -- Makes the bot kill <user>."""
     target = inp.strip()
 
