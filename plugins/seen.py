@@ -2,10 +2,14 @@
 
 import time
 import re
+import datafiles
 
 from util import hook, timesince
 
 db_ready = False
+
+with open("plugins/data/insults.txt") as f:
+    insults = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
 
 def db_init(db):
@@ -90,14 +94,15 @@ def seen_sieve(paraml, input=None, db=None, bot=None, notice=None, say=None):
         # db.execute("UPDATE {} SET {} = '{}' WHERE {} = '{}';".format(table,field,value,matchfield,matchvalue))
 
 @hook.command
-def seen(inp, nick='', chan='', db=None, input=None):
+def seen(inp, nick='', chan='', db=None, input=None, conn=None, notice=None):
     "seen <nick> -- Tell when a nickname was last in active in one of this bot's channels."
 
     if input.conn.nick.lower() == inp.lower():
-        return "You need to get your eyes checked."
+        phrase = datafiles.get_phrase(nick,insults,nick,conn,notice,chan)
+        return phrase
 
     if inp.lower() == nick.lower():
-        return "Have you looked in a mirror lately?"
+        return phrase
 
     #if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", inp.lower()):
     #    return "I can't look up that name, its impossible to use!"
