@@ -1,9 +1,6 @@
 from util import hook,http, database
-from urllib import urlencode
-import re
 import random
 import urllib
-import re
 
 # HONK HONK
 actions = {
@@ -59,10 +56,10 @@ def owed(inp, nick=None, conn=None, chan=None,db=None):
     else:
         return u'\x02{} owes: \x0304${}\x02'.format(nick,fines)
 
-#@hook.command(autohelp=False)
-#def pay(inp, nick=None, conn=None, chan=None,db=None):
-#    """pay -- pay your fines"""
-#    return u'\x02Donate to infinitys paypal to pay the fees! \x02'
+@hook.command(autohelp=False)
+def pay(inp, nick=None, conn=None, chan=None,db=None):
+    """pay -- pay your fines"""
+    return u'\x02Donate to infinitys paypal to pay the fees! \x02'
 
 
 # VENDINGMACHINE
@@ -106,32 +103,11 @@ def vendingmachine(inp, nick=None, me=None):
 
 # MISC
 @hook.command('daki', autohelp=False)
-@hook.command('snuggle', autohelp=False)
 @hook.command(autohelp=False)
 def hug(inp, nick=None):
     "hug <nick> -- hugs someone"
     if not inp: inp = nick
     return '\x02\x034♥♡❤♡♥\x03 {} \x034♥♡❤♡♥\x03\x02'.format(inp).decode('UTF-8')
-
-words =  ['Ships', 'Sends', 'Deports', 'Exiles', 'Evicts', 'Casts out', 'Throws out', 'Boots out', 'Chucks out', 'Transports', 'Expels', 'Banishes', 'Repatriates']
-@hook.command('box', autohelp=False)
-@hook.command(autohelp=False)
-def deport(inp, nick='', chan='', db=None, input=None, notice=None):
-    wordnum = random.randint(0, len(words) - 1)
-    query = inp.split(' ', 1)
-    nick = query[0]
-    loc = query[1].strip()
-    "deport <nick> <location> -- deports someone"
-    if not loc: loc = 'mexico'
-    return '{} {} back to {}'.format(words[wordnum], nick, loc).decode('UTF-8')
-  
-
-@hook.command(autohelp=False)
-def gas(inp, nick=None):
-    "gas <nick> -- send someone to the gas chambers"
-    if not inp: inp = nick
-    return 'Loads {} into the showers'.format(inp).decode('UTF-8')
-
 
 @hook.command(autohelp=False)
 def kiss(inp, nick=None):
@@ -140,6 +116,7 @@ def kiss(inp, nick=None):
     return '(づ｡◕‿‿◕｡)づ\x02\x034。。・゜゜・。。・゜❤ {} ❤\x03\x02 '.format(inp).decode('UTF-8')
 
     
+
 
 @hook.regex(r'^\[(.*)\]$')
 @hook.command(autohelp=False)
@@ -162,6 +139,10 @@ def decrease(inp):
     return '\x02[QUALITY OF CHANNEL SIGNIFICANTLY DECREASED]\x02'
 
 
+@hook.command(autohelp=False)
+def pantsumap(inp, chan=None, notice=None):
+    if chan == "#pantsumen": notice(("Pantsumen Map: http://tinyurl.com/clx2qeg\r\n").encode('utf-8', 'ignore'))
+    return
 
 @hook.command('tits', autohelp=False)
 @hook.command('vagina', autohelp=False)
@@ -236,7 +217,7 @@ def woah(inp, nick=None):
         return woahs[random.randint(0, len(woahs) - 1)].replace('woah',inp.group(1))
 
 
-@hook.regex(r'.*(?<!gnu[/+])(l+i+n+u+x)(?! kernel).*', re.I)
+@hook.regex(r'.*([L|l]+[I|i]+[N|n]+[U|u]+[X|x]).*')
 def interject(inp, nick=None):
     if random.randint(0, 12) == 0:
         return "I'd Just Like To Interject For A Moment. What you're referring to as Linux, is in fact, GNU/Linux, or as I've recently taken to calling it, GNU plus Linux. Linux is not an operating system unto itself, but rather another free component of a fully functioning GNU system made useful by the GNU corelibs, shell utilities and vital system components comprising a full OS as defined by POSIX. \n " 
@@ -248,6 +229,10 @@ def interject(inp, nick=None):
 @hook.command
 def hack(inp):
     return 'hacking...'
+
+@hook.command
+def pdawg(inp):
+    return '<PDawg> i suck cocks...'
 
 @hook.command
 def leet(text):
@@ -358,7 +343,6 @@ def cayoot(inp, nick=None):
 def spit(inp, nick=None, me=None):
     if not inp: inp = nick
     me('spits on {} like a dirty whore'.format(inp))
-
 
 
 # @hook.command('siid')

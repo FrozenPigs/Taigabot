@@ -70,12 +70,12 @@ def onjoined(inp,input=None, conn=None, chan=None,raw=None, db=None):
     disabled_commands = database.get(db,'channels','disabled','chan',chan)
     if not disabled_commands: disabled_commands = ""
     
-    if not 'banlist' in disabled_commands:
-        #check if bans
-        banlist = database.get(db,'channels','bans','chan',chan)
-        if banlist and mask in banlist:
-            conn.send(u"MODE {} {} *{}".format(input.chan, '+b', mask))
-            conn.send(u"KICK {} {} :{}".format(input.chan, input.nick, 'I dont think so Tim.'))
+    #if not 'banlist' in disabled_commands:
+    #    #check if bans
+    #    banlist = database.get(db,'channels','bans','chan',chan)
+    #    if banlist and mask in banlist:
+    #        conn.send(u"MODE {} {} *{}".format(input.chan, '+b', mask))
+    #        conn.send(u"KICK {} {} :{}".format(input.chan, input.nick, 'I dont think so Tim.'))
 
     if not 'autoop' in disabled_commands:
         #check if ops

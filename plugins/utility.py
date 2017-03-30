@@ -141,7 +141,6 @@ def munge(inp):
 
 
 # colors - based on code by Reece Selwood - <https://github.com/hitzler/homero>
-@hook.command("gay")
 @hook.command
 def rainbow(inp):
     inp = unicode(inp)
@@ -179,6 +178,14 @@ def usa(inp):
         out += c[i % l] + t
     return out
 
+@hook.command
+def sadboys(inp):
+    inp = strip(inp)
+    out = ''
+    for i in enumerate(inp):
+      out+= i + ' '
+    return out
+
 
 @hook.command
 def shorten(inp):
@@ -188,4 +195,3 @@ def shorten(inp):
         return web.isgd(inp)
     except (web.ShortenError, http.HTTPError) as error:
         return error
-
