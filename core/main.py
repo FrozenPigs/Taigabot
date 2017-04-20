@@ -176,8 +176,12 @@ def main(conn, out):
 
             if isinstance(command, list):  # multiple potential matches
                 input = Input(conn, *out)
+<<<<<<< HEAD
                 if trigger not in ('b', 'p', 'd', 'pa', 'uj'):
                     input.notice("Did you mean %s or %s?" %
+=======
+                input.notice("Did you mean %s or %s?" %
+>>>>>>> infinuguu/master
                             (', '.join(command[:-1]), command[-1]))
             elif command in bot.commands:
                 input = Input(conn, *out)

@@ -42,6 +42,7 @@ def amazon(inp):
         price = results.xpath("//li[@id='result_0']/div/div/div/div/div/div/div/a/span/text()")[0]
         rating = results.xpath("//li[@id='result_0']/div/div/div/div/div/div/div/span/span/a/i/span/text()")[0]
     except:
+<<<<<<< HEAD
         try:
             title = results.xpath("//li[@id='result_1']/div/div/div/div/div/a/h2/text()")[0]
             url = results.xpath("//li[@id='result_1']/div/div/div/div/div/a/@href")[0]
@@ -49,6 +50,12 @@ def amazon(inp):
             rating = results.xpath("//li[@id='result_1']/div/div/div/div/div/div/div/span/span/a/i/span/text()")[0]
         except:
             return 'No results'
+=======
+        title = results.xpath("//li[@id='result_1']/div/div/div/div/div/a/h2/text()")[0]
+        url = results.xpath("//li[@id='result_1']/div/div/div/div/div/a/@href")[0]
+        price = results.xpath("//li[@id='result_1']/div/div/div/div/div/div/div/a/span/text()")[0]
+        rating = results.xpath("//li[@id='result_1']/div/div/div/div/div/div/div/span/span/a/i/span/text()")[0]
+>>>>>>> infinuguu/master
 
     azid = re.match(r'^.*\/dp\/([\w]+)\/.*',url).group(1)
 
@@ -59,4 +66,8 @@ def amazon(inp):
     for y in xrange(int(star_count),5):
         stars = "{}{}".format(stars,'☆')
 
+<<<<<<< HEAD
     return '\x02{}\x02 - {} - \x034{}\x02 - http://amzn.com/{}'.format(title, stars, price, azid).decode('utf-8')
+=======
+    return '\x02{}\x02 - {} - \x034{}\x02 - http://amzn.com/{}'.format(title, stars, price, azid).decode('utf-8')
+>>>>>>> infinuguu/master

@@ -65,7 +65,11 @@ class WolframAlphaQuery:
     self.PodTimeout = ''
     self.FormatTimeout = ''
     self.Async = ''
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> infinuguu/master
   def ToURL(self):
     self.Query = 'input=' + self.Query
     self.Query = self.Query + '&appid=' + self.appid
@@ -80,7 +84,11 @@ class WolframAlphaQuery:
     return
 
   def AddPodTitle(self, podtitle=''):
+<<<<<<< HEAD
     self.Query = self.Query + '&podtitle=' + podtitle
+=======
+    self.Query = self.Query + '&podtitle=' + podtitle        
+>>>>>>> infinuguu/master
     return
 
   def AddPodIndex(self, podindex=''):
@@ -279,7 +287,10 @@ errors = [
 # @hook.command('math')
 
 # @hook.command('convert')
+<<<<<<< HEAD
 @hook.command('convert')
+=======
+>>>>>>> infinuguu/master
 @hook.command('calc')
 @hook.command('wa')
 @hook.command
@@ -319,10 +330,19 @@ def wolframalpha(inp, bot=None):
             waesp = Subpod(subpod)
             plaintext = waesp.Plaintext()
             results.append(plaintext)
+<<<<<<< HEAD
     try:
 	waquery = re.sub(' (?:\||) +', ' ', ' '.join(results[0][0].splitlines())).strip().replace(u'\xc2 ', '')
 	waresult = ' '.join(results[1][0].splitlines()).replace(u'\xc2 ', '')
 	print(waquery, waresult)
 	return formatting.output('WolframAlpha', [waquery.encode('utf-8'), waresult.encode('utf-8')])
     except:
+=======
+
+    try:
+	waquery = re.sub(' (?:\||) +', ' ', ' '.join(results[0][0].splitlines())).strip()
+	waresult = ' '.join(results[1][0].splitlines())
+	return formatting.output('WolframAlpha', [waquery, waresult])
+    except: 
+>>>>>>> infinuguu/master
 	return formatting.output('WolframAlpha', [random.choice(errors)])

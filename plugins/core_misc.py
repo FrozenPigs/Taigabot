@@ -70,12 +70,21 @@ def onjoined(inp,input=None, conn=None, chan=None,raw=None, db=None):
     disabled_commands = database.get(db,'channels','disabled','chan',chan)
     if not disabled_commands: disabled_commands = ""
     
+<<<<<<< HEAD
     if not 'banlist' in disabled_commands:
         #check if bans
         banlist = database.get(db,'channels','bans','chan',chan)
         if banlist and mask in banlist:
             conn.send(u"MODE {} {} *{}".format(input.chan, '+b', mask))
             conn.send(u"KICK {} {} :{}".format(input.chan, input.nick, 'I dont think so Tim.'))
+=======
+    #if not 'banlist' in disabled_commands:
+    #    #check if bans
+    #    banlist = database.get(db,'channels','bans','chan',chan)
+    #    if banlist and mask in banlist:
+    #        conn.send(u"MODE {} {} *{}".format(input.chan, '+b', mask))
+    #        conn.send(u"KICK {} {} :{}".format(input.chan, input.nick, 'I dont think so Tim.'))
+>>>>>>> infinuguu/master
 
     if not 'autoop' in disabled_commands:
         #check if ops
@@ -90,7 +99,11 @@ def onjoined(inp,input=None, conn=None, chan=None,raw=None, db=None):
         # send greeting
         greeting = database.get(db,'users','greeting','nick',input.nick)
 
+<<<<<<< HEAD
         if greeting: conn.msg(chan, greeting.decode('UTF-8'))
+=======
+        if greeting: return greeting
+>>>>>>> infinuguu/master
 
 
 @hook.event("PART")

@@ -10,7 +10,11 @@ def ctcp_version(inp, notice=None):
     notice('\x01VERSION: Skynet v0.99')
 
 
+<<<<<<< HEAD
 @hook.regex(r'^\x01PING')
+=======
+@hook.regex(r'^\x01PING\x01$')
+>>>>>>> infinuguu/master
 def ctcp_ping(inp, notice=None):
     notice('\x01PING: PONG')
 
@@ -22,8 +26,12 @@ def ctcp_time(inp, notice=None):
 
 @hook.regex(r'^\x01FINGER\x01$')
 def ctcp_finger(inp, notice=None):
+<<<<<<< HEAD
     notice('\x01FINGER: pls no')
 
+=======
+    notice('\x01FINGER: Username is: $s' % getpass.getuser())
+>>>>>>> infinuguu/master
 
 global ctcpcache
 ctcpcache = []

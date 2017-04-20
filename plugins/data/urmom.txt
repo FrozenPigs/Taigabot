@@ -799,4 +799,7 @@ Yo momma's so stupid she tried to fix a whitespace error by painting whiteout on
 Yo momma's so ugly she has to use bulletproof glass to see her reflection in one piece
 Yo momma's so fat the hospital had to implant an extra heart in order to maintain adequete fluid flow.
 Yo momma's so stupid she has to study how to do track running for P.E.
+<<<<<<< HEAD
 Spodes
+=======
+>>>>>>> infinuguu/master

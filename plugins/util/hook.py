@@ -21,10 +21,16 @@ def _hook_add(func, add, name=''):
             if argspec.varargs:
                 n_args -= 1
             if n_args != 1:
+<<<<<<< HEAD
 		pass
                 #err = '%ss must take 1 non-keyword argument (%s)' % (name,
                 #            func.__name__)
                 #raise ValueError(err)
+=======
+                err = '%ss must take 1 non-keyword argument (%s)' % (name,
+                            func.__name__)
+                raise ValueError(err)
+>>>>>>> infinuguu/master
 
         args = []
         if argspec.defaults:
@@ -100,6 +106,7 @@ def regex(regex, flags=0, **kwargs):
         raise ValueError("regex decorators require a regex to match against")
     else:
         return regex_wrapper
+<<<<<<< HEAD
 
 
 def on_start(param=None, **kwargs):
@@ -120,3 +127,5 @@ def on_start(param=None, **kwargs):
 
 # this is temporary, to ease transition
 onload = on_start
+=======
+>>>>>>> infinuguu/master

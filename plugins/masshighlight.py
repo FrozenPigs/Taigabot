@@ -11,15 +11,24 @@ def onnames(input, conn=None, bot=None):
     chan,users = re.match(r'.*#(\S+)(.*)', inp.lower()).group(1, 2)
     try: userlist[chan]
     except: userlist[chan] = []
+<<<<<<< HEAD
     userlist[chan] = set(userlist[chan])|set(users.split(' '))
+=======
+    userlist[chan] = set(userlist[chan])|set(users.split(' ')) 
+>>>>>>> infinuguu/master
 
 
 @hook.event("JOIN")
 def onjoined_addhighlight(inp,input=None, conn=None, chan=None,raw=None):
     global userlist
     try: userlist[input.chan.lower().replace('#','')].add(input.nick.lower())
+<<<<<<< HEAD
     except: return
 
+=======
+    except: return     
+    
+>>>>>>> infinuguu/master
 
 @hook.sieve
 def highlight_sieve(bot, input, func, kind, args):
@@ -33,12 +42,21 @@ def highlight_sieve(bot, input, func, kind, args):
     try: users = userlist[input.chan.lower().replace('#','')]
     except: return input
     inp = set(re.sub('[#~&@+%,\.]', '', input.msg.lower()).split(' '))
+<<<<<<< HEAD
     if len(users & inp) >= 5:
         globaladmin = user.is_globaladmin(input.mask, input.chan, bot)
         db = bot.get_db_connection(input.conn)
         channeladmin = user.is_channeladmin(input.mask, input.chan, db)
         if not globaladmin and not channeladmin:
             if len(users & inp) >= 7:
+=======
+    if len(users & inp) > 3: 
+        globaladmin = user.is_globaladmin(input.mask, input.chan, bot) 
+        db = bot.get_db_connection(input.conn)
+        channeladmin = user.is_channeladmin(input.mask, input.chan, db)
+        if not globaladmin and not channeladmin:
+            if len(users & inp) > 5: 
+>>>>>>> infinuguu/master
                 input.conn.send(u"MODE {} +b *!*{}".format(input.chan, user.format_hostmask(input.mask)))
             input.conn.send(u"KICK {} {} :MASSHIGHLIGHTING FAGGOT GET #REKT".format(input.chan, input.nick))
     return input
@@ -57,7 +75,11 @@ def getusers(inp, conn=None,chan=None):
     if inp: chan = inp
     conn.send('NAMES {}'.format(chan))
 
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> infinuguu/master
 ### dev ###
 # @hook.command(autohelp=False,adminonly=True)
 # def testcompare(inp, conn=None,chan=None, notice=None):

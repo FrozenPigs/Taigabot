@@ -58,12 +58,17 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
         new_data = data.replace('+','')
         #new_data = data[1:]
         # append new_data to the old_data
+<<<<<<< HEAD
         print(new_data[0])
         if len(new_data) > 1 and new_data[0] in (string.punctuation + ' '):
             if new_data[1] == ' ':
                 data = old_data + new_data[0] + new_data[1:]
             else:
                 data = old_data + new_data[0] + ' ' + new_data[1:]
+=======
+        if len(new_data) > 1 and new_data[1] in (string.punctuation + ' '):
+            data = old_data + new_data
+>>>>>>> infinuguu/master
         else:
             data = old_data + ' and ' + new_data
 
@@ -132,8 +137,11 @@ def hashtag(inp, say=None, db=None, bot=None, me=None, conn=None, input=None, ch
             return
     except TypeError:
         pass
+<<<<<<< HEAD
     except AttributeError:
         pass
+=======
+>>>>>>> infinuguu/master
 
     try:
         prefix_on = bot.config["plugins"]["factoids"].get("prefix", False)

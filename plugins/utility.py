@@ -141,7 +141,10 @@ def munge(inp):
 
 
 # colors - based on code by Reece Selwood - <https://github.com/hitzler/homero>
+<<<<<<< HEAD
 @hook.command("gay")
+=======
+>>>>>>> infinuguu/master
 @hook.command
 def rainbow(inp):
     inp = unicode(inp)
@@ -169,7 +172,10 @@ def wrainbow(inp):
     return ' '.join(out)
 
 
+<<<<<<< HEAD
 @hook.command('uk')
+=======
+>>>>>>> infinuguu/master
 @hook.command
 def usa(inp):
     inp = strip(inp)
@@ -180,6 +186,17 @@ def usa(inp):
         out += c[i % l] + t
     return out
 
+<<<<<<< HEAD
+=======
+@hook.command
+def sadboys(inp):
+    inp = strip(inp)
+    out = ''
+    for i in enumerate(inp):
+      out+= i + ' '
+    return out
+
+>>>>>>> infinuguu/master
 
 @hook.command
 def shorten(inp):
@@ -189,4 +206,7 @@ def shorten(inp):
         return web.isgd(inp)
     except (web.ShortenError, http.HTTPError) as error:
         return error
+<<<<<<< HEAD
 
+=======
+>>>>>>> infinuguu/master

@@ -15,8 +15,13 @@ from bs4 import BeautifulSoup
 # used in plugins that import this
 from urllib2 import URLError, HTTPError
 
+<<<<<<< HEAD
 ua_firefox = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:17.0) Gecko/50.0' \
              ' Firefox/50.0'
+=======
+ua_firefox = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:17.0) Gecko/17.0' \
+             ' Firefox/17.0'
+>>>>>>> infinuguu/master
 ua_old_firefox = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; ' \
     'rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6'
 ua_internetexplorer = 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
@@ -189,4 +194,8 @@ def get_element(soup,element,idclass=None,selector=None):
 
 
 # while u',,' in page:
+<<<<<<< HEAD
 #         page = page.replace(u',,', u',"",')
+=======
+#         page = page.replace(u',,', u',"",')
+>>>>>>> infinuguu/master

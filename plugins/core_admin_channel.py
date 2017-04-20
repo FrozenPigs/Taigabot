@@ -200,7 +200,11 @@ def disabled(inp, notice=None, bot=None, chan=None, db=None):
     """disabled [#channel] -- Lists disabled commands/."""
     disabledcommands = database.get(db,'channels','disabled','chan',chan)
     disabledglobalcommands = " ".join(bot.config["disabled_commands"])
+<<<<<<< HEAD
     if disabledcommands: notice(u"[{}]: Disabled commands: Chan: {}, Global: {}".format(chan,disabledcommands,disabledglobalcommands))
+=======
+    if disabledcommands: notice(u"[{}]: Disabled commands: {} {}".format(chan,disabledcommands,disabledglobalcommands))
+>>>>>>> infinuguu/master
     else: notice(u"[{}]: No commands are currently disabled.".format(chan))
     return
 
@@ -216,7 +220,11 @@ def disable(inp, notice=None, bot=None, chan=None, db=None):
         if disabledcommands and target in disabledcommands:
             notice(u"[{}]: {} is already disabled.".format(chan,target))
         else:
+<<<<<<< HEAD
             if 'disable' in target or 'enable' in target or 'core_admin' in target or 'plez' in target:
+=======
+            if 'disable' in target or 'enable' in target or 'core_admin' in target:
+>>>>>>> infinuguu/master
                  notice(u"[{}]: {} cannot be disabled.".format(chan,target))
             else:
                 disabledcommands = '{} {}'.format(target,disabledcommands)
@@ -501,6 +509,7 @@ def mode_cmd(mode, text, inp, chan, conn, notice):
     if len(inp) < 2: inp = conn.nick
     targets = inp.split(" ")
     for target in targets:
+<<<<<<< HEAD
         if notice is None:
             conn.send(u"MODE {} {} {}".format(chan, mode, target))
             pass
@@ -516,6 +525,13 @@ def jumi(inp, chan=None, conn=None, notice=None):
         mode_cmd("+o", "op", 'jumi', chan, conn, None)
 
 
+=======
+        notice(u"Attempting to {} {} in {}...".format(text, target, chan))
+        conn.send(u"MODE {} {} {}".format(chan, mode, target))
+    return
+
+
+>>>>>>> infinuguu/master
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)
 def bans(inp, notice=None, bot=None, chan=None, db=None):
     """bans -- Lists bans on channel."""
@@ -579,10 +595,13 @@ def unban(inp, conn=None, chan=None, notice=None, db=None):
     if not '@' in nick: target = user.get_hostmask(nick,db)
     else: target = nick
     if '@' in target and not '!' in target: target = '*!*{}'.format(target)
+<<<<<<< HEAD
     elif '*' in inp or 'all' in inp:
         notice(u"[{}]: Everyone unbanned".format(chan))
         database.set(db,'channels','bans','','chan',chan)
         return
+=======
+>>>>>>> infinuguu/master
     notice(u"Attempting to unban {} in {}...".format(target, chan))
     conn.send(u"MODE {} -b {}".format(chan, target))
     banlist = database.get(db,'channels','bans','chan',chan)
@@ -600,6 +619,10 @@ def kick(inp, chan=None, conn=None, notice=None, nick=None, bot=None):
     If [channel] is blank the bot will kick the <user> in
     the channel the command was used in."""
     reason = "bye bye"
+<<<<<<< HEAD
+=======
+    print inp
+>>>>>>> infinuguu/master
     # inp,chan = get_chan(inp,chan)
     split = inp.split()
     target = split[0]
@@ -724,8 +747,12 @@ def invite(inp, conn=None, chan=None, notice=None, ):
 @hook.command(permissions=["op_rem", "op"], channeladminonly=True)
 def remove(inp, chan=None, conn=None):
     """remove [channel] <user> [message] -- Force a user to part from a channel."""
+<<<<<<< HEAD
     print inp
     message = inp
+=======
+    message = " ".join(inp)
+>>>>>>> infinuguu/master
     conn.send(u"REMOVE {} :{}".format(chan, message))
     return
 

@@ -4,6 +4,7 @@ import http
 import urlnorm
 import json
 import urllib
+<<<<<<< HEAD
 import yql
 
 short_url = "http://is.gd/create.php"
@@ -11,6 +12,12 @@ paste_url = "http://hastebin.com"
 yql_env = "http://datatables.org/alltables.env"
 
 YQL = yql.Public()
+=======
+
+short_url = "http://is.gd/create.php"
+paste_url = "http://hastebin.com"
+base_url = 'https://query.yahooapis.com/v1/public/yql?'
+>>>>>>> infinuguu/master
 
 
 class ShortenError(Exception):
@@ -45,11 +52,23 @@ def try_isgd(url):
 def haste(text, ext='txt'):
     """ pastes text to a hastebin server """
     page = http.get(paste_url + "/documents", post_data=text)
+<<<<<<< HEAD
     print page
+=======
+>>>>>>> infinuguu/master
     data = json.loads(page)
     return ("%s/raw/%s.%s" % (paste_url, data['key'], ext))
 
 
+<<<<<<< HEAD
 def query(query, params={}):
     """ runs a YQL query and returns the results """
     return YQL.execute(query, params, env=yql_env)
+=======
+def query(query):
+	url = base_url + urllib.urlencode(query)
+	response = urllib.urlopen(url)
+	data = response.read()
+        return data 
+
+>>>>>>> infinuguu/master

@@ -1,9 +1,14 @@
 import random
 import re
 import time
+<<<<<<< HEAD
 import urllib
 
 from util import hook, user
+=======
+
+from util import hook
+>>>>>>> infinuguu/master
 
 
 def format_quote(q, num, n_quotes):
@@ -27,6 +32,7 @@ def add_quote(db, chan, nick, add_nick, msg):
         db.execute('''INSERT OR FAIL INTO quote
                       (chan, nick, add_nick, msg, time)
                       VALUES(?,?,?,?,?)''',
+<<<<<<< HEAD
                    (chan, nick, add_nick, msg.replace("'","").replace('\"', "").replace("\x02", "").replace("\x1f", "").replace("\x03", ""), time.time()))
         db.commit()
     except db.IntegrityError:
@@ -37,14 +43,26 @@ def add_quote(db, chan, nick, add_nick, msg):
             db.commit()
         except:
             return "Message already stored, doing nothing."
+=======
+                   (chan, nick, add_nick, msg.replace("'","").replace('\"', ""), time.time()))
+        db.commit()
+    except db.IntegrityError:
+        return "Message already stored, doing nothing."
+>>>>>>> infinuguu/master
     return "Quote added."
 
 
 def del_quote(db, nick, num):
     """Deletes a quote from a nick"""
+<<<<<<< HEAD
 
     msg = get_msg_by_nick(db, nick, num)
 
+=======
+    
+    msg = get_msg_by_nick(db, nick, num)
+    
+>>>>>>> infinuguu/master
     try:
         db.execute('''UPDATE quote SET deleted = 1 WHERE
                       lower(nick)=lower(?) AND msg=?''',
@@ -55,7 +73,11 @@ def del_quote(db, nick, num):
     return "Message removed"
 
 
+<<<<<<< HEAD
 def search_quote(db, nick, search, bot):
+=======
+def search_quote(db, nick, search):
+>>>>>>> infinuguu/master
     """Searches a quote from a nick"""
     quotes = db.execute('''SELECT msg
                            FROM quote
@@ -69,12 +91,15 @@ def search_quote(db, nick, search, bot):
         if search.lower() in quote[0].lower(): #or search.strip().lower() == 'list'
             results.append(u'[{}/{}] <{}> {}'.format(num, len(quotes),nick, quote[0]))
         num+=1
+<<<<<<< HEAD
     print results
     if len(results) >= 5:
         pastebin_vars = {'api_dev_key': bot.config.get('api_keys', {}).get('pastebin'), 'api_option': 'paste', 'api_paste_code': ', '.join(results)}
         response = urllib.urlopen('http://pastebin.com/api/api_post.php', urllib.urlencode(pastebin_vars))
         results = response.read()
         print results
+=======
+>>>>>>> infinuguu/master
     return results
 
 def get_quote_num(num, count, name):
@@ -102,7 +127,11 @@ def get_msg_by_nick(db, nick, num):
     try:
         num = get_quote_num(num, count, nick)
     except Exception as error_message:
+<<<<<<< HEAD
         return error_message.message
+=======
+        return error_message
+>>>>>>> infinuguu/master
 
     quote = db.execute('''SELECT msg
                           FROM quote
@@ -110,7 +139,11 @@ def get_msg_by_nick(db, nick, num):
                           AND lower(nick) = lower(?)
                           ORDER BY time
                           LIMIT ?, 1''', (nick, (num - 1))).fetchall()[0]
+<<<<<<< HEAD
 
+=======
+                          
+>>>>>>> infinuguu/master
     msg, = quote
     return msg
 
@@ -122,7 +155,11 @@ def get_quote_by_nick(db, nick, num=False):
     try:
         num = get_quote_num(num, count, nick)
     except Exception as error_message:
+<<<<<<< HEAD
         return error_message.message
+=======
+        return error_message
+>>>>>>> infinuguu/master
 
     quote = db.execute('''SELECT time, nick, msg
                           FROM quote
@@ -144,7 +181,11 @@ def get_quote_by_nick_chan(db, chan, nick, num=False):
     try:
         num = get_quote_num(num, count, nick)
     except Exception as error_message:
+<<<<<<< HEAD
         return error_message.message
+=======
+        return error_message
+>>>>>>> infinuguu/master
 
     quote = db.execute('''SELECT time, nick, msg
                           FROM quote
@@ -166,7 +207,11 @@ def get_quote_by_chan(db, chan, num=False):
     try:
         num = get_quote_num(num, count, chan)
     except Exception as error_message:
+<<<<<<< HEAD
         return error_message.message
+=======
+        return error_message
+>>>>>>> infinuguu/master
 
     quote = db.execute('''SELECT time, nick, msg
                           FROM quote
@@ -179,8 +224,14 @@ def get_quote_by_chan(db, chan, num=False):
 
 @hook.command('q')
 @hook.command
+<<<<<<< HEAD
 def quote(inp, nick='', chan='', db=None, notice=None,reply=None, bot=None):
     "quote [add] <#chan | nick> [-r query/query/number]"
+=======
+def quote(inp, nick='', chan='', db=None, notice=None,reply=None):
+    "quote <#chan | nick> [#n] ex: .quote add <nick> <msg> -- Gets " \
+    "random or [#n]th quote by <nick> or from <#chan>/adds quote."
+>>>>>>> infinuguu/master
     create_table_if_not_exists(db)
 
     add = re.match(r"add[^\w@]+(\S+?)>?\s+(.*)", inp, re.I)
@@ -188,7 +239,11 @@ def quote(inp, nick='', chan='', db=None, notice=None,reply=None, bot=None):
     retrieve = re.match(r"(\S+)(?:\s+#?(-?\d+))?$", inp)
     retrieve_chan = re.match(r"(#\S+)\s+(\S+)(?:\s+#?(-?\d+))?$", inp)
     retrieve_search = re.match(r"(\S+)(?:\s+)(.+)$", inp)
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> infinuguu/master
     if add:
         quoted_nick, msg = add.groups()
         notice(add_quote(db, chan, quoted_nick, nick, msg))
@@ -205,6 +260,7 @@ def quote(inp, nick='', chan='', db=None, notice=None,reply=None, bot=None):
         return get_quote_by_nick_chan(db, chan, nick, num)
     elif retrieve_search:
         nick, search = retrieve_search.groups()
+<<<<<<< HEAD
         if len(search) < 3:
             notice('Please search for something larger than 3 characters')
             return
@@ -233,11 +289,25 @@ def quote(inp, nick='', chan='', db=None, notice=None,reply=None, bot=None):
                         else:
                             notice(result)
                             time.sleep(0.5)
+=======
+        if len(search) < 3: 
+            notice('Please search for something larger than 3 characters')
+            return
+        else:
+            results = search_quote(db,nick,search)
+            if len(results) == 0: 
+                return "No Results"
+            elif len(results) < 3: 
+                for result in results: reply(result)
+            else: 
+                for result in results: notice(result)
+>>>>>>> infinuguu/master
             return
 
     notice(quote.__doc__)
 
 
+<<<<<<< HEAD
 @hook.command()
 def rquote(inp, db=None, notice=None, nick=None, bot=None, reply=None):
     """rquote <number/*> <nick> - Deletes a quote from a nick"""
@@ -258,11 +328,23 @@ def rquote(inp, db=None, notice=None, nick=None, bot=None, reply=None):
             time.sleep(0.5)
     else:
         notice(del_quote(db, target, num))
+=======
+@hook.command(adminonly=True)
+def rquote(inp, db=None, notice=None):
+    """Deletes a quote from a nick"""
+    nick = inp.split(' ')[0]
+    num = inp.split(' ')[1]
+    notice(del_quote(db, nick, num))
+>>>>>>> infinuguu/master
 
 
 
     # cur.execute("SELECT * FROM list WHERE InstitutionName=?", (Variable,))
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> infinuguu/master
 
 # elif delete:
 #         quoted_nick, msg = add.groups()
@@ -272,13 +354,25 @@ def rquote(inp, db=None, notice=None, nick=None, bot=None, reply=None):
 # def rquote(inp, nick='', chan='', db=None, notice=None):
 #     "rquote <nick> <#n> -- Removes <#n>th quote by <nick>"
 #     create_table_if_not_exists(db)
+<<<<<<< HEAD
 
 #     remove = re.match(r"(\S+?)\s+(\d+)", inp)
 
+=======
+    
+#     remove = re.match(r"(\S+?)\s+(\d+)", inp)
+    
+>>>>>>> infinuguu/master
 #     if remove:
 #         quoted_nick, num = remove.groups()
 #         notice(del_quote(db, quoted_nick, num))
 #         return
+<<<<<<< HEAD
 
 #     notice(quote.__doc__)
 
+=======
+    
+#     notice(quote.__doc__)
+        
+>>>>>>> infinuguu/master

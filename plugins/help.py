@@ -1,5 +1,8 @@
 import re
+<<<<<<< HEAD
 import urllib
+=======
+>>>>>>> infinuguu/master
 from util import hook, user, web
 
 @hook.command(autohelp=False)
@@ -52,6 +55,7 @@ def commands(inp, say=None, notice=None, input=None, conn=None, bot=None, db=Non
 			notice(line)
 	else:
 		output = ", ".join(output)
+<<<<<<< HEAD
 		# print(output)
                 print bot.config.get('api_keys', {}).get('pastebin')
                 pastebin_vars = {'api_dev_key': bot.config.get('api_keys', {}).get('pastebin'), 'api_option': 'paste', 'api_paste_code': output}
@@ -59,6 +63,10 @@ def commands(inp, say=None, notice=None, input=None, conn=None, bot=None, db=Non
                 url = response.read()
 		#haste = web.haste("{}\n\n{}".format(output, help))
 		notice("Commands you have access to ({}): {}".format(len(well), url))
+=======
+		haste = web.haste("{}\n\n{}".format(output, help))
+		notice("Commands you have access to ({}): {}".format(len(well), haste))
+>>>>>>> infinuguu/master
     elif inp in commands:
 	notice("{}{}".format(conn.conf["command_prefix"], commands[inp].__doc__))
     return
@@ -81,7 +89,11 @@ def help(inp, say=None, notice=None, input=None, conn=None, bot=None):
 #     for command, (func, args) in bot.commands.iteritems():
 #         #print command.__doc__
 #         helptext = helptext + u'{}\n'.format(func.__doc__).encode('utf-8')
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> infinuguu/master
 #         #print '{} {} {}'.format(command,func,args)
 
 #     with open('plugins/data/help.txt', 'a') as file:

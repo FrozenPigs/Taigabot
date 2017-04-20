@@ -37,20 +37,31 @@ with open("plugins/data/lewd.txt") as f:
 with open("plugins/data/slogans.txt") as f:
     slogans = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
+<<<<<<< HEAD
 with open("plugins/data/youtube.txt") as f:
     slogans = [line.strip() for line in f.readlines() if not line.startswith("//")]
+=======
+>>>>>>> infinuguu/master
 
 
 def get_generator(_json, variables):
     data = json.loads(_json)
     return textgen.TextGenerator(data["templates"], data["parts"], variables=variables)
 
+<<<<<<< HEAD
 
 def send_phrase(inp,attack,nick,conn,me,notice,chan):
     target = inp.strip()
     # if " " in target:
     #     notice("Invalid username!")
     #     return
+=======
+def send_phrase(inp,attack,nick,conn,me,notice,chan):
+    target = inp.strip()
+    if " " in target:
+        notice("Invalid username!")
+        return
+>>>>>>> infinuguu/master
 
     # if the user is trying to make the bot slap itself, slap them
     if target.lower() == conn.nick.lower() or target.lower() == "itself": target = nick
@@ -72,11 +83,17 @@ def eightball(input, me=None):
     me("shakes the magic 8 ball... {}".format(magic))
     return
 
+<<<<<<< HEAD
 
 @hook.command
 def lart(inp, me=None, nick=None, conn=None, notice=None, chan=None):
     """lart <user> -- LARTs <user>."""
     send_phrase(inp,larts,nick,conn,me,notice, chan)
+=======
+@hook.command
+def lart(inp, me=None, nick=None, conn=None, notice=None, chan=None):
+    """lart <user> -- LARTs <user>."""
+>>>>>>> infinuguu/master
     return
 
 
@@ -172,8 +189,13 @@ def slogan(inp):
 
 
 def get_filename(action,notice):
+<<<<<<< HEAD
     # if 'loli' in action: action = 'lolis'
     if 'insult' in action: action = 'insults'
+=======
+    if 'loli' in action: action = 'lolis'
+    elif 'insult' in action: action = 'insults'
+>>>>>>> infinuguu/master
     elif 'kek' in action: action = 'keks'
     elif 'flirt' in action: action = 'flirts'
     elif 'moist' in action: action = 'moists'
@@ -297,12 +319,20 @@ def topkek(inp,say=None,notice=None):
     say(process_text(inp,"keks",notice))
     return
 
+<<<<<<< HEAD
 
 # @hook.command(autohelp=False)
 # def loli(inp,say=None,notice=None):
 #     """loli -- Returns a loli."""
 #     say("\x02\x034NSFW\x03\x02 {}".format(process_text(inp,"lolis",notice)))
 #     return
+=======
+@hook.command(autohelp=False)
+def loli(inp,say=None,notice=None):
+    """loli -- Returns a loli."""
+    say("\x02\x034NSFW\x03\x02 {}".format(process_text(inp,"lolis",notice)))
+    return
+>>>>>>> infinuguu/master
 
 @hook.command(autohelp=False)
 def moistcake(inp,say=None,notice=None):
