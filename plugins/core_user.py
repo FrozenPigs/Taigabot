@@ -8,10 +8,7 @@ import random
 #TYPE, NICK, VOTES, VOTERS
 
 ### Battlestations
-<<<<<<< HEAD
 @hook.command('bullshit', autohelp=False)
-=======
->>>>>>> infinuguu/master
 @hook.command(autohelp=False)
 def battlestation(inp, nick=None, conn=None, chan=None,db=None, notice=None):
     "battlestation <url | @ person> -- Shows a users Battlestation."
@@ -78,11 +75,7 @@ def greeting(inp, nick=None, conn=None, chan=None,db=None, notice=None):
             database.set(db,'users','greeting','','nick',nick)
             notice("Deleted your greeting.")
         else:
-<<<<<<< HEAD
             database.set(db,'users','greeting','{} '.format(inp.strip().replace("'","").replace("ACTION","").replace("PRIVMSG","").replace("PING","").replace("NOTICE","").replace("\x01","").encode('utf8')),'nick',nick)
-=======
-            database.set(db,'users','greeting','{} '.format(inp.strip().replace("'","").encode('utf8')),'nick',nick)
->>>>>>> infinuguu/master
             notice("Saved your greeting.")
         return
     except: return "Uwaaahh~~?"
@@ -170,7 +163,6 @@ def daughteru(inp, nick=None, conn=None, chan=None,db=None, notice=None):
     return
 
 
-<<<<<<< HEAD
 @hook.command(autohelp=False)
 def mom(inp, nick=None, conn=None, chan=None,db=None, notice=None):
     "mom <mom | @ person> -- Shows a users mom."
@@ -213,8 +205,6 @@ def dad(inp, nick=None, conn=None, chan=None,db=None, notice=None):
     return
 
 
-=======
->>>>>>> infinuguu/master
 ### Desktops
 @hook.command(autohelp=False)
 def birthday(inp, nick=None, conn=None, chan=None,db=None, notice=None):
@@ -257,29 +247,16 @@ def horoscope(inp, db=None, notice=None, nick=None):
             if " save" in inp: save = True
             sign = inp.split()[0]
 
-<<<<<<< HEAD
     url = "http://my.horoscope.com/astrology/free-daily-horoscope-%s.html" % sign
     try:
         result = http.get_soup(url)
         title = result.find_all('h1', {'class': 'h1b'})[1].text
         horoscopetxt = result.find('div', {'id': 'textline'}).text
-=======
-    import urllib
-    url = "http://my.horoscope.com/astrology/free-daily-horoscope-%s.html" % sign
-    try:
-        response = urllib.urlopen(url)
-        result = response.read()
-        horoscopetxt = result.find('div', {'class': 'block-horoscope-text f16 l20'}).text
->>>>>>> infinuguu/master
     except: return "Could not get the horoscope for {}.".format(sign.encode('utf8'))
 
     if sign and save: database.set(db,'users','horoscope',sign,'nick',nick)
 
-<<<<<<< HEAD
     return u"\x02{}\x02 {}".format(title, horoscopetxt)
-=======
-    return u"\x02{}\x02 {}".format(sign, horoscopetxt)
->>>>>>> infinuguu/master
 
 
 @hook.command(autohelp=False)

@@ -331,7 +331,6 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
     elif len(inpsplit) >= 3:
         field = inp.split(" ")[0].strip()
         nick = inp.split(" ")[1].strip()
-<<<<<<< HEAD
         # value = inp.replace(field,'').replace(nick,'').strip()
         value = inp.strip()
         vsplit = value.split()
@@ -339,9 +338,6 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
             value = ' '.join(vsplit[2:])
         else:
             value = ''.join(vsplit[2:])
-=======
-        value = inp.replace(field,'').replace(nick,'').strip()
->>>>>>> infinuguu/master
         if field and nick and value:
             if 'del' in value or 'none' in value: value = ''
             if 'location' in field or \
@@ -361,10 +357,7 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
                 'selfie' in field or\
                 'steam' in field or\
                 'greeting' in field or\
-<<<<<<< HEAD
                 'seen' in field or\
-=======
->>>>>>> infinuguu/master
                 'socialmedias' in field or\
                 'snapchat' in field:
                 #if type(value) is list: value = value[0]
@@ -376,7 +369,6 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
     notice(u"Could not set {}.".format(field))
     return
 
-<<<<<<< HEAD
 @hook.command(autohelp=False, adminonly=True)
 def db(inp, db=None, notice=None, chan=None):
     """db <update|init> -- Init or update the database."""
@@ -387,21 +379,3 @@ def db(inp, db=None, notice=None, chan=None):
     elif 'init' in inp:
         database.init(db)
         notice('[{}]: Initiated databases.'.format(chan))
-=======
-
-@hook.command(adminonly=True, autohelp=False)
-def db(inp,db=None):
-    split = inp.split(' ')
-    action = split[0]
-    if "init" in action:
-        result = db.execute("create table if not exists users(nick primary key, host, location, greeting, lastfm, fines, battlestation, desktop, horoscope, version)")
-        db.commit()
-        return result
-    elif "addcol" in action:
-        table = split[1]
-        col = split[2]
-        if table is not None and col is not None:
-            db.execute("ALTER TABLE {} ADD COLUMN {}".format(table,col))
-            db.commit
-            return "Added Column"
->>>>>>> infinuguu/master

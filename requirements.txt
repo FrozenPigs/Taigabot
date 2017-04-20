@@ -4,10 +4,6 @@ pygeoip
 tweepy
 BeautifulSoup==3.2.1
 lxml==3.1beta1
-<<<<<<< HEAD
-=======
-pyenchant==1.6.5
->>>>>>> infinuguu/master
 pydns>=2.3.6
 BeautifulSoup4
 requests
@@ -16,7 +12,3 @@ mygengo
 pytz>=2013b
 timezones
 pycrypto
-<<<<<<< HEAD
-=======
-soundcloud
->>>>>>> infinuguu/master

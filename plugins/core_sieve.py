@@ -44,17 +44,10 @@ if not os.path.exists(flood_filename): open(flood_filename, 'w').write(inspect.c
 @hook.sieve
 def ignoresieve(bot, input, func, type, args):
     """ blocks input from ignored channels/nicks/hosts """
-<<<<<<< HEAD
     globalignorelist = " ".join(filter(None, bot.config["ignored"]))
 
     db = bot.get_db_connection(input.conn)
     mask = input.mask.lower().replace('~', '')
-=======
-    globalignorelist = " ".join(bot.config["ignored"])
-
-    db = bot.get_db_connection(input.conn)
-    mask = input.mask.lower()
->>>>>>> infinuguu/master
     chan = input.chan.lower()
     ignorelist = database.get(db,'channels','ignored','chan',chan)
 
@@ -64,18 +57,13 @@ def ignoresieve(bot, input, func, type, args):
     # if user.is_admin(mask,chan,db,bot): return input
 
     if ignorelist and user.compare_hostmasks(mask, ignorelist): return None
-<<<<<<< HEAD
     if globalignorelist and user.compare_hostmasks(mask, globalignorelist): return None
-=======
-    if ignorelist and user.compare_hostmasks(mask, globalignorelist): return None
->>>>>>> infinuguu/master
 
     return input
 
 
 @hook.sieve
 def sieve_suite(bot, input, func, kind, args):
-<<<<<<< HEAD
     if func.__name__ == 'youtube_url':
         if len(input['lastparam'].split()) >= 5:
             time.sleep(1)
@@ -84,14 +72,11 @@ def sieve_suite(bot, input, func, kind, args):
     #if func.__name__ == 'quote':
     #    if len(input['lastparam'].split()) >= 3:
     #        time.sleep(5)
-=======
->>>>>>> infinuguu/master
     global ledzep_counter
     global sudos_counter
     # ignore any input from the bot
     if input.nick == input.conn.nick: return None    # print "Ignoring {}".format(input.conn.nick)
     if input.command == 'QUIT': return None #fix for db issue???
-<<<<<<< HEAD
 
     # ignore bots if ignorebots = true
     if input.command == 'PRIVMSG' and input.nick.lower().endswith('bot') and args.get('ignorebots', True):
@@ -101,11 +86,6 @@ def sieve_suite(bot, input, func, kind, args):
             pass
         else:
             return None
-=======
-        
-    # ignore bots if ignorebots = true
-    if input.command == 'PRIVMSG' and input.nick.lower().endswith('bot') and args.get('ignorebots', True): return None
->>>>>>> infinuguu/master
 
     fn = re.match(r'^plugins.(.+).py$', func._filename)
     db = bot.get_db_connection(input.conn)
@@ -113,13 +93,8 @@ def sieve_suite(bot, input, func, kind, args):
     # parse for different dest channel
     if kind == "command":
         try:
-<<<<<<< HEAD
             if input.inp[0][0] == "#":
                 if "join" in input.trigger or "part" in input.trigger:
-=======
-            if input.inp[0][0] == "#": 
-                if "join" in input.trigger or "part" in input.trigger: 
->>>>>>> infinuguu/master
                     pass
                 else:
                     input.chan = input.inp.split(' ')[0]
@@ -134,11 +109,7 @@ def sieve_suite(bot, input, func, kind, args):
     # print input
     if fn and fn.group(1).lower() in bot.config.get('disabled_plugins', []): return None
 
-<<<<<<< HEAD
     if fn and fn.group(1).lower() in bot.config.get('disabled_commands', []):
-=======
-    if fn and fn.group(1).lower() in bot.config.get('disabled_commands', []): 
->>>>>>> infinuguu/master
         print("[{}]: {} is disabled.".format(input.chan,fn.group(1)))
         return None
 
@@ -169,13 +140,8 @@ def sieve_suite(bot, input, func, kind, args):
        fn.group(1) == 'tell' or\
        fn.group(1) == 'ai' or \
        fn.group(1) == 'core_ctcp': return input
-<<<<<<< HEAD
        # fn.group(1) == 'log':
 
-=======
-       # fn.group(1) == 'log': 
- 
->>>>>>> infinuguu/master
     if 'ledzep' in input.nick.lower(): ledzep_counter+=input.msg.lower().count('tfw')
 
     if 'sudos' in input.nick.lower(): sudos_counter+=input.msg.lower().count('tfw')
@@ -183,11 +149,7 @@ def sieve_suite(bot, input, func, kind, args):
     # CANT SOMEONE DISABLE SEEN OR LOG????
 
     ### process global config options
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> infinuguu/master
     # process acls
     acl = bot.config.get('acls', {}).get(func.__name__)
     if acl:
@@ -204,7 +166,6 @@ def sieve_suite(bot, input, func, kind, args):
     # if not fn.group(1) == 'log': print fn.group(1)
 
     ### channel configs
-<<<<<<< HEAD
 
     globaladmin = user.is_globaladmin(input.mask, chan, bot)
     if args.get('adminonly', False):
@@ -215,32 +176,13 @@ def sieve_suite(bot, input, func, kind, args):
     if args.get('channeladminonly', False):
         if not channeladmin and not globaladmin: return None
     if channeladmin: return input
-=======
-  
-    globaladmin = user.is_globaladmin(input.prefix, chan, bot) 
-    if args.get('adminonly', False):
-        print input
-        if not globaladmin: return None
-    if globaladmin: return input 
-        #input.notice("Flood detected. Please wait {} seconds.".format(cmdflood_duration))
-        #return None
-
-    channeladmin = user.is_channeladmin(input.mask, chan, db)
-    if args.get('channeladminonly', False): 
-        if not channeladmin and not globaladmin: return None
-    if channeladmin: return input   
->>>>>>> infinuguu/master
 
     #badwords
     if not globaladmin and not channeladmin:
         badwordlist = database.get(db,'channels','badwords','chan',chan)
         if badwordlist:
             for badword in badwordlist.split(' '):
-<<<<<<< HEAD
                 if len(badword) > 2 and badword.lower() is not chan.lower() and badword.lower().strip() in input.msg.lower():
-=======
-                if len(badword) > 2 and badword.lower() is not chan.lower() and badword.lower().strip() in input.msg.lower(): 
->>>>>>> infinuguu/master
                     input.conn.send(u"KICK {} {} :{}".format(input.chan, input.nick, 'Used bad word: {}'.format(badword)))
                     return
 
@@ -254,15 +196,9 @@ def sieve_suite(bot, input, func, kind, args):
                 cmdflood_duration = cmdflood_protection.split(' ')[1]
                 now = time.time()
                 cmdflood = json.load(open(cmdflood_filename))
-<<<<<<< HEAD
                 try:
                     nick = cmdflood[input.nick]
                 except:
-=======
-                try: 
-                    nick = cmdflood[input.nick]
-                except: 
->>>>>>> infinuguu/master
                     nick = []
                     cmdflood[input.nick] = nick
 
@@ -273,11 +209,7 @@ def sieve_suite(bot, input, func, kind, args):
                         cmdflood[input.nick].remove(x)
 
                 json.dump(cmdflood, open(cmdflood_filename, 'w'), sort_keys=True, indent=2)
-<<<<<<< HEAD
 
-=======
-     
->>>>>>> infinuguu/master
                 if len(cmdflood[input.nick]) > (int(cmdflood_num)):
                     input.notice("Flood detected. Please wait {} seconds.".format(cmdflood_duration))
                     return None
@@ -290,15 +222,9 @@ def sieve_suite(bot, input, func, kind, args):
                     flood_duration = flood_protection.split(' ')[1]
                     now = time.time()
                     flood = json.load(open(flood_filename))
-<<<<<<< HEAD
                     try:
                         nick = flood[input.nick]
                     except:
-=======
-                    try: 
-                        nick = flood[input.nick]
-                    except: 
->>>>>>> infinuguu/master
                         nick = []
                         flood[input.nick] = nick
 

@@ -88,11 +88,7 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
     if chan.lower() == user_from.lower():
         chan = 'a pm'
 
-<<<<<<< HEAD
     if user_to == 'me':
-=======
-    if user_to == 'me': 
->>>>>>> infinuguu/master
         user_to = user_from.lower()
     # if user_to == user_from.lower():
     #     notice("Have you looked in a mirror lately?")

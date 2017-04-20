@@ -31,11 +31,7 @@ def pushFirst( strg, loc, toks ):
 
 
 def pushUMinus( strg, loc, toks ):
-<<<<<<< HEAD
     if toks and toks[0]=='-':
-=======
-    if toks and toks[0]=='-': 
->>>>>>> infinuguu/master
         exprStack.append( 'unary -' )
         #~ exprStack.append( '-1' )
         #~ exprStack.append( '*' )
@@ -55,19 +51,11 @@ def parseTerms():
     if not terms:
         point = Literal( "." )
         e     = CaselessLiteral( "E" )
-<<<<<<< HEAD
         fnumber = Combine( Word( "+-"+nums, nums ) +
                            Optional( point + Optional( Word( nums ) ) ) +
                            Optional( e + Word( "+-"+nums, nums ) ) )
         ident = Word(alphas, alphas+nums+"_$")
 
-=======
-        fnumber = Combine( Word( "+-"+nums, nums ) + 
-                           Optional( point + Optional( Word( nums ) ) ) +
-                           Optional( e + Word( "+-"+nums, nums ) ) )
-        ident = Word(alphas, alphas+nums+"_$")
-     
->>>>>>> infinuguu/master
         plus  = Literal( "+" )
         minus = Literal( "-" )
         mult  = Literal( "*" )
@@ -78,26 +66,15 @@ def parseTerms():
         multop = mult | div
         expop = Literal( "^" )
         pi    = CaselessLiteral( "PI" )
-<<<<<<< HEAD
 
         expr = Forward()
         atom = (Optional("-") + ( pi | e | fnumber | ident + lpar + expr + rpar ).setParseAction( pushFirst ) | ( lpar + expr.suppress() + rpar )).setParseAction(pushUMinus)
 
-=======
-        
-        expr = Forward()
-        atom = (Optional("-") + ( pi | e | fnumber | ident + lpar + expr + rpar ).setParseAction( pushFirst ) | ( lpar + expr.suppress() + rpar )).setParseAction(pushUMinus) 
-        
->>>>>>> infinuguu/master
         # by defining exponentiation as "atom [ ^ factor ]..." instead of "atom [ ^ atom ]...", we get right-to-left exponents, instead of left-to-righ
         # that is, 2^3^2 = 2^(3^2), not (2^3)^2.
         factor = Forward()
         factor << atom + ZeroOrMore( ( expop + factor ).setParseAction( pushFirst ) )
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> infinuguu/master
         term = factor + ZeroOrMore( ( multop + factor ).setParseAction( pushFirst ) )
         expr << term + ZeroOrMore( ( addop + term ).setParseAction( pushFirst ) )
         terms = expr
@@ -131,28 +108,16 @@ def c(inp):
     "c [equation] -- calculates equation with custom calculator"
     global exprStack
     exprStack = []
-<<<<<<< HEAD
     #try:
     results = parseTerms().parseString(inp)
     # except: return "I cant let you do that Jim."
     val = evaluateStack(exprStack[:])
     if val is None:
-=======
-    #try: 
-    results = parseTerms().parseString(inp)
-    # except: return "I cant let you do that Jim."
-    val = evaluateStack(exprStack[:])
-    if val is None: 
->>>>>>> infinuguu/master
         return "Uwaahh~~ i-its too big onii-chan!"
     else:
         try:
             val = "{:20,.17f}".format(val)
-<<<<<<< HEAD
             val = re.search(r'^(.*\...[1-9+]*).*$', val).group(1)
-=======
-            val = re.search(r'^(.*\...[1-9+]*).*$', val).group(1) 
->>>>>>> infinuguu/master
         except:
             val = val
     # return u"{} = {}".format(inp, val)

@@ -62,7 +62,6 @@ I want you like JFK wanted a car with a roof.are those astronaut pants {nick}? c
 girl you must be a rodeo bull because i want to ride you for 8 seconds and then get off
 my love for you is a backward-sloping demand curve
 u so hot that i apply sun screen 2 muh dick b4 we fuck
-<<<<<<< HEAD
 I bet your name's Mickey, 'cause you're so fine.
 I better get out my library card, 'cause I'm checkin' you out.
 If you were a booger, I'd pick you.
@@ -231,5 +230,3 @@ Are we playing IRC duckhunt? because I want to .bang you.
 On a scale of one to America, how free are you tonight?
 You can jingle my bells, baby.
 Are you a text document? Cuz I wanna open you up and enter.
-=======
->>>>>>> infinuguu/master

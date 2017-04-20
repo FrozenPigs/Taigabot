@@ -2,10 +2,6 @@ from util import hook, http, database, urlnorm, formatting
 from bs4 import BeautifulSoup
 from urlparse import urlparse
 import re
-<<<<<<< HEAD
-=======
-from time import time
->>>>>>> infinuguu/master
 
 from urllib import FancyURLopener
 import urllib2
@@ -19,37 +15,20 @@ opener = urlopener()
 
 link_re = (r'((https?://([-\w\.]+)+(:\d+)?(/([\S/_\.]*(\?\S+)?)?)?))', re.I)
 
-<<<<<<< HEAD
-=======
-cache = {}
-
->>>>>>> infinuguu/master
 @hook.regex(*link_re)
 def process_url(match,bot=None,input=None,chan=None,db=None, reply=None):
     global trimlength
     url = match.group(1).replace('https:','http:')
-<<<<<<< HEAD
 
     if '127.0.0.1' in url or 'localhost' in url.lower(): return
 
-=======
-    if url in cache:
-      if (time() < (cache[url] + 60)): return
-    cache[url] = time()
-
-    if '127.0.0.1' in url or 'localhost' in url.lower(): return
-    
->>>>>>> infinuguu/master
     trimlength = database.get(db,'channels','trimlength','chan',chan)
     if not trimlength: trimlength = 9999
     try: trimlength = int(trimlength)
     except: trimlength = trimlength
 
-<<<<<<< HEAD
     if '.html' in url.lower(): return
 
-=======
->>>>>>> infinuguu/master
     if   'youtube.com'       in url.lower(): return                         #handled by youtube plugin: exiting
     elif 'youtu.be'          in url.lower(): return                         #handled by youtube plugin: exiting
     elif 'yooouuutuuube'     in url.lower(): return                         #handled by youtube plugin: exiting
@@ -139,11 +118,7 @@ def ebay_url(match,bot):
 
     try: bids = item.xpath("//span[@id='qty-test']/text()")[0].strip()
     except: bids = "Buy It Now"
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> infinuguu/master
     feedback = item.xpath("//span[@class='w2b-head']/text()")
     if not feedback: feedback = item.xpath("//div[@id='si-fb']/text()")
     if feedback: feedback = feedback[0].strip()
@@ -171,11 +146,7 @@ def wikipedia_url(match):
 # @hook.regex(*hentai_re)
 def hentai_url(match,bot):
     userpass = bot.config.get("api_keys", {}).get("exhentai")
-<<<<<<< HEAD
     if "user:pass" in userpass:
-=======
-    if "user:pass" in userpass: 
->>>>>>> infinuguu/master
         return
     else:
         username = userpass.split(':')[0]
@@ -184,11 +155,7 @@ def hentai_url(match,bot):
 
     url = match
     loginurl = 'http://forums.e-hentai.org/index.php?act=Login&CODE=01'
-<<<<<<< HEAD
     logindata = 'referer=http://forums.e-hentai.org/index.php&UserName={}&PassWord={}&CookieDate=1'.format(username,password)
-=======
-    logindata = 'referer=http://forums.e-hentai.org/index.php&UserName={}&PassWord={}&CookieDate=1'.format(username,password) 
->>>>>>> infinuguu/master
 
     req = urllib2.Request(loginurl)
     resp=urllib2.urlopen(req,logindata)#POST登陆
@@ -234,19 +201,11 @@ headers = {
 
 def unmatched_url(match,chan,db):
     disabled_commands = database.get(db,'channels','disabled','chan',chan)
-<<<<<<< HEAD
 
     try:
 	r = requests.get(match, headers=headers,allow_redirects=True, stream=True)
     except Exception as e:
 	return formatting.output('URL', ['Error: {}'.format(e)])
-=======
-    
-    try:
-        r = requests.get(match, headers=headers,allow_redirects=True, stream=True)
-    except Exception as e:
-        return formatting.output('URL', ['Error: {}'.format(e)])
->>>>>>> infinuguu/master
 
     domain = urlparse(match).netloc
 
@@ -254,26 +213,16 @@ def unmatched_url(match,chan,db):
         content_type = r.headers['Content-Type']
         try: encoding = r.headers['content-encoding']
         except: encoding = ''
-<<<<<<< HEAD
 
         if content_type.find("html") != -1: # and content_type is not 'gzip':
 	    data = ''
 	    for chunk in r.iter_content(chunk_size=1024):
 		data += chunk
 		if len(data) > 48336: break
-=======
-        
-        if content_type.find("html") != -1: # and content_type is not 'gzip':
-            data = ''
-            for chunk in r.iter_content(chunk_size=1024):
-                data += chunk
-                if len(data) > 48336: break
->>>>>>> infinuguu/master
 
             body = html.fromstring(data)
 
             try: title = body.xpath('//title/text()')[0]
-<<<<<<< HEAD
 	    except: return formatting.output('URL', ['No Title ({})'.format(domain)])
 
             try: title_formatted = text.fix_bad_unicode(body.xpath('//title/text()')[0])
@@ -281,36 +230,17 @@ def unmatched_url(match,chan,db):
             return formatting.output('URL', ['{} ({})'.format(title_formatted.encode('utf-8'), domain)])
         else:
 	    if disabled_commands:
-=======
-            except: return formatting.output('URL', ['No Title ({})'.format(domain)])
-
-            try: title_formatted = text.fix_bad_unicode(body.xpath('//title/text()')[0])
-            except: title_formatted = body.xpath('//title/text()')[0]
-            title_formatted = title_formatted.strip(' \t\n\r')
-            return formatting.output('URL', [u'{} ({})'.format(title_formatted[:trimlength], domain)])
-        else:
-            if disabled_commands:
->>>>>>> infinuguu/master
                 if 'filesize' in disabled_commands: return
             try:
                 if r.headers['Content-Length']:
                     length = int(r.headers['Content-Length'])
                     if length < 0: length = 'Unknown size'
                     else: length = formatting.filesize(length)
-<<<<<<< HEAD
                 else:
-=======
-                else: 
->>>>>>> infinuguu/master
                     length = "Unknown size"
             except:
                 length = "Unknown size"
             if "503 B" in length: length = ""
             if length is None: length = ""
-<<<<<<< HEAD
 	    return formatting.output('URL', ['{} Size: {} ({})'.format(content_type, length, domain)])
     return
-=======
-        return formatting.output('URL', ['{} Size: {} ({})'.format(content_type, length, domain)])
-    return
->>>>>>> infinuguu/master

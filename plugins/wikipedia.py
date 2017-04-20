@@ -40,12 +40,6 @@ def wiki(inp):
 
     desc = re.sub('\s+', ' ', desc).strip()  # remove excess spaces
 
-<<<<<<< HEAD
     #desc = text.truncate_str(desc, 200)
 
     return u'{} :: {}'.format(http.quote(url.replace('en.wikipedia.org/wiki','enwp.org'), ':/'),desc)
-=======
-    desc = text.truncate_str(desc, 140)
-
-    return u'{} :: {}'.format(url, desc)
->>>>>>> infinuguu/master

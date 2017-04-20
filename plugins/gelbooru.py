@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from util import hook, http, web
 import random
 import re
@@ -9,23 +8,12 @@ gelbooru_cache = []
 gb_lastsearch = ''
 
 def gb_refresh_cache(inp):
-=======
-from util import hook, http
-import random
-import re
-
-gelbooru_cache = []
-lastsearch = ''
-
-def refresh_cache(inp):
->>>>>>> infinuguu/master
     global gelbooru_cache
     gelbooru_cache = []
     num = 0
     search = inp.replace(' ','+').replace('explicit','rating:explicit').replace('nsfw','rating:explicit').replace('safe','rating:safe').replace('sfw','rating:safe')
     # score:>100
     #print 'http://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=20&tags={}'.format(search)
-<<<<<<< HEAD
     # try:
     #     soup = http.get_soup(u'http://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=20&tags={}'.format(search), cookies=True)
     #     posts = soup.find_all('post')
@@ -35,9 +23,6 @@ def refresh_cache(inp):
     authurl = u'http://gelbooru.com/index.php?page=account&s=login&code=00'
     http.get_soup(authurl, post_data=data, cookies=True)
     soup = http.get_soup(u'http://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=20&tags={}'.format(search), cookies=True)
-=======
-    soup = http.get_soup(u'http://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=20&tags={}'.format(search))
->>>>>>> infinuguu/master
     posts = soup.find_all('post')
 
     while num < len(posts):
@@ -51,7 +36,6 @@ def refresh_cache(inp):
 # @hook.command('sb', autohelp=False)
 
 @hook.command('gb', autohelp=False)
-<<<<<<< HEAD
 @hook.command('loli', autohelp=False)
 @hook.command('shota', autohelp=False)
 @hook.command('trap', autohelp=False)
@@ -114,34 +98,14 @@ def gelbooru(inp, reply=None, input=None):
                 counter += 1
                 gb_refresh_cache(search)
 
-=======
-@hook.command(autohelp=False)
-def gelbooru(inp, reply=None):
-    "gelbooru <tags> -- Gets a random image from gelbooru.com"
-    global lastsearch
-    global gelbooru_cache
-
-    search = inp.lower()
-    if not search in lastsearch or len(gelbooru_cache) < 2: refresh_cache(search)
-    lastsearch = search
-
-    if len(gelbooru_cache) == 0: return "No Results"
-
-    id, score, url, rating, tags = gelbooru_cache.pop()
-    
->>>>>>> infinuguu/master
     if rating is 'e': rating = "\x02\x034NSFW\x03\x02"
     elif rating is 'q': rating = "\x02\x037Questionable\x03\x02"
     elif rating is 's': rating = "\x02\x033Safe\x03\x02"
 
-<<<<<<< HEAD
     try:
         return u'\x02[{}]\x02 Score: \x02{}\x02 - Rating: {} - {}'.format(id, score, rating, web.isgd(url))
     except:
         return u'\x02[{}]\x02 Score: \x02{}\x02 - Rating: {} - {}'.format(id, score, rating, url)
-=======
-    return u'\x02[{}]\x02 Score: \x02{}\x02 - Rating: {} - {}'.format(id, score, rating, url)
->>>>>>> infinuguu/master
     # return u'\x02[{}]\x02 Score: \x02{}\x02 - Rating: {} - {} - {}'.format(id, score, rating, url, tags[:75].strip())
 
 
@@ -168,7 +132,6 @@ def gelbooru_url(match):
     return u'\x02[{}]\x02 Score: \x02{}\x02 - Rating: {} - {} - {}'.format(id, score, rating, url, tags[:75].strip())
 
 
-<<<<<<< HEAD
 # http://gelbooru.com/index.php?page=post&s=list&tags=%3D_%3D
 
 danbooru_cache = []
@@ -250,6 +213,3 @@ def danbooru(inp, reply=None, input=None):
         return u'\x02[{}]\x02 Score: \x02{}\x02 - Rating: {} - {}'.format(id, score, rating, url)
     # return u'\x02[{}]\x02 Score: \x02{}\x02 - Rating: {} - {} - {}'.format(id, score, rating, url, tags[:75].strip())
 
-=======
-# http://gelbooru.com/index.php?page=post&s=list&tags=%3D_%3D
->>>>>>> infinuguu/master

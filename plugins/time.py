@@ -31,11 +31,7 @@ def timefunction(inp, nick="", reply=None, db=None, notice=None):
 
     # now, to get the actual time
     try:
-<<<<<<< HEAD
         url = "https://www.google.co.uk/search?q=time+in+{}".format(location.replace(' ','+').replace(' save',''))
-=======
-        url = "https://www.google.com/search?q=time+in+{}".format(location.replace(' ','+').replace(' save',''))
->>>>>>> infinuguu/master
         request = urllib2.Request(url, None, headers)
         page = urllib2.urlopen(request).read()
         soup = BeautifulSoup(page, 'lxml')
@@ -76,15 +72,12 @@ def timefunction2(inp, nick="", reply=None, db=None, notice=None):
             if " dontsave" in inp: save = False
             location = inp.split()[0]
 
-<<<<<<< HEAD
     url = "https://time.is/%s" % location.replace(' ','+').replace(' save','')
     html = http.get_html(url)
     prefix = html.xpath("//div[@id='msgdiv']/h1/a/text()")[0].strip()
     curtime = html.xpath("//div[contains(@id,'twd')]/text()")[0].strip()
     ampm = html.xpath("//div[contains(@id,'twd')]/span/text()")[0].strip()
     date = html.xpath("//h2[contains(@id,'dd')]/text()")[0].strip()
-=======
->>>>>>> infinuguu/master
     # now, to get the actual time
     try:
         url = "https://time.is/%s" % location.replace(' ','+').replace(' save','')
@@ -98,10 +91,7 @@ def timefunction2(inp, nick="", reply=None, db=None, notice=None):
 
     if location and save: database.set(db,'users','location',location,'nick',nick)
 
-<<<<<<< HEAD
     print(prefix, curtime, ampm, date)
-=======
->>>>>>> infinuguu/master
     return u'Time in {} is \x02{} {}\x02 [{}]'.format(prefix, curtime, ampm.upper(), date)
 
 

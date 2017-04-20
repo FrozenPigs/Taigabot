@@ -2,16 +2,11 @@ import os
 import re
 import time
 import platform
-<<<<<<< HEAD
 from util import hook
-=======
-from util import hook, formatting
->>>>>>> infinuguu/master
 from datetime import timedelta
 
 
 def convert_kilobytes(kilobytes):
-<<<<<<< HEAD
     if kilobytes >= 1024:
         megabytes = kilobytes / 1024
         size = '%.2f MB' % megabytes
@@ -19,9 +14,6 @@ def convert_kilobytes(kilobytes):
         size = '%.2f KB' % kilobytes
     return size
 
-=======
-    return formatting.filesize(kilobytes*1024).replace('iB', 'B')
->>>>>>> infinuguu/master
 
 @hook.command(autohelp=False, adminonly=True)
 def system(inp):
@@ -98,10 +90,5 @@ def bots(inp):
 
 @hook.command(autohelp=False)
 def source(inp):
-<<<<<<< HEAD
     return "\x02Taigabot\x02 - Here, take the unfinished python3 version https://github.com/FrozenPigs/Taigabot"
     
-=======
-    return "\x02uguubot\x02 - http://github.com/infinitylabs/uguubot"
-
->>>>>>> infinuguu/master

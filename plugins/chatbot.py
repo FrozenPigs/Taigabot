@@ -7,29 +7,17 @@ import xml.dom.minidom
 """
     chatterbotapi
     Copyright (C) 2011 pierredavidbelanger@gmail.com
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> infinuguu/master
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> infinuguu/master
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> infinuguu/master
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
@@ -161,10 +149,7 @@ class _PandorabotsSession(ChatterBotSession):
         try:
             self.vars['input'] = thought.text
             data = urllib.urlencode(self.vars)
-<<<<<<< HEAD
             print data
-=======
->>>>>>> infinuguu/master
             url_response = urllib2.urlopen('http://www.pandorabots.com/pandora/talk-xml', data)
             response = url_response.read()
             response_dom = xml.dom.minidom.parseString(response)
@@ -201,7 +186,6 @@ factory = ChatterBotFactory()
 bot = factory.create(ChatterBotType.PANDORABOTS, 'df9c8acfde345d97')
 botsession = bot.create_session()
 
-<<<<<<< HEAD
 chatbot_re = (r'((?:taiga|taigabot)\s(.+)|(.+)\s(?:taiga|taigabot))', re.I)
 @hook.regex(*chatbot_re)
 @hook.command
@@ -211,12 +195,3 @@ def chatbot(inp, reply=None):
     response = botsession.think(thought)
     print response
     reply(response.lower().replace('bartender katie','Taiga').replace('alice','TAIGA~~~').replace('daisy picnic','wednesday').replace('elvis','wednesday').replace('<br> ','').replace('german alice','urmom').replace('dancing alice','wednesday').replace('www.alicebot.Org','www.uguubot.com').replace('alicebot','Taigabot'))
-=======
-chatbot_re = (r'((?:uguu|uguubot)\s(.+)|(.+)\s(?:uguu|uguubot))', re.I)
-@hook.regex(*chatbot_re)
-@hook.command
-def chatbot(inp, reply=None):
-    thought = inp.group(1).replace('uguubot','').replace('uguu','').replace('ALICE','Uguu').strip()
-    response = botsession.think(thought)
-    reply(response.replace('Bartender Katie','Uguu').replace('ALICE','UGUU~~~').replace('Daisy Picnic','infinity').replace('ELVIS','infinity').replace('<br> ','').replace('German Alice','urmom').replace('Dancing Alice','infinity').replace('Www.AliceBot.Org','uguubot.com').replace('alicebot','uguubot')  )
->>>>>>> infinuguu/master

@@ -1,10 +1,7 @@
 import re
 import time
-<<<<<<< HEAD
 import urllib
 import random
-=======
->>>>>>> infinuguu/master
 
 from util import hook, http, timeformat
 
@@ -17,11 +14,8 @@ api_url = base_url + 'videos?part=snippet,statistics,contentDetails'
 video_url = "http://youtu.be/%s"
 
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> infinuguu/master
 def plural(num=0, text=''):
     return "{:,} {}{}".format(num, text, "s"[num==1:])
 
@@ -74,7 +68,6 @@ def get_video_description(key,video_id):
         dislikes = 'dislikes disabled'
         percent = 0
 
-<<<<<<< HEAD
     out += u' - {}, {} (\x02{:.1f}\x02%)'.format(likes, dislikes, percent)
 
     views = int(stats['viewCount'])
@@ -84,17 +77,6 @@ def get_video_description(key,video_id):
 
     upload_time = time.strptime(data['snippet']['publishedAt'], "%Y-%m-%dT%H:%M:%S.000Z")
     out += u' - \x02{}\x02 on \x02{}\x02'.format(uploader, time.strftime("%Y.%m.%d", upload_time))
-=======
-    #out += u' - {}, {} (\x02{:.1f}\x02%)'.format(likes, dislikes, percent)
-
-    views = int(stats['viewCount'])
-    #out += u' - \x02{:,}\x02 {}{}'.format(views, 'view', "s"[views==1:])
-
-    #uploader = data['snippet']['channelTitle']
-
-#    upload_time = time.strptime(data['snippet']['publishedAt'], "%Y-%m-%dT%H:%M:%S.000Z")
- #   out += u' - \x02{}\x02 on \x02{}\x02'.format(uploader, time.strftime("%Y.%m.%d", upload_time))
->>>>>>> infinuguu/master
 
     try:
         data['contentDetails']['contentRating']
@@ -105,7 +87,6 @@ def get_video_description(key,video_id):
 
     return out
 
-<<<<<<< HEAD
 @hook.command('ytr', autohelp=False)
 def randomtube(inp, bot=None):
     """randomtube -- Returns random youtube link from old logs."""
@@ -136,12 +117,6 @@ def youtube_url(match,bot=None,chan=None):
     oldurl = match.group(1)
     oldchan = chan
     key = bot.config.get("api_keys", {}).get("google")
-=======
-
-@hook.regex(*youtube_re)
-def youtube_url(match,bot=None):
-    key = bot.config.get("api_keys", {}).get("youtube")
->>>>>>> infinuguu/master
 
     return get_video_description(key,match.group(1))
 
@@ -150,15 +125,9 @@ def youtube_url(match,bot=None):
 @hook.command
 def youtube(inp, bot=None):
     """youtube <query> -- Returns the first YouTube search result for <query>."""
-<<<<<<< HEAD
     key = bot.config.get("api_keys", {}).get("google")
 
     request = http.get_json(search_api_url, key=key, type='video', q=inp)
-=======
-    key = bot.config.get("api_keys", {}).get("youtube")
-
-    request = http.get_json(search_api_url, key=key, q=inp, type='video')
->>>>>>> infinuguu/master
 
     if 'error' in request:
         return 'Error performing search.'
@@ -175,11 +144,7 @@ def youtube(inp, bot=None):
 @hook.command
 def youtime(inp, bot=None):
     """youtime <query> -- Gets the total run time of the first YouTube search result for <query>."""
-<<<<<<< HEAD
     key = bot.config.get("api_keys", {}).get("google")
-=======
-    key = bot.config.get("api_keys", {}).get("youtube")
->>>>>>> infinuguu/master
     request = http.get_json(search_api_url, key=key, q=inp, type='video')
 
     if 'error' in request:

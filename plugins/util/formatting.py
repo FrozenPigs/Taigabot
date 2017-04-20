@@ -6,8 +6,4 @@ def filesize(num, suffix='B'):
     return '{0:.1f}{}{}'.format(num, 'Yi', suffix)
 
 def output(scriptname, fields=[], color=11):
-<<<<<<< HEAD
     return '[{}] {}'.format(scriptname, ' = '.join(fields))
-=======
-    return '[{}] {}'.format(scriptname, ' - '.join(fields))
->>>>>>> infinuguu/master

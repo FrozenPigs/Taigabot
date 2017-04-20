@@ -1,13 +1,8 @@
 from util import hook,http, database
-<<<<<<< HEAD
 import locale
 import random
 import urllib
 import re
-=======
-import random
-import urllib
->>>>>>> infinuguu/master
 
 # HONK HONK
 actions = {
@@ -15,7 +10,6 @@ actions = {
     "pet":["pet", "petting"],
     "diddle":["diddled", "diddling"],
     "spank":["spanked", "spanking"],
-<<<<<<< HEAD
     "rape": ["raped", "raping"],
     "sex": ["sexed", "sexing"]
 }
@@ -86,25 +80,11 @@ def plez(inp, chan=None, conn=None):
 @hook.command('sell', autohelp=False)
 @hook.command('sex', autohelp=False)
 @hook.command('buy', autohelp=False)
-=======
-    "rape": ["raped", "raping"]
-}
-
-def citation(db,chan,nick,reason):
-    fine = random.randint(1, 500)
-    try: totalfines = int(database.get(db,'users','fines','nick',nick)) + fine
-    except: totalfines = 0 + fine
-    database.set(db,'users','fines',totalfines,'nick',nick)
-    return u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 {}. You owe: \x0304${}\x02\x01".format(chan, nick, fine, reason, totalfines)
-
-
->>>>>>> infinuguu/master
 @hook.command('rape', autohelp=False)
 @hook.command('spank', autohelp=False)
 @hook.command('diddle', autohelp=False)
 @hook.command('pet', autohelp=False)
 @hook.command(autohelp=False)
-<<<<<<< HEAD
 def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None, input=None):
     "honk <nick> -- Honks at someone."
     # if pm
@@ -246,36 +226,12 @@ def mug(inp, db=None, nick=None, chan=None, conn=None, notice=None):
             database.set(db,'users','fines',robber - money,'nick', nick)
         conn.send(u"PRIVMSG {} :\x01ACTION {} shanks {} in a dark alley and takes \x02${}\x02\x01".format(chan, nick, user, money))
 
-=======
-def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None):
-    "honk <nick> -- Honks at someone."
-    target = inp.strip()
-    command = paraml[-1].split(' ')[0][1:].lower()
-
-    if len(inp) == 0:
-        if random.randint(1, 3) == 2: 
-            out = citation(db,chan,nick,"for {}".format(actions[command][1]))
-        else:
-            out = u"PRIVMSG {} :\x01ACTION {}s {}\x01".format(chan, command, nick)
-    else:
-        randnum = random.randint(1, 4)
-        if randnum == 1: 
-            out = citation(db,chan,nick,"for {}".format(actions[command][1]))
-        elif randnum == 2: 
-            out = citation(db,chan,target,"for being too lewd and getting {}".format(actions[command][0]))
-        else:
-            out = u"PRIVMSG {} :\x01ACTION {}s {}\x01".format(chan, command, target)
-    conn.send(out)
-
-
->>>>>>> infinuguu/master
 @hook.command(autohelp=False)
 def owed(inp, nick=None, conn=None, chan=None,db=None):
     """owe -- shows your total fines"""
     if '@' in inp: nick = inp.split('@')[1].strip()
     fines = database.get(db,'users','fines','nick',nick)
     if not fines: fines = 0
-<<<<<<< HEAD
     strfines = "{:,}".format(float(fines))
     if '-' in strfines[0]:
         return u'\x02{} has:\x02 \x0309${}'.format(nick,strfines[1:])
@@ -283,12 +239,6 @@ def owed(inp, nick=None, conn=None, chan=None,db=None):
         return u'\x02{} owes:\x02 \x0309${}'.format(nick,strfines)
     else:
         return u'\x02{} owes:\x02 \x0304${}'.format(nick,strfines)
-=======
-    if fines <= 0:
-        return u'\x02{} owes: \x0309${}\x02'.format(nick,fines)
-    else:
-        return u'\x02{} owes: \x0304${}\x02'.format(nick,fines)
->>>>>>> infinuguu/master
 
 @hook.command(autohelp=False)
 def pay(inp, nick=None, conn=None, chan=None,db=None):
@@ -337,30 +287,20 @@ def vendingmachine(inp, nick=None, me=None):
 
 # MISC
 @hook.command('daki', autohelp=False)
-<<<<<<< HEAD
 @hook.command('love', autohelp=False)
-=======
->>>>>>> infinuguu/master
 @hook.command(autohelp=False)
 def hug(inp, nick=None):
     "hug <nick> -- hugs someone"
     if not inp: inp = nick
     return '\x02\x034♥♡❤♡♥\x03 {} \x034♥♡❤♡♥\x03\x02'.format(inp).decode('UTF-8')
 
-<<<<<<< HEAD
 
-=======
->>>>>>> infinuguu/master
 @hook.command(autohelp=False)
 def kiss(inp, nick=None):
     "hug <nick> -- hugs someone"
     if not inp: inp = nick
     return '(づ｡◕‿‿◕｡)づ\x02\x034。。・゜゜・。。・゜❤ {} ❤\x03\x02 '.format(inp).decode('UTF-8')
 
-<<<<<<< HEAD
-=======
-    
->>>>>>> infinuguu/master
 
 
 @hook.regex(r'^\[(.*)\]$')
@@ -403,21 +343,14 @@ def penis(inp, nick=None, paraml=None):
 
 
 @hook.command("anhero", autohelp=False)
-<<<<<<< HEAD
 @hook.command("seppuku", autohelp=False)
-=======
->>>>>>> infinuguu/master
 @hook.command(autohelp=False)
 def sudoku(inp, conn=None, chan=None, nick=None, say=None):
     "up -- Makes the bot kill you in [channel]. "\
     "If [channel] is blank the bot will op you in "\
     "the channel the command was used in."
     say("Sayonara bonzai-chan...")
-<<<<<<< HEAD
     conn.send(u"KICK {} {}".format(chan, nick))
-=======
-    conn.send(u"KICK {} {}".format(chan, nick)) 
->>>>>>> infinuguu/master
     return
 
 @hook.command("storyofrincewindscat", autohelp=False)
@@ -473,11 +406,7 @@ def woah(inp, nick=None):
 @hook.regex(r'.*([L|l]+[I|i]+[N|n]+[U|u]+[X|x]).*')
 def interject(inp, nick=None):
     if random.randint(0, 12) == 0:
-<<<<<<< HEAD
         return "I'd Just Like To Interject For A Moment. What you're referring to as Linux, is in fact, GNU/Linux, or as I've recently taken to calling it, GNU plus Linux. Linux is not an operating system unto itself, but rather another free component of a fully functioning GNU system made useful by the GNU corelibs, shell utilities and vital system components comprising a full OS as defined by POSIX. \n "
-=======
-        return "I'd Just Like To Interject For A Moment. What you're referring to as Linux, is in fact, GNU/Linux, or as I've recently taken to calling it, GNU plus Linux. Linux is not an operating system unto itself, but rather another free component of a fully functioning GNU system made useful by the GNU corelibs, shell utilities and vital system components comprising a full OS as defined by POSIX. \n " 
->>>>>>> infinuguu/master
         # \
         # "Many computer users run a modified version of the GNU system every day, without realizing it. Through a peculiar turn of events, the version of GNU which is widely used today is often called “Linux”, and many of its users are not aware that it is basically the GNU system, developed by the GNU Project. There really is a Linux, and these people are using it, but it is just a part of the system they use. \n" \
         # "Linux is the kernel: the program in the system that allocates the machine's resources to the other programs that you run. The kernel is an essential part of an operating system, but useless by itself; it can only function in the context of a complete operating system. Linux is normally used in combination with the GNU operating system: the whole system is basically GNU with Linux added, or GNU/Linux. All the so-called “Linux” distributions are really distributions of GNU/Linux. "
@@ -563,7 +492,6 @@ def pushups(inp,autohelp=False,me=None,paraml=None):
 
 
 
-<<<<<<< HEAD
 # @hook.command
 # def room(inp, conn=None):
 #     letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
@@ -577,21 +505,6 @@ def pushups(inp,autohelp=False,me=None,paraml=None):
 
 #     for user in users:
 #         conn.send("INVITE " + user + " " + channel)
-=======
-@hook.command
-def room(inp, conn=None):
-    letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
-    users = inp.split()
-    channel = "#rm-"
-       
-    for i in range(1,6):
-        channel = channel + random.choice(letters)
-
-    conn.send("JOIN " + channel)
-    
-    for user in users:
-        conn.send("INVITE " + user + " " + channel)
->>>>>>> infinuguu/master
 
 
 @hook.command(autohelp=False)
@@ -618,7 +531,6 @@ def spit(inp, nick=None, me=None):
     me('spits on {} like a dirty whore'.format(inp))
 
 
-<<<<<<< HEAD
 @hook.command(autohelp=False)
 def sniff(inp, nick=None, me=None):
     if not inp: inp = nick
@@ -626,8 +538,6 @@ def sniff(inp, nick=None, me=None):
 
 
 
-=======
->>>>>>> infinuguu/master
 # @hook.command('siid')
 # @hook.command(autohelp=False)
 # def sleepytime(inp, chan=None, conn=None, notice=None):
@@ -647,7 +557,6 @@ def sniff(inp, nick=None, me=None):
 #     "disabled -- Lists channels's disabled commands."
 #     url = "http://booru.touhouradio.com/post/list/%7Bchannel%7C%23pantsumen%7D/1"
 #     html = http.get_html(url)
-<<<<<<< HEAD
 #
 #     link = html.xpath("//div[@id='main']//a/@href")[0]
 #     #COMPARE TO DB
@@ -656,10 +565,3 @@ def sniff(inp, nick=None, me=None):
 @hook.command(autohelp=False)
 def lok(inp, reply=None):
     reply('lol')
-=======
-# 
-#     link = html.xpath("//div[@id='main']//a/@href")[0]
-#     #COMPARE TO DB
-#     image = http.unquote(re.search('.+?imgurl=(.+)&imgrefurl.+', link).group(1))
-#     return image
->>>>>>> infinuguu/master
