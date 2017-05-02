@@ -53,6 +53,20 @@ def citation(db,chan,nick,reason):
             return u"PRIVMSG {} :\x01ACTION sells {} for \x02${}\x02 {} owes \x0309${}\x01".format(chan, thing, strfine, nick, strfines)
         else:
             return u"PRIVMSG {} :\x01ACTION sells {} for \x02${}\x02. {} owes \x0304${}\x02\x01".format(chan, thing, strfine, nick, strfines)
+    if 'shill' in reason:
+        thing = nick
+        nick = reason.split(' ')[1]
+        try: totalfines = float(database.get(db,'users','fines','nick',nick)) - fine
+        except: totalfines = 0.0 - fine
+        database.set(db,'users','fines',totalfines,'nick',nick)
+        strfines = "{:,}".format(totalfines)
+        strfine = "{:,}".format(fine)
+        if '-' in strfines[0]:
+            return u"PRIVMSG {} :\x01ACTION shills {} for \x02${}\x02 {} has \x0309${}\x01".format(chan, thing, strfine, nick, strfines[1:])
+        if totalfines <= 0:
+            return u"PRIVMSG {} :\x01ACTION shills {} for \x02${}\x02 {} owes \x0309${}\x01".format(chan, thing, strfine, nick, strfines)
+        else:
+            return u"PRIVMSG {} :\x01ACTION shills {} for \x02${}\x02. {} owes \x0304${}\x02\x01".format(chan, thing, strfine, nick, strfines)
     else:
         try: totalfines = float(database.get(db,'users','fines','nick',nick)) + fine
         except: totalfines = 0.0 + fine
@@ -78,6 +92,7 @@ def plez(inp, chan=None, conn=None):
     conn.send(out)
 
 @hook.command('sell', autohelp=False)
+@hook.command('shill', autohelp=False)
 @hook.command('sex', autohelp=False)
 @hook.command('buy', autohelp=False)
 @hook.command('rape', autohelp=False)
@@ -119,6 +134,39 @@ def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None, input=None):
                 out = citation(db, chan, thing, 'sell {}'.format(nick))
             else:
                 out = u"PRIVMSG {} :\x01ACTION drops {} in a lake.\x01".format(chan, thing)
+    elif command == 'shill':
+        randnum = random.randint(1, 4)
+        if len(inp) == 0:
+            if random.randint(1, 3) == 2:
+                out = citation(db, chan, thing, 'shill {}'.format(nick))
+            else:
+                fine = float(random.randint(1500, 3000))
+		nick = input.nick
+		try: totalfines = float(database.get(db,'users','fines','nick',nick)) + fine
+		except: totalfines = 0.0 + fine
+		database.set(db,'users','fines',totalfines,'nick',nick)
+		fine = "{:,}".format(fine)
+		totalfines = "{:,}".format(totalfines)
+                out =  u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 for breaking the NDA. You have: \x0309${}\x02\x01".format(chan, nick, fine, totalfines[1:])
+        else:
+            if randnum == 1:
+                out = citation(db, chan, thing, 'shill {}'.format(nick))
+            elif randnum == 2:
+                out = citation(db, chan, thing, 'shill {}'.format(nick))
+            elif randnum == 3:
+                out = citation(db, chan, thing, 'shill {}'.format(nick))
+            else:
+                fine = float(random.randint(1500, 3000))
+		nick = input.nick
+		try: totalfines = float(database.get(db,'users','fines','nick',nick)) + fine
+		except: totalfines = 0.0 + fine
+		database.set(db,'users','fines',totalfines,'nick',nick)
+		fine = "{:,}".format(fine)
+		totalfines = "{:,}".format(totalfines)
+                if totalfines[0] == "-":
+                    out =  u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 for breaking the NDA. You have: \x0309${}\x02\x01".format(chan, nick, fine, totalfines[1:])
+                else:
+                    out = u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 for breaking the NDA. You owe: \x0304${}\x02\x01".format(chan, nick, fine, totalfines)
     elif command == 'buy':
         randnum = random.randint(1, 4)
         if len(inp) == 0:
@@ -170,7 +218,7 @@ def donate(inp, db=None, nick=None, chan=None, conn=None, notice=None):
         pass
     if donation > 10000.00:
         donation = 10000.00
-    if user == nick:
+    if user.lower() == nick.lower():
         user = 'wednesday'
     try:
         giver = float(database.get(db,'users','fines','nick',nick))
@@ -323,6 +371,10 @@ def decrease(inp):
     "decrease"
     return '\x02[QUALITY OF CHANNEL SIGNIFICANTLY DECREASED]\x02'
 
+@hook.command(autohelp=False)
+def shekels(inp, conn=None, chan=None):
+    "shekles"
+    conn.send(u"PRIVMSG {} :\x01ACTION lays some shekels on the ground to lure the jews.".format(chan))
 
 @hook.command(autohelp=False)
 def pantsumap(inp, chan=None, notice=None):
