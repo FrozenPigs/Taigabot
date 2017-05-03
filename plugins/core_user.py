@@ -9,6 +9,7 @@ import random
 
 ### Battlestations
 @hook.command('bullshit', autohelp=False)
+@hook.command('keyboard', autohelp=False)
 @hook.command(autohelp=False)
 def battlestation(inp, nick=None, conn=None, chan=None,db=None, notice=None):
     "battlestation <url | @ person> -- Shows a users Battlestation."

@@ -7,9 +7,9 @@ def refresh_cache():
     """ gets a page of random FMLs and puts them into a dictionary """
     soup = http.get_soup('http://www.fmylife.com/random/')
 
-    for e in soup.find_all('a', attrs={'class': 'fmllink'}):
-        id = int(e['href'].split('/')[-1])
-        text = e.text
+    for e in soup.find_all('p', attrs={'class': 'block'}):
+        id = int(e.find_all('a', href=True)[0]['href'].split('_')[1].split('.')[0])
+        text = e.find_all('a')[0].text.strip()
         fml_cache.append((id, text))
 
 # do an initial refresh of the cache

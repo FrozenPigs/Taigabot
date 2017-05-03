@@ -91,15 +91,16 @@ def sieve_suite(bot, input, func, kind, args):
     db = bot.get_db_connection(input.conn)
 
     # parse for different dest channel
-    if kind == "command":
-        try:
-            if input.inp[0][0] == "#":
-                if "join" in input.trigger or "part" in input.trigger:
-                    pass
-                else:
-                    input.chan = input.inp.split(' ')[0]
-                    input.inp = input.inp.replace(input.chan,'').strip()
-        except: pass
+    if user.is_globaladmin(input.mask, input.chan, bot):
+        if kind == "command":
+            try:
+                if input.inp[0][0] == "#":
+                    if "join" in input.trigger or "part" in input.trigger:
+                        pass
+                    else:
+                        input.chan = input.inp.split(' ')[0]
+                        input.inp = input.inp.replace(input.chan,'').strip()
+            except: pass
     chan = input.chan.lower()
 
     #if fn.group(1) == 'core_ctcp' : return input
