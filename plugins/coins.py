@@ -63,6 +63,7 @@ def litecoin(inp, say=None):
 
 
 @hook.command(autohelp=False)
+@hook.command("dogecoin", autohelp=False)
 def doge(inp, say=None):
     ".doge -- Returns the value of a dogecoin."
     try:

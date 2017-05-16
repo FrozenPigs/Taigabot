@@ -130,8 +130,9 @@ def translate(inp, chan=None, notice=None):
         from_language = inp.split()[1]
         to_language = inp.split()[3]
         to_translate = inp.split(to_language)[1].strip()
-        to_language = langs[to_language]
-        from_language = langs[from_language]
+        if to_language in langs.keys():
+            to_language = langs[to_language]
+            from_language = langs[from_language]
     elif 'from ' in inp: 
         from_language = inp.split()[1]
         to_language = "auto"

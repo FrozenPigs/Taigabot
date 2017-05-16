@@ -374,7 +374,7 @@ def decrease(inp):
 @hook.command(autohelp=False)
 def shekels(inp, conn=None, chan=None):
     "shekles"
-    conn.send(u"PRIVMSG {} :\x01ACTION lays some shekels on the ground to lure the jews.".format(chan))
+    conn.send(u"PRIVMSG {} :\x01ACTION lays some shekels on the ground to lure the jews.\x01".format(chan))
 
 @hook.command(autohelp=False)
 def pantsumap(inp, chan=None, notice=None):

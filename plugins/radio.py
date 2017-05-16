@@ -31,6 +31,22 @@ def aradio(inp, say=False):
 
 
 @hook.command(autohelp=False)
+@hook.command('mutantradio', autohelp=False)
+def muradio(inp, say=False):
+    "radio [url]-- Returns current mutantradio song"
+    url = 'http://mutantradio.org/'
+    if 'url' in inp: return url
+    tree = lxml.html.parse(url)
+    #dj = tree.xpath("//h4[@id='dj-name']/text()")[0]
+    song = tree.xpath("//td[@class='streamdata']/text()")[0]
+    #listeners = tree.xpath("//span[@id='listeners']/text()")[0]
+    try: song_formatted = text.fix_bad_unicode(song)
+    except: song_formatted = song
+    #return "[R/a/dio] (%s) \x02%s\x02 : %s" % (listeners, dj, song_formatted)
+    return "[muradio] %s" % (song_formatted)
+
+
+@hook.command(autohelp=False)
 def radio(inp, conn=None, chan=None, say=False):
     eden_result = eden(inp)
     radio_result = aradio(inp)

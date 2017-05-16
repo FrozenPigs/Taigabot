@@ -1,4 +1,9 @@
 from util import hook, http, web, database
+import urllib
+import urllib2
+import json
+import yql
+from bs4 import BeautifulSoup
 
 
 # def get_weather(location):
@@ -128,64 +133,145 @@ from util import hook, http, web, database
 #         "\x02Tomorrow:\x02 {_forecast}, High: {_high_f}F" \
 #         "/{_high_c}C, Low: {_low_f}F/{_low_c}C.".format(**weather_data)
 
-
-
-
 @hook.command('w', autohelp=False)
-@hook.command('we', autohelp=False)
 @hook.command(autohelp=False)
 def weather(inp, bot=None, reply=None, db=None, nick=None, notice=None):
-    """weather | <location> [dontsave] | <@ user> -- Gets weather data for <location>."""
-    inp = ','.join(inp.replace(',', '').split())
-    apikey = bot.config.get("api_keys", {}).get("openweathermap")
+    "weather | <location> [save] | <@ user> -- Gets weather data for <location>."
+    baseurl = "https://query.yahooapis.com/v1/public/yql?"
     save = True
+
     if '@' in inp:
         save = False
         nick = inp.split('@')[1].strip()
-        loc = database.get(db,'users','location','nick',nick)
-        if not loc: return "No location stored for {}.".format(nick.encode('ascii', 'ignore'))
+        woeid = database.get(db,'users','woeid','nick',nick)
+        if not woeid: return "No location stored for {}.".format(nick.encode('ascii', 'ignore'))
     else:
-        loc = database.get(db,'users','location','nick',nick)
+        woeid = database.get(db,'users','woeid','nick',nick)
         if not inp:
-            if not loc:
-                notice(weather.__doc__)
-                return
-            else:
-                inp = loc
-                save = False
+            if woeid == 'None':
+                woeid = None
+            if not woeid or woeid is None:
+                try:
+	            inp = database.get(db,'users','location','nick',nick)
+                    if not inp or inp is None:
+                        notice(weather.__doc__)
+                        return
+                    woeidquery = 'select * from ugeo.geocode where text="{}" and appname="{}"'.format(inp, 'Taigabot')
+                    woeidurl = baseurl + urllib.urlencode({'q':woeidquery}) + "&format=json"
+                    woeidresult = urllib2.urlopen(woeidurl).read()
+                    print woeidresult
+                    woeid = json.loads(woeidresult)['query']['results']['result']['locations']['woe']['id']
+                except Exception as e:
+                    print e
+                    notice(weather.__doc__)
+                    return
         else:
             # if not loc: save = True
             if " dontsave" in inp:
                 inp = inp.replace(' dontsave','')
                 save = False
+    if not woeid:
+        woeidquery = 'select * from ugeo.geocode where text="{}" and appname="{}"'.format(inp, 'Taigabot')
+        woeidurl = baseurl + urllib.urlencode({'q':woeidquery}) + "&format=json"
+        woeidresult = urllib2.urlopen(woeidurl).read()
+        woeid = json.loads(woeidresult)['query']['results']['result']['locations']['woe']['id']
 
-    if inp and save:
-        database.set(db,'users','location',inp,'nick',nick)
-    try:
-        if int(inp) or int(inp.split(',')[0]):
-            url = 'http://api.openweathermap.org/data/2.5/weather?zip={}&appid={}'
-        else:
-            url = 'http://api.openweathermap.org/data/2.5/weather?q={}&appid={}'
-    except:
-        url = 'http://api.openweathermap.org/data/2.5/weather?q={}&appid={}'
-    json = http.get_json(url.format(inp, apikey))
-    place = json['name'] + ', ' + json['sys']['country']
-    conditions = json['weather'][0]['description']
-    temp_f = (json['main']['temp'] - 273.15) * 1.8000 + 32.00
-    temp_c = (json['main']['temp'] - 273.15) * 1
-    humidity = json['main']['humidity']
-    wind_kph = json['wind']['speed'] * 3.60
-    wind_mph = json['wind']['speed'] * 2.24
-    response = ('\x02{place}\x02 - \x02Current:\x02 {conditions}, {temp_f}F/'
-                '{temp_c}C, Humidity: {humidity}%, Wind: {wind_kph}KPH/'
-                '{wind_mph}MPH')
+    if woeid and save:
+        database.set(db,'users','woeid',woeid,'nick',nick)
+
+    yql_query = "select * from weather.forecast where woeid={} and u='c'".format(woeid)
+    yql_url = baseurl + urllib.urlencode({'q':yql_query}) + "&format=json"
+    result = urllib2.urlopen(yql_url).read()
+    data = json.loads(result)
+    print data
+    if data['query']['results'] is None:
+        yql_query = "select * from weather.forecast where woeid={} and u='c'".format(woeid)
+        yql_url = baseurl + urllib.urlencode({'q':yql_query}) + "&format=json"
+        result = urllib2.urlopen(yql_url).read()
+        data = json.loads(result)
     weather_data = {
-        'place': place,
-        'conditions': conditions,
-        'temp_f': temp_f,
-        'temp_c': temp_c,
-        'humidity': humidity,
-        'wind_kph': wind_kph,
-        'wind_mph': wind_mph
+        'place': data['query']['results']['channel']['location']['city'] + ',' + data['query']['results']['channel']['location']['region'] + ', ' + data['query']['results']['channel']['location']['country'],
+        'conditions': data['query']['results']['channel']['item']['condition']['text'],
+        'temp_c': data['query']['results']['channel']['item']['condition']['temp'],
+        'temp_f': unicode(int(data['query']['results']['channel']['item']['condition']['temp']) * 9 / 5 + 32),
+        'humidity': data['query']['results']['channel']['atmosphere']['humidity'],
+        'wind_kph': data['query']['results']['channel']['wind']['speed'],
+        'wind_mph': unicode(round(float(data['query']['results']['channel']['wind']['speed']) / 1.609344, 2)),
+        'forecast': data['query']['results']['channel']['item']['forecast'][0]['text'],
+        'high_c': data['query']['results']['channel']['item']['forecast'][0]['high'],
+        'low_c': data['query']['results']['channel']['item']['forecast'][0]['low'],
+        'high_f': unicode(int(data['query']['results']['channel']['item']['forecast'][0]['high']) * 9 / 5 + 32),
+        'low_f': unicode(int(data['query']['results']['channel']['item']['forecast'][0]['low']) * 9 / 5 + 32),
+        '_forecast': data['query']['results']['channel']['item']['forecast'][1]['text'],
+        '_high_c': data['query']['results']['channel']['item']['forecast'][1]['high'],
+        '_low_c': data['query']['results']['channel']['item']['forecast'][1]['low'],
+        '_high_f': unicode(int(data['query']['results']['channel']['item']['forecast'][1]['high']) * 9 / 5 + 32),
+        '_low_f': unicode(int(data['query']['results']['channel']['item']['forecast'][1]['low']) * 9 / 5 + 32)
     }
-    reply(response.format(**weather_data))
+    return "\x02{place}\x02 - \x02Current:\x02 {conditions}, {temp_f}F/{temp_c}C, Humidity: {humidity}%, " \
+        "Wind: {wind_kph}KPH/{wind_mph}MPH, \x02Today:\x02 {forecast}, " \
+        "High: {high_f}F/{high_c}C, Low: {low_f}F/{low_c}C. " \
+        "\x02Tomorrow:\x02 {_forecast}, High: {_high_f}F" \
+        "/{_high_c}C, Low: {_low_f}F/{_low_c}C.".format(**weather_data)
+
+
+
+
+#@hook.command('w', autohelp=False)
+#@hook.command('we', autohelp=False)
+#@hook.command(autohelp=False)
+#def weather(inp, bot=None, reply=None, db=None, nick=None, notice=None):
+#    """weather | <location> [dontsave] | <@ user> -- Gets weather data for <location>."""
+#    inp = ','.join(inp.replace(',', '').split())
+#    apikey = bot.config.get("api_keys", {}).get("openweathermap")
+#    save = True
+#    if '@' in inp:
+#        save = False
+#        nick = inp.split('@')[1].strip()
+#        loc = database.get(db,'users','location','nick',nick)
+#        if not loc: return "No location stored for {}.".format(nick.encode('ascii', 'ignore'))
+#    else:
+#        loc = database.get(db,'users','location','nick',nick)
+#        if not inp:
+#            if not loc:
+#                notice(weather.__doc__)
+#                return
+#            else:
+#                inp = loc
+#                save = False
+#        else:
+#            # if not loc: save = True
+#            if " dontsave" in inp:
+#                inp = inp.replace(' dontsave','')
+#                save = False
+#
+#    if inp and save:
+#        database.set(db,'users','location',inp,'nick',nick)
+#    try:
+#        if int(inp) or int(inp.split(',')[0]):
+#            url = 'http://api.openweathermap.org/data/2.5/weather?zip={}&appid={}'
+#        else:
+#            url = 'http://api.openweathermap.org/data/2.5/weather?q={}&appid={}'
+#    except:
+#        url = 'http://api.openweathermap.org/data/2.5/weather?q={}&appid={}'
+#    json = http.get_json(url.format(inp, apikey))
+#    place = json['name'] + ', ' + json['sys']['country']
+#    conditions = json['weather'][0]['description']
+#    temp_f = (json['main']['temp'] - 273.15) * 1.8000 + 32.00
+#    temp_c = (json['main']['temp'] - 273.15) * 1
+#    humidity = json['main']['humidity']
+#    wind_kph = json['wind']['speed'] * 3.60
+#    wind_mph = json['wind']['speed'] * 2.24
+#    response = ('\x02{place}\x02 - \x02Current:\x02 {conditions}, {temp_f}F/'
+#                '{temp_c}C, Humidity: {humidity}%, Wind: {wind_kph}KPH/'
+#                '{wind_mph}MPH')
+#    weather_data = {
+#        'place': place,
+#        'conditions': conditions,
+#        'temp_f': temp_f,
+#        'temp_c': temp_c,
+#        'humidity': humidity,
+#        'wind_kph': wind_kph,
+#        'wind_mph': wind_mph
+#    }
+#    reply(response.format(**weather_data))
