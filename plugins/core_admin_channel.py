@@ -511,9 +511,9 @@ def mode_cmd(mode, text, inp, chan, conn, notice):
 
 
 @hook.event('*')
-def jumi(inp, chan=None, conn=None, notice=None):
-    if chan == '#/w/alls':
-        mode_cmd("+o", "op", 'jumi', chan, conn, None)
+def christisthegay(inp, chan=None, conn=None, notice=None, nick=None, reply=None):
+    if nick == 'Christistheway':
+        reply('Christistheway: proof')
 
 
 @hook.command(permissions=["op_lock", "op"], channeladminonly=True, autohelp=False)

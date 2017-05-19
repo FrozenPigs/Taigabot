@@ -243,7 +243,9 @@ def donate(inp, db=None, nick=None, chan=None, conn=None, notice=None):
             database.set(db,'users','fines',taker - donation,'nick', user)
         conn.send(u"PRIVMSG {} :\x01ACTION gives \x02${}\x02 to {}.\x01".format(chan, donation, user))
 
-@hook.command
+@hook.command('steal')
+@hook.command('rob')
+@hook.command()
 def mug(inp, db=None, nick=None, chan=None, conn=None, notice=None):
     """mug <user> -- Takes money from <user>.."""
     inp = inp.split()
@@ -394,6 +396,7 @@ def penis(inp, nick=None, paraml=None):
     return url
 
 
+@hook.command("harakiri", autohelp=False)
 @hook.command("anhero", autohelp=False)
 @hook.command("seppuku", autohelp=False)
 @hook.command(autohelp=False)

@@ -17,4 +17,4 @@ def chatbot(inp, reply=None, nick=None, conn=None):
     response = url_response.read()
     response_dom = xml.dom.minidom.parseString(response)
     text = response_dom.getElementsByTagName('response')[0].childNodes[0].data.strip()
-    return nick + ': ' + str(text.lower().replace('programo', 'taiga').replace('program-o', 'taigabot'))
+    return nick + ': ' + str(text.lower().replace('programo', 'taiga').replace('program-o', 'taigabot').replace('elizabeth', 'wednesday')

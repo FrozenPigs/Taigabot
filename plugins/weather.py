@@ -162,15 +162,30 @@ def weather(inp, bot=None, reply=None, db=None, nick=None, notice=None):
                     print woeidresult
                     woeid = json.loads(woeidresult)['query']['results']['result']['locations']['woe']['id']
                 except Exception as e:
-                    print e
-                    notice(weather.__doc__)
-                    return
+	            inp = database.get(db,'users','location','nick',nick)
+                    if not inp or inp is None:
+                        notice(weather.__doc__)
+                        return
+                    woeidquery = 'select * from ugeo.geocode where text="{}" and appname="{}"'.format(inp, 'Taigabot')
+                    woeidurl = baseurl + urllib.urlencode({'q':woeidquery}) + "&format=json"
+                    woeidresult = urllib2.urlopen(woeidurl).read()
+                    print woeidresult
+                    woeid = json.loads(woeidresult)['query']['results']['result']['locations'][0]['woe']['id']
+                    if not woeid:
+                        print e
+                        notice(weather.__doc__)
+                        return
         else:
             # if not loc: save = True
             if " dontsave" in inp:
                 inp = inp.replace(' dontsave','')
                 save = False
     if not woeid:
+        woeidquery = 'select * from ugeo.geocode where text="{}" and appname="{}"'.format(inp, 'Taigabot')
+        woeidurl = baseurl + urllib.urlencode({'q':woeidquery}) + "&format=json"
+        woeidresult = urllib2.urlopen(woeidurl).read()
+        woeid = json.loads(woeidresult)['query']['results']['result']['locations']['woe']['id']
+    if inp and '@' not in inp:
         woeidquery = 'select * from ugeo.geocode where text="{}" and appname="{}"'.format(inp, 'Taigabot')
         woeidurl = baseurl + urllib.urlencode({'q':woeidquery}) + "&format=json"
         woeidresult = urllib2.urlopen(woeidurl).read()
