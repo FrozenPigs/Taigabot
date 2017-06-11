@@ -184,12 +184,18 @@ def weather(inp, bot=None, reply=None, db=None, nick=None, notice=None):
         woeidquery = 'select * from ugeo.geocode where text="{}" and appname="{}"'.format(inp, 'Taigabot')
         woeidurl = baseurl + urllib.urlencode({'q':woeidquery}) + "&format=json"
         woeidresult = urllib2.urlopen(woeidurl).read()
-        woeid = json.loads(woeidresult)['query']['results']['result']['locations']['woe']['id']
+        try:
+            woeid = json.loads(woeidresult)['query']['results']['result']['locations']['woe']['id']
+        except:
+            woeid = json.loads(woeidresult)['query']['results']['result']['locations'][0]['woe']['id']
     if inp and '@' not in inp:
         woeidquery = 'select * from ugeo.geocode where text="{}" and appname="{}"'.format(inp, 'Taigabot')
         woeidurl = baseurl + urllib.urlencode({'q':woeidquery}) + "&format=json"
         woeidresult = urllib2.urlopen(woeidurl).read()
-        woeid = json.loads(woeidresult)['query']['results']['result']['locations']['woe']['id']
+        try:
+            woeid = json.loads(woeidresult)['query']['results']['result']['locations']['woe']['id']
+        except:
+            woeid = json.loads(woeidresult)['query']['results']['result']['locations'][0]['woe']['id']
 
     if woeid and save:
         database.set(db,'users','woeid',woeid,'nick',nick)

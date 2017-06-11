@@ -1,6 +1,7 @@
 import re
 import random
 from datetime import datetime
+from HTMLParser import HTMLParser
 
 import tweepy
 
@@ -50,8 +51,8 @@ def twitter_url(match, bot=None):
         prefix = ""
 
     time = timesince.timesince(tweet.created_at, datetime.utcnow())
-
-    return u"{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, text, time)
+    h = HTMLParser()
+    return u"{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, h.unescape(text), time)
 
 
 @hook.command("tw")
@@ -136,8 +137,8 @@ def twitter(inp, bot=None):
         prefix = ""
 
     time = timesince.timesince(tweet.created_at, datetime.utcnow())
-
-    return u"{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, text, time)
+    h = HTMLParser()
+    return u"{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, h.unescape(text), time)
 
 
 @hook.command("twinfo")

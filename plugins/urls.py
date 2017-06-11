@@ -227,7 +227,7 @@ def unmatched_url(match,chan,db):
 
             try: title_formatted = text.fix_bad_unicode(body.xpath('//title/text()')[0])
             except: title_formatted = body.xpath('//title/text()')[0]
-            return formatting.output('URL', ['{} ({})'.format(title_formatted.encode('utf-8'), domain)])
+            return formatting.output('URL', ['{} ({})'.format(title_formatted.encode('utf-8'), domain)]).strip()
         else:
 	    if disabled_commands:
                 if 'filesize' in disabled_commands: return

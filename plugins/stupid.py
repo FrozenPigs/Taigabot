@@ -3,6 +3,7 @@ import locale
 import random
 import urllib
 import re
+import time
 
 # HONK HONK
 actions = {
@@ -346,6 +347,13 @@ def hug(inp, nick=None):
 
 
 @hook.command(autohelp=False)
+def poke(inp, nick=None):
+    "poke <nick> -- pokes someone"
+    if not inp: inp = nick
+    return 'pokes {}'.format(inp)
+
+
+@hook.command(autohelp=False)
 def kiss(inp, nick=None):
     "hug <nick> -- hugs someone"
     if not inp: inp = nick
@@ -406,6 +414,16 @@ def sudoku(inp, conn=None, chan=None, nick=None, say=None):
     "the channel the command was used in."
     say("Sayonara bonzai-chan...")
     conn.send(u"KICK {} {}".format(chan, nick))
+    return
+
+
+@hook.command(autohelp=False)
+def akbar(inp, conn=None, chan=None, nick=None, say=None, bot=None):
+    "akbar - makes the bot kick itsself."
+    say("ALLAHU AKBAR")
+    conn.send(u"KICK {} {}".format(chan, conn.nick))
+    time.sleep(5)
+    conn.send(u"JOIN {}".format(chan))
     return
 
 @hook.command("storyofrincewindscat", autohelp=False)
@@ -569,6 +587,11 @@ def madoka(inp):
 @hook.command(autohelp=False)
 def drink(inp,me=None):
     me('Drinks {}, and it was delicious. mmmmmmmmmmmmmmmm'.format(inp))
+
+
+@hook.command(autohelp=False)
+def fap(inp, me=None, nick=None):
+    me('Jerks off and cums on {}'.format(inp))
 
 # var replies = ['faggot','i ought to fuk u up m8','1v1 me','do u evn lift','ur mom','consider urself trolld','ur mom iz gay','stfu fagget','omg nub','u hax i repert u','my dad works for this site so I would be nice if I were you','ill rek u','get rekt scrub','u r gay'];
 

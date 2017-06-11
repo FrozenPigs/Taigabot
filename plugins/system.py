@@ -90,5 +90,5 @@ def bots(inp):
 
 @hook.command(autohelp=False)
 def source(inp):
-    return "\x02Taigabot\x02 - Here, take the unfinished python3 version https://github.com/FrozenPigs/Taigabot"
+    return "\x02Taigabot\x02 - Fuck my shit up nigga https://github.com/FrozenPigs/Taigabot"
     

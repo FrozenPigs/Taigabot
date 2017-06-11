@@ -4,6 +4,8 @@ from util import hook, http
 import re
 
 import datetime
+import urllib2
+from bs4 import BeautifulSoup
 from urllib2 import URLError
 from zipfile import ZipFile
 from cStringIO import StringIO
@@ -211,29 +213,53 @@ id_re = re.compile("tt\d+")
 @hook.command
 def imdb(inp):
     "imdb <movie> -- Gets information about <movie> from IMDb."
-
-    strip = inp.strip()
-
-    if id_re.match(strip):
-        content = http.get_json("http://www.omdbapi.com/", i=strip)
+    base_url = 'http://www.imdb.com'
+    search = base_url + "/find?q={}&s=all".format(inp)
+    response = urllib2.urlopen(search)
+    soup = BeautifulSoup(response.read())
+    result = base_url + soup.find_all('table', 'findList')[0].find_all('td')[1].find_all('a', href=True)[0]['href']
+    response = urllib2.urlopen(result)
+    soup = BeautifulSoup(response.read())
+    title = soup.find_all('h1')[1].get_text()[0:-8].strip()
+    year = soup.find_all('h1')[1].find_all('span')[0].get_text().strip()
+    print(soup.find_all('div', 'subtext'))
+    genres = soup.find_all('div', 'subtext')[0].find_all('span', 'itemprop')
+    tmp = []
+    if len(genres) >= 2:
+         for i in genres:
+             tmp.append(i.get_text())
     else:
-        content = http.get_json("http://www.omdbapi.com/", t=strip)
+        tmp = genres[0].get_text()
+    genres = ', '.join(tmp)
+    plot = soup.find_all('div', 'summary_text')[0].get_text().strip()
+    runtime = soup.find_all('div', 'subtext')[0].find_all('time')[0].get_text().strip()
+    score = soup.find_all('div', 'ratingValue')[0].get_text().strip()
+    votes = soup.find_all('span', 'small')[0].get_text().strip()
+    print(votes)
+    return "\x02{}\x02 {} ({}): {} {}. {} with {} votes. {}".format(title, year, genres, plot, runtime, score, votes, result.split('?')[0])
 
-    if content.get('Error', None) == 'Movie not found!':
-        return 'Movie not found!'
-    elif content['Response'] == 'True':
-        content['URL'] = 'http://www.imdb.com/title/%(imdbID)s' % content
+    #strip = inp.strip()
 
-        out = '\x02%(Title)s\x02 (%(Year)s) (%(Genre)s): %(Plot)s'
-        if content['Runtime'] != 'N/A':
-            out += ' \x02%(Runtime)s\x02.'
-        if content['imdbRating'] != 'N/A' and content['imdbVotes'] != 'N/A':
-            out += ' \x02%(imdbRating)s/10\x02 with \x02%(imdbVotes)s\x02' \
-                   ' votes.'
-        out += ' %(URL)s'
-        return out % content
-    else:
-        return 'Unknown error.'
+    #if id_re.match(strip):
+    #    content = http.get_json("http://www.omdbapi.com/?apikey={}&".format('f293592e'), i=strip)
+    #else:
+    #    content = http.get_json("http://www.omdbapi.com/?apikey={}&".format('f293592e'), t=strip)
+
+    #if content.get('Error', None) == 'Movie not found!':
+    #    return 'Movie not found!'
+    #elif content['Response'] == 'True':
+    #    content['URL'] = 'http://www.imdb.com/title/%(imdbID)s' % content
+
+    #    out = '\x02%(Title)s\x02 (%(Year)s) (%(Genre)s): %(Plot)s'
+    #    if content['Runtime'] != 'N/A':
+    #        out += ' \x02%(Runtime)s\x02.'
+    #    if content['imdbRating'] != 'N/A' and content['imdbVotes'] != 'N/A':
+    #        out += ' \x02%(imdbRating)s/10\x02 with \x02%(imdbVotes)s\x02' \
+    #               ' votes.'
+    #    out += ' %(URL)s'
+    #    return out % content
+    #else:
+    #    return 'Unknown error.'
 
 
 

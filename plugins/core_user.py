@@ -63,6 +63,8 @@ def desktop(inp, nick=None, conn=None, chan=None,db=None, notice=None):
 @hook.command(autohelp=False)
 def greeting(inp, nick=None, conn=None, chan=None,db=None, notice=None):
     "greet <message | @ person> -- Shows a users Greeting."
+    if nick == 'kimi':
+        return
     try:
         if not inp or '@' in inp:
             if '@' in inp: nick = inp.split('@')[1].strip()
