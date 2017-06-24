@@ -5,8 +5,9 @@ import random
 
 from util import hook, http, timeformat
 
-youtube_re = (r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)'
-              '([-_a-zA-Z0-9]+)', re.I)
+#youtube_re = (r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)'
+#              '([-_a-zA-Z0-9]+)', re.I)
+youtube_re = (r'(?:youtube.*?(?:v=|/v/)|youtu\.be/)([-_a-zA-Z0-9]+)?(.*)', re.I)
 
 base_url = 'https://www.googleapis.com/youtube/v3/'
 search_api_url = base_url + 'search?part=id,snippet'
@@ -105,17 +106,8 @@ def randomtube(inp, bot=None):
             f.close()
             return url + ' - ' + description
 
-oldchan = ''
-oldurl = ''
 @hook.regex(*youtube_re)
 def youtube_url(match,bot=None,chan=None):
-    global oldurl
-    global oldchan
-    if match.group(1) == oldurl:
-        if oldchan == chan:
-            return
-    oldurl = match.group(1)
-    oldchan = chan
     key = bot.config.get("api_keys", {}).get("google")
 
     return get_video_description(key,match.group(1))

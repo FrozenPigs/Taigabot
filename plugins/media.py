@@ -5,6 +5,7 @@ import re
 
 import datetime
 import urllib2
+import urllib
 from bs4 import BeautifulSoup
 from urllib2 import URLError
 from zipfile import ZipFile
@@ -213,16 +214,16 @@ id_re = re.compile("tt\d+")
 @hook.command
 def imdb(inp):
     "imdb <movie> -- Gets information about <movie> from IMDb."
+    print urllib.quote(inp)
     base_url = 'http://www.imdb.com'
-    search = base_url + "/find?q={}&s=all".format(inp)
+    search = base_url + "/find?q={}&s=all".format(urllib.quote(inp))
     response = urllib2.urlopen(search)
-    soup = BeautifulSoup(response.read())
+    soup = BeautifulSoup(response.read(), 'lxml')
     result = base_url + soup.find_all('table', 'findList')[0].find_all('td')[1].find_all('a', href=True)[0]['href']
     response = urllib2.urlopen(result)
     soup = BeautifulSoup(response.read())
     title = soup.find_all('h1')[1].get_text()[0:-8].strip()
     year = soup.find_all('h1')[1].find_all('span')[0].get_text().strip()
-    print(soup.find_all('div', 'subtext'))
     genres = soup.find_all('div', 'subtext')[0].find_all('span', 'itemprop')
     tmp = []
     if len(genres) >= 2:
@@ -235,8 +236,7 @@ def imdb(inp):
     runtime = soup.find_all('div', 'subtext')[0].find_all('time')[0].get_text().strip()
     score = soup.find_all('div', 'ratingValue')[0].get_text().strip()
     votes = soup.find_all('span', 'small')[0].get_text().strip()
-    print(votes)
-    return "\x02{}\x02 {} ({}): {} {}. {} with {} votes. {}".format(title, year, genres, plot, runtime, score, votes, result.split('?')[0])
+    return u"\x02{}\x02 {} ({}): {} {}. {} with {} votes. {}".format(title, year, genres, plot, runtime, score, votes, result.split('?')[0])
 
     #strip = inp.strip()
 
