@@ -195,7 +195,8 @@ class IRC(object):
         """ makes the bot join a channel """
         self.send("JOIN %s" % channel)
         if channel not in self.channels:
-            self.channels.append(channel)
+            if ',' not in channel:
+                self.channels.append(channel)
 
     def part(self, channel):
         """ makes the bot leave a channel """

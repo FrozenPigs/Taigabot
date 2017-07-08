@@ -549,7 +549,7 @@ def ban(inp, conn=None, chan=None, notice=None, db=None, nick=None, bot=None):
     else: target = inp_nick
 
     if '@' in target and not '!' in target: target = '*!*{}'.format(target)
-    timer = scheduler.check_for_timers(inp)
+    timer = scheduler.check_for_timers(inp, 'ban')
     if timer > 0: reason = "{} Come back in {} seconds!!!".format(reason,timer)
     notice(u"Attempting to ban {} in {}...".format(target, chan))
     conn.send(u"MODE {} {} {}".format(chan, mode, target))

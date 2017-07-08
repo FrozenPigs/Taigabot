@@ -1,18 +1,34 @@
 from util import hook
 import sched, time
 
-def check_for_timers(inp):
+def check_for_timers(inp, command):
     split = inp.split(' ')
     timer = 0
-    lastparam = split[-1].lower()
-    if   'sec'   in lastparam: timer = int(split[-2])
-    if   'min'   in lastparam: timer = int(split[-2]) * 60
-    elif 'hour'  in lastparam: timer = int(split[-2]) * 60 * 60
-    elif 'day'   in lastparam: timer = int(split[-2]) * 60 * 60 * 24
-    elif 'week'  in lastparam: timer = int(split[-2]) * 60 * 60 * 24 * 7
-    elif 'month' in lastparam: timer = int(split[-2]) * 60 * 60 * 24 * 30
-    elif 'year'  in lastparam: timer = int(split[-2]) * 60 * 60 * 24 * 365
-    elif  lastparam.isdigit(): timer = int(lastparam) * 60
+    print split
+    if command == 'ban':
+        lastparam = split[-1].lower()
+        if   'sec'   in lastparam: timer = int(split[-2])
+        if   'min'   in lastparam: timer = int(split[-2]) * 60
+        elif 'hour'  in lastparam: timer = int(split[-2]) * 60 * 60
+        elif 'day'   in lastparam: timer = int(split[-2]) * 60 * 60 * 24
+        elif 'week'  in lastparam: timer = int(split[-2]) * 60 * 60 * 24 * 7
+        elif 'month' in lastparam: timer = int(split[-2]) * 60 * 60 * 24 * 30
+        elif 'year'  in lastparam: timer = int(split[-2]) * 60 * 60 * 24 * 365
+        elif  lastparam.isdigit(): timer = int(lastparam) * 60
+    if command == 'reminder':
+        if split[1] in [u'sec', u'min', u'hour', u'day', u'week', u'month', u'year']:
+            lastparam = ' '.join(split[0:2]).lower()
+            print lastparam
+        else:
+            lastparam = split[0].lower()
+        if   'sec'   in lastparam: timer = int(split[0])
+        if   'min'   in lastparam: timer = int(split[0]) * 60
+        elif 'hour'  in lastparam: timer = int(split[0]) * 60 * 60
+        elif 'day'   in lastparam: timer = int(split[0]) * 60 * 60 * 24
+        elif 'week'  in lastparam: timer = int(split[0]) * 60 * 60 * 24 * 7
+        elif 'month' in lastparam: timer = int(split[0]) * 60 * 60 * 24 * 30
+        elif 'year'  in lastparam: timer = int(split[0]) * 60 * 60 * 24 * 365
+        elif  lastparam.isdigit(): timer = int(lastparam) * 60
     return timer
 
 def execute(command, conn):

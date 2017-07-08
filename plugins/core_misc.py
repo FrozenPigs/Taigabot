@@ -30,9 +30,25 @@ def onjoin(paraml, conn=None, bot=None):
         conn.cmd('MODE', [conn.nick, mode])
 
     # Join config-defined channels
-    for channel in conn.channels:
-        conn.join(channel)
-        time.sleep(1)
+    try:
+        if len(conn.channels) > 30:
+            channels1 = conn.channels[:len(conn.channels)/2]
+            conn.join(','.join(channels1))
+            channels2 = conn.channels[len(conn.channels)/2:]
+            conn.join(','.join(channels2))
+            time.sleep(1)
+            print conn.channels
+            print channels1
+            print len(channels1)
+            print channels2
+            print len(channels2)
+        else:
+            conn.join(','.join(conn.channels))
+        print len(conn.channels)
+    except:
+        for channel in conn.channels:
+            conn.join(channel)
+            time.sleep(1)
 
     print "Bot ready."
     

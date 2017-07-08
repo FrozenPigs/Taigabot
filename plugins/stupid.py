@@ -426,6 +426,7 @@ def sudoku(inp, conn=None, chan=None, nick=None, say=None):
 def akbar(inp, conn=None, chan=None, nick=None, say=None, bot=None):
     "akbar - makes the bot kick itsself."
     say("ALLAHU AKBAR")
+    conn.send(u"KICK {} {}".format(chan, nick))
     conn.send(u"KICK {} {}".format(chan, conn.nick))
     time.sleep(5)
     conn.send(u"JOIN {}".format(chan))
