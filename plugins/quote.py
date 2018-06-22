@@ -227,11 +227,11 @@ def quote(inp, nick='', chan='', db=None, notice=None,reply=None, bot=None):
                     reply(results)
                 else:
                     for result in results: 
-                        if results >= 10:
+                        if len(results) >= 10:
                             notice(result)
                             time.sleep(1)
                         else:
-                            notice(result)
+                            reply(result)
                             time.sleep(0.5)
             return
 
@@ -240,13 +240,14 @@ def quote(inp, nick='', chan='', db=None, notice=None,reply=None, bot=None):
 
 @hook.command()
 def rquote(inp, db=None, notice=None, nick=None, bot=None, reply=None):
-    """rquote <number/*> <nick> - Deletes a quote from a nick"""
+    """rquote <nick> <number/*> - Deletes a quote from a nick"""
     target = inp.split(' ')[0]
     if nick != target:
 	if user.is_globaladmin(user.get_hostmask(nick, db), nick, bot):
             pass
         else:
-            return 'You can only remove your own quotes.'
+            notice('You can only remove your own quotes.')
+            return
     num = inp.split(' ')[1]
     if num == '*':
         tmp = 0

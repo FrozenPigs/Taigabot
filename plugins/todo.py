@@ -148,7 +148,7 @@ def todo(inp, nick='', chan='', db=None, notice=None, bot=None):
 
         notice("Deleted %d entries" % rows.rowcount)
     elif cmd == 'list':
-        limit = -1
+        limit = 21
 
         if len(args):
             try:

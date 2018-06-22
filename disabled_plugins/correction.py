@@ -7,6 +7,7 @@ def correction(inp, nick=None, chan=None, say=None, input=None, notice=None, db=
 
     # if inpsplit[3]: nick = inpsplit[3]
     # else: nick = nick
+    print 'penis'
 
     last_message = db.execute("select name, quote from seen where name like ? and chan = ?", (nick.lower(), chan.lower())).fetchone()
 

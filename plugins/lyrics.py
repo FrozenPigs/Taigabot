@@ -1,15 +1,29 @@
 from util import hook, http, web
+import json
+import requests
 
 url = "http://www.genius.com/search?q={}"
 
 
 @hook.command
-def lyrics(inp, reply=None):
+def lyrics(inp, reply=None, bot=None):
     """lyrics <search> - Search genius.com for song lyrics"""
-    inp = '+'.join(inp.split())
-    soup = http.get_soup(url.format(inp))
-    result = soup.findAll('a', {'class': 'song_link'})
-    reply(result[0]['href'])
+    
+    base_url = "http://api.genius.com"
+    headers = {'Authorization': bot.config['api_keys']['genius']}
+    search_url = base_url + "/search"
+    song_title = inp
+    params = {'q': song_title}
+    response = requests.get(search_url, params=params, headers=headers)
+    return json.loads(response.text)['response']['hits'][0]['result']['url']
+
+    #inp = '+'.join(inp.split())
+    #soup = http.get_soup(url.format(inp))
+    #print soup
+    #result = soup.findAll('a', {'class': 'mini_card'})
+    #print 'penis'
+    #print result
+    #reply(result[0]['href'])
     # if "pastelyrics" in inp:
     #     dopaste = True
     #     inp = inp.replace("pastelyrics", "").strip()
