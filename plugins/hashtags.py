@@ -187,11 +187,14 @@ def hashtag(inp, say=None, db=None, bot=None, me=None, conn=None, input=None, ch
 def hashes(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
     "hashes -- Shows hash names for all known hashes."
 
-    search = "SELECT word FROM mem"
-    if inp: search = "{} WHERE word LIKE '%{}%'".format(search, inp)
-    search = "{} ORDER BY word".format(search)
+    if inp:
+        search = "SELECT word FROM mem WHERE word LIKE '%' || ? || '%' ORDER BY word"
+        rows = db.execute(search, [inp]).fetchall()
+    else:
+        search = "SELECT word FROM mem ORDER BY word"
+        rows = db.execute(search).fetchall()
 
-    rows = db.execute(search).fetchall()
-
-    if rows: return ", ".join(tuple(x[0] for x in rows))
-    else: return "No results."
+    if rows:
+        return ", ".join(tuple(x[0] for x in rows))
+    else:
+        return "No results."
