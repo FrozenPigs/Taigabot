@@ -12,7 +12,8 @@ actions = {
     "diddle":["diddled", "diddling"],
     "spank":["spanked", "spanking"],
     "rape": ["raped", "raping"],
-    "sex": ["sexed", "sexing"]
+    "sex": ["sexed", "sexing"],
+    "lick": ["licked", "licking"]
 }
 
 def citation(db,chan,nick,reason):
@@ -100,6 +101,7 @@ def plez(inp, chan=None, conn=None):
 @hook.command('spank', autohelp=False)
 @hook.command('diddle', autohelp=False)
 @hook.command('pet', autohelp=False)
+@hook.command('lick', autohelp=False)
 @hook.command(autohelp=False)
 def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None, input=None):
     "honk <nick> -- Honks at someone."
@@ -352,13 +354,18 @@ def poke(inp, nick=None):
     if not inp: inp = nick
     return 'pokes {}'.format(inp)
 
+@hook.command(autohelp=False)
+def nigger(inp, nick=None):
+    "nigger <nick> -- niggers someone"
+    if not inp: inp = nick
+    return '{} is a nigger'.format(inp)
+
 
 @hook.command(autohelp=False)
 def kiss(inp, nick=None):
     "hug <nick> -- hugs someone"
     if not inp: inp = nick
     return '(づ｡◕‿‿◕｡)づ\x02\x034。。・゜゜・。。・゜❤ {} ❤\x03\x02 '.format(inp).decode('UTF-8')
-
 
 
 @hook.regex(r'^\[(.*)\]$')

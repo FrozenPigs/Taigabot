@@ -391,6 +391,53 @@ def selfie(inp, nick=None, conn=None, chan=None,db=None, notice=None):
         return 'No selfie saved for {}.'.format(nick)
 
 @hook.command(autohelp=False)
+def fit(inp, nick=None, conn=None, chan=None,db=None, notice=None):
+    "fit <url | @ person> -- Shows a users outfit."
+    if inp:
+        if  "http" in inp:
+            database.set(db,'users','fit',inp.strip(),'nick',nick)
+            notice("Saved your fit.")
+            return
+        elif 'del' in inp:
+            database.set(db,'users','fit','','nick',nick)
+            notice("Deleted your fit.")
+            return
+        else:
+            if '@' in inp: nick = inp.split('@')[1].strip()
+            else: nick = inp.strip()
+
+    result = database.get(db,'users','fit','nick',nick)
+    if result:
+        return '{}: {}'.format(nick,result)
+    else:
+        if not '@' in inp: notice(fit.__doc__)
+        return 'No fit saved for {}.'.format(nick)
+
+@hook.command('hw', autohelp=False)
+@hook.command(autohelp=False)
+def handwriting(inp, nick=None, conn=None, chan=None,db=None, notice=None):
+    "handwriting <url | @ person> -- Shows a users handwriting."
+    if inp:
+        if  "http" in inp:
+            database.set(db,'users','handwriting',inp.strip(),'nick',nick)
+            notice("Saved your handwriting.")
+            return
+        elif 'del' in inp:
+            database.set(db,'users','handwriting','','nick',nick)
+            notice("Deleted your handwriting.")
+            return
+        else:
+            if '@' in inp: nick = inp.split('@')[1].strip()
+            else: nick = inp.strip()
+
+    result = database.get(db,'users','handwriting','nick',nick)
+    if result:
+        return '{}: {}'.format(nick,result)
+    else:
+        if not '@' in inp: notice(fit.__doc__)
+        return 'No handwriting saved for {}.'.format(nick)
+
+@hook.command(autohelp=False)
 def steam(inp, nick=None, conn=None, chan=None,db=None, notice=None):
     "steam <steam | @ person> -- Shows a users steam information."
 

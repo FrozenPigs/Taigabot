@@ -1,4 +1,6 @@
 from util import hook, http
+import requests
+import urllib
 
 
 @hook.command('god')
@@ -6,15 +8,8 @@ from util import hook, http
 def bible(inp):
     """.bible <passage> -- gets <passage> from the Bible (ESV)"""
 
-    base_url = ('http://www.esvapi.org/v2/rest/passageQuery?key=IP&'
-                'output-format=plain-text&include-heading-horizontal-lines&'
-                'include-headings=false&include-passage-horizontal-lines=false&'
-                'include-passage-references=false&include-short-copyright=false&'
-                'include-footnotes=false&line-length=0&'
-                'include-heading-horizontal-lines=false')
-
-    text = http.get(base_url, passage=inp)
-
+    text = requests.get("https://api.esv.org/v3/passage/html/?q={}".format(urllib.quote(inp)), headers={"Authorization": "Token e1733632cb3a360e8d4db70b13da07f2df5c785d"})
+    print(text.text)
     text = ' '.join(text.split())
 
     if len(text) > 400:

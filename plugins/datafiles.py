@@ -38,7 +38,7 @@ with open("plugins/data/slogans.txt") as f:
     slogans = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
 with open("plugins/data/youtube.txt") as f:
-    slogans = [line.strip() for line in f.readlines() if not line.startswith("//")]
+    youtube = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
 
 def get_generator(_json, variables):

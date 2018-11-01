@@ -114,8 +114,10 @@ def youtube_url(match,bot=None,chan=None):
 
 
 @hook.command('yt')
+@hook.command('hooktube')
+@hook.command('ht')
 @hook.command
-def youtube(inp, bot=None):
+def youtube(inp, bot=None, input=None):
     """youtube <query> -- Returns the first YouTube search result for <query>."""
     key = bot.config.get("api_keys", {}).get("google")
 
@@ -128,8 +130,11 @@ def youtube(inp, bot=None):
         return 'No results found.'
 
     video_id = request['items'][0]['id']['videoId']
-
-    return get_video_description(key,video_id) + u" - " + video_url % video_id
+    if input['trigger'] == u'hooktube' or input['trigger'] == u'ht':
+        print "penis"
+        return get_video_description(key,video_id) + u" - " + video_url.replace('youtu.be', 'hooktube.com') % video_id
+    else:
+        return get_video_description(key,video_id) + u" - " + video_url % video_id
 
 
 @hook.command('ytime')
