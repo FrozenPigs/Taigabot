@@ -373,7 +373,6 @@ def set(inp, conn=None, chan=None, db=None, notice=None):
 @hook.command(autohelp=False, adminonly=True)
 def db(inp, db=None, notice=None, chan=None):
     """db <update|init> -- Init or update the database."""
-    print(inp)
     if 'update' in inp:
         database.update(db)
         notice('[{}]: Updated databases.'.format(chan))

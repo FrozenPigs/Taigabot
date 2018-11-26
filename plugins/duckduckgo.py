@@ -163,6 +163,9 @@ def get_zci(q, web_fallback=True, priority=['answer', 'abstract', 'related.0', '
 
 @hook.command
 def ddg(inp):
+    inp = inp.replace('my ip', '').replace('ip address', '').replace('addr', '')
+    if inp == 'ip':
+        return
     return get_zci(inp)
     # print r.type
     # print r.results

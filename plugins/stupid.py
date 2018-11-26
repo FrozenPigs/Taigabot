@@ -93,6 +93,53 @@ def plez(inp, chan=None, conn=None):
     conn.send(out)
     conn.send(out)
 
+
+@hook.command(autohelp=False)
+def bet(inp, nick=None, db=None, chan=None):
+    "bet <ammount> -- bets <ammount>"
+    inp = inp.replace(',', '').replace('$', '')
+    try:
+        money = float(database.get(db,'users','fines','nick',nick))
+    except:
+        money = 0.0
+    if inp == "":
+        inp = "100"
+    if inp > 0:
+        inp = float('-' + inp)
+        strinp = "{:,}".format(inp)
+        strmoney = "{:,}".format(money)
+        if  inp < money or money == 0:
+            if '-' in strmoney[0]:
+                return u"\x01ACTION You don't have enough money to bet \x02${}\x02. You have \x0309${}\x02\x01".format(strinp[1:], strmoney[1:])
+            else:
+ 		return u"\x01ACTION You don't have enough money to bet \x02${}\x02. You owe \x0304${}\x02\x01".format(strinp[1:], strmoney)
+            if inp == 0:
+                if '-' in strmoney[0]:
+                    return u"\x01ACTION You have to bet more than \x02${}\x02. You have \x0309${}\x02\x01".format(strinp[1:], strmoney[1:])
+                else:
+                    return u"\x01ACTION You have to bet more than \x02${}\x02. You owe \x0304${}\x02\x01".format(strinp[1:], strmoney)
+        else:
+            print(inp)
+            if random.randint(1,100) <= 50:
+                money = money - inp
+                strinp = "{:,}".format(inp)
+                strmoney = "{:,}".format(money)
+                database.set(db,'users','fines',money,'nick',nick)
+                if '-' in strmoney[0]:
+                    return u"\x01ACTION You lose the bet and lost \x02${}\x02. You have \x0309${}\x02\x01".format(strinp[1:], strmoney[1:])
+                else:
+                    return u"\x01ACTION You lose the bet and lost \x02${}\x02. You owe \x0304${}\x02\x01".format(strinp[1:], strmoney)
+            else:
+                money = money + inp
+                strinp = "{:,}".format(inp)
+                strmoney = "{:,}".format(money)
+                database.set(db,'users','fines',money,'nick',nick)
+                if '-' in strmoney[0]:
+                    return u"\x01ACTION You win the bet and win \x02${}\x02. You have \x0309${}\x02\x01".format(strinp[1:], strmoney[1:])
+                else:
+                    return u"\x01ACTION You win the bet and win \x02${}\x02. You owe \x0304${}\x02\x01".format(strinp[1:], strmoney)
+ 		
+
 @hook.command('sell', autohelp=False)
 @hook.command('shill', autohelp=False)
 @hook.command('sex', autohelp=False)
@@ -219,8 +266,8 @@ def donate(inp, db=None, nick=None, chan=None, conn=None, notice=None):
 	donation = float(donation)
     except:
         pass
-    if donation > 10000.00:
-        donation = 10000.00
+    #if donation > 10000.00:
+    #    donation = 10000.00
     if user.lower() == nick.lower():
         user = 'wednesday'
     try:
@@ -244,6 +291,7 @@ def donate(inp, db=None, nick=None, chan=None, conn=None, notice=None):
     else:
         if giver != taker:
             database.set(db,'users','fines',taker - donation,'nick', user)
+            database.set(db,'users','fines', giver,'nick', nick)
         conn.send(u"PRIVMSG {} :\x01ACTION gives \x02${}\x02 to {}.\x01".format(chan, donation, user))
 
 @hook.command('steal')

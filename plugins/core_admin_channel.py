@@ -6,11 +6,11 @@ from time import sleep
 # \binfinity@[^\s]*like.lolis\b
 @hook.command(autohelp=False,adminonly=True)
 def mask(inp,bot=None,input=None):
-    return re.sub(r'((?:@)[^@\.]+\d{2,}([^\.]?)+\.)','*',inp.replace('@','@@')).replace('~','').replace('@@','@').lower().strip()
+    return re.sub(r'((?:@)[^@\.]+\d{2,}([^\.]?)+\.)','*',inp.replace('@','@@')).replace('@@','@').lower().strip()
 
 def format_hostmask(inp):
     "format_hostmask -- Returns a nicks userhost"
-    return re.sub(r'(@[^@\.]+\d{2,}([^\.]?)+\.)','*',inp.replace('@','@@')).replace('~','').replace('@@','@').lower().strip()
+    return re.sub(r'(@[^@\.]+\d{2,}([^\.]?)+\.)','*',inp.replace('@','@@')).replace('@@','@').lower().strip()
 
 
 def compare_hostmasks(hostmask,matchmasks):
