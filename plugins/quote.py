@@ -71,7 +71,7 @@ def search_quote(db, nick, search, bot):
         num+=1
     print results
     if len(results) >= 5:
-        pastebin_vars = {'api_dev_key': bot.config.get('api_keys', {}).get('pastebin'), 'api_option': 'paste', 'api_paste_code': ', '.join(results)}
+        pastebin_vars = {'api_dev_key': bot.config.get('api_keys', {}).get('pastebin'), 'api_option': 'paste', 'api_paste_code': '\n'.join(results)}
         response = urllib.urlopen('http://pastebin.com/api/api_post.php', urllib.urlencode(pastebin_vars))
         results = response.read()
         print results
