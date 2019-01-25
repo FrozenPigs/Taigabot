@@ -12,7 +12,8 @@ def ctcp_version(inp, notice=None):
 
 @hook.regex(r'^\x01PING')
 def ctcp_ping(inp, notice=None):
-    notice('\x01PING: PONG')
+    msg = ' '.join(inp.string.split()[1:])
+    notice('\x01PING {}'.format(msg))
 
 
 @hook.regex(r'^\x01TIME\x01$')

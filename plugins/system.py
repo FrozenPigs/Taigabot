@@ -1,4 +1,5 @@
 import os
+import psutil
 import re
 import time
 import platform
@@ -34,8 +35,12 @@ def system(inp):
 
 
 @hook.command(autohelp=False, adminonly=True)
-def memory(inp):
+def memory(inp, notice=None):
     """memory -- Displays the bot's current memory usage."""
+    p = psutil.Process()
+    mem = p.memory_info()
+    rss, vms, heap = mem.rss/1000000, mem.vms/1000000, mem.data/1000000
+    notice('%s %s %s' % (rss, vms, heap))
     if os.name == "posix":
         # get process info
         status_file = open('/proc/self/status').read()

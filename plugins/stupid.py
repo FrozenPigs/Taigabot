@@ -4,6 +4,7 @@ import random
 import urllib
 import re
 import time
+import math
 
 # HONK HONK
 actions = {
@@ -104,8 +105,10 @@ def bet(inp, nick=None, db=None, chan=None):
         money = 0.0
     if inp == "":
         inp = "100"
-    if inp > 0:
+    if inp != "0":
         inp = float('-' + inp)
+	if math.isnan(inp):
+		return
         strinp = "{:,}".format(inp)
         strmoney = "{:,}".format(money)
         if  inp < money or money == 0:
@@ -256,16 +259,15 @@ def donate(inp, db=None, nick=None, chan=None, conn=None, notice=None):
     """donate <user> <money> -- Gives <money> to <user>."""
     inp = inp.replace('$', '').replace('-', '').split(' ')
     inp = ' '.join(inp[0:2]).split('.')[0].split()
-    print inp
     user = str(' '.join(inp[0:-1]).split('.')[0])
-    print user
     donation = float(inp[-1])
-    print donation
+    if math.isnan(donation):
+        return
     try:
         donation = inp[-1].split('.')[0] + '.' + inp[-1].split('.')[1][0:2]
 	donation = float(donation)
     except:
-        pass
+        return
     #if donation > 10000.00:
     #    donation = 10000.00
     if user.lower() == nick.lower():
