@@ -106,7 +106,8 @@ def onjoined(inp,input=None, conn=None, chan=None,raw=None, db=None):
         # send greeting
         greeting = database.get(db,'users','greeting','nick',input.nick)
 
-        if greeting: conn.msg(chan, greeting.decode('UTF-8'))
+        if greeting:
+            conn.msg(chan, '\x02\x02{}'.format(greeting.decode('UTF-8')))
     if input.nick == "kimi":
         conn.send('PRIVMSG {} :\x02[QUALITY OF CHANNEL SIGNIFICANTLY DECREASED]\x02'.format(input.chan))
 
