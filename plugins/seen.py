@@ -123,9 +123,11 @@ def seen(inp, nick='', chan='', db=None, input=None, bot=None):
     #    return "I can't look up that name, its impossible to use!"
 
     if not db_ready: db_init(db, bot)
-
-    last_seen = db.execute("select name, time, quote from seen where name like ? and chan = ?", (inp, chan)).fetchone()
-
+    seens = db.execute("select name, time, quote from seen where name like ? and chan = ?", (inp, chan)).fetchall()
+    last_seen = None
+    for i in seens:
+        if str(i[0]) == inp.lower():
+            last_seen = i
     if last_seen:
         reltime = timesince.timesince(last_seen[1])
         if last_seen[0] != inp.lower():  # for glob matching
