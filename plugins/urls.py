@@ -50,7 +50,9 @@ def process_url(match, bot=None, input=None, chan=None, db=None, reply=None):
 
     if '.html' in url.lower(): return
 
-    if 'youtube.com' in url.lower():
+    if '.onion' in url.lower():
+        return
+    elif 'youtube.com' in url.lower():
         return  #handled by youtube plugin: exiting
     elif 'youtu.be' in url.lower():
         return  #handled by youtube plugin: exiting
@@ -268,6 +270,7 @@ def unmatched_url(match, chan, db):
         r = requests.get(
             match, headers=headers, allow_redirects=True, stream=True)
     except Exception as e:
+        print e
         return formatting.output('URL', ['Error: {}'.format(e)])
 
     domain = urlparse(match).netloc
