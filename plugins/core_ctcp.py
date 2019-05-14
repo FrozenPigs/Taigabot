@@ -7,7 +7,7 @@ from util import hook,database, user
 # CTCP responses
 @hook.regex(r'^\x01VERSION\x01$')
 def ctcp_version(inp, notice=None):
-    notice('\x01VERSION: Skynet v0.99')
+    notice('\x01VERSION Skynet v0.99\x01')
 
 
 @hook.regex(r'^\x01PING')
@@ -18,12 +18,12 @@ def ctcp_ping(inp, notice=None):
 
 @hook.regex(r'^\x01TIME\x01$')
 def ctcp_time(inp, notice=None):
-    notice('\x01TIME: The time is: %s' % time.strftime("%r", time.localtime()))
+    notice('\x01TIME The time is: %s\x01' % time.strftime("%r", time.localtime()))
 
 
 @hook.regex(r'^\x01FINGER\x01$')
 def ctcp_finger(inp, notice=None):
-    notice('\x01FINGER: pls no')
+    notice('\x01FINGER pls no\x01')
 
 
 global ctcpcache
