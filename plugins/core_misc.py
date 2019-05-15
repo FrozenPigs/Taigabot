@@ -113,7 +113,8 @@ def onjoined(inp, input=None, conn=None, chan=None, raw=None, db=None):
             format(input.chan))
         if not 'greeting' in disabled_commands:
             # send greeting
-        greeting = database.get(db, 'users', 'greeting', 'nick', input.nick)
+            greeting = database.get(db, 'users', 'greeting', 'nick',
+                                    input.nick)
         if greeting:
             return '\x02\x02{}'.format(greeting)
 
