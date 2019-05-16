@@ -1,10 +1,12 @@
+import json
+import re
 import socket
 import time
-import re
-import json
+
+from util import database, hook, user
+
 # import datetime
 
-from util import hook, user, database
 
 socket.setdefaulttimeout(10)
 
@@ -82,9 +84,9 @@ def onkick(paraml, conn=None, chan=None, bot=None):
 
 @hook.event("JOIN")
 def onjoined(inp, input=None, conn=None, chan=None, raw=None, db=None):
-    database.set(db, 'users', 'mask',
-                 input.mask.lower().replace('~', ''), 'nick',
-                 input.nick.lower())
+    database.set(
+        db, 'users', 'mask',
+        input.mask.lower().replace('~', ''), 'nick', input.nick.lower())
     mask = user.format_hostmask(input.mask)
     disabled_commands = database.get(db, 'channels', 'disabled', 'chan', chan)
     if not disabled_commands: disabled_commands = ""
@@ -94,8 +96,9 @@ def onjoined(inp, input=None, conn=None, chan=None, raw=None, db=None):
         banlist = database.get(db, 'channels', 'bans', 'chan', chan)
         if banlist and mask in banlist:
             conn.send(u"MODE {} {} *{}".format(input.chan, '+b', mask))
-            conn.send(u"KICK {} {} :{}".format(input.chan, input.nick,
-                                               'I dont think so Tim.'))
+            conn.send(
+                u"KICK {} {} :{}".format(
+                    input.chan, input.nick, 'I dont think so Tim.'))
 
     if not 'autoop' in disabled_commands:
         #check if ops
@@ -109,25 +112,24 @@ def onjoined(inp, input=None, conn=None, chan=None, raw=None, db=None):
             conn.send(u"MODE {} {} {}".format(input.chan, '+o', input.nick))
     if input.nick == "kimi":
         conn.send(
-            'PRIVMSG {} :\x02[QUALITY OF CHANNEL SIGNIFICANTLY DECREASED]\x02'.
-            format(input.chan))
-        if not 'greeting' in disabled_commands:
-            # send greeting
-            greeting = database.get(db, 'users', 'greeting', 'nick',
-                                    input.nick)
+            'PRIVMSG {} :\x02[QUALITY OF CHANNEL SIGNIFICANTLY DECREASED]\x02'
+            .format(input.chan))
+    if not 'greeting' in disabled_commands:
+        # send greeting
+        greeting = database.get(db, 'users', 'greeting', 'nick', input.nick)
         if greeting:
             return '\x02\x02{}'.format(greeting)
 
 
 @hook.event("PART")
 def onpart(inp, input=None, conn=None, chan=None, raw=None, db=None):
-    database.set(db, 'users', 'mask',
-                 input.mask.lower().replace('~', ''), 'nick',
-                 input.nick.lower())
+    database.set(
+        db, 'users', 'mask',
+        input.mask.lower().replace('~', ''), 'nick', input.nick.lower())
     if input.nick == "kimi":
         conn.send(
-            'PRIVMSG {} :\x02[QUALITY OF CHANNEL SIGNIFICANTLY INCREASED]\x02'.
-            format(input.chan))
+            'PRIVMSG {} :\x02[QUALITY OF CHANNEL SIGNIFICANTLY INCREASED]\x02'
+            .format(input.chan))
 
 
 @hook.event("NICK")
@@ -140,13 +142,8 @@ def onnick(paraml, conn=None, raw=None):
 
 
 @hook.event("MODE")
-def onmode(paraml,
-           input=None,
-           conn=None,
-           raw=None,
-           chan=None,
-           db=None,
-           bot=None):
+def onmode(
+        paraml, input=None, conn=None, raw=None, chan=None, db=None, bot=None):
     if '#defect' in chan.lower():
         if not user.is_admin(input.mask, chan, db, bot):
             fixed_modes = []
@@ -172,8 +169,9 @@ def onmode(paraml,
                         if mode in requires_param: param_num += 1
 
             if len(fixed_modes) > 1:
-                conn.send(u'MODE {} {} {}'.format(chan, ''.join(fixed_modes),
-                                                  ' '.join(params)))
+                conn.send(
+                    u'MODE {} {} {}'.format(
+                        chan, ''.join(fixed_modes), ' '.join(params)))
 
 
 @hook.singlethread
