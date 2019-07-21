@@ -27,7 +27,7 @@ def add_quote(db, chan, nick, add_nick, msg):
         db.execute('''INSERT OR FAIL INTO quote
                       (chan, nick, add_nick, msg, time)
                       VALUES(?,?,?,?,?)''',
-                   (chan, nick, add_nick, msg.replace("'","").replace('\"', "").replace("\x02", "").replace("\x1f", "").replace("\x03", ""), time.time()))
+                   (chan, nick, add_nick, msg.replace("\x02", "").replace("\x1f", "").replace("\x03", ""), time.time()))
         db.commit()
     except db.IntegrityError:
         try:
