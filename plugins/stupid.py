@@ -399,10 +399,10 @@ def hug(inp, nick=None):
 
 
 @hook.command(autohelp=False)
-def poke(inp, nick=None):
+def poke(inp, nick=None, me=None):
     "poke <nick> -- pokes someone"
     if not inp: inp = nick
-    return 'pokes {}'.format(inp)
+    me('pokes {}'.format(inp))
 
 @hook.command(autohelp=False)
 def nigger(inp, nick=None):
