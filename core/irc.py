@@ -1,10 +1,9 @@
+import Queue
 import re
 import socket
-import time
 import thread
-import Queue
-
-from ssl import wrap_socket, CERT_NONE, CERT_REQUIRED, SSLError
+import time
+from ssl import CERT_NONE, CERT_REQUIRED, SSLError, wrap_socket
 
 
 def decode(txt):
@@ -31,8 +30,8 @@ class crlf_tcp(object):
     def __init__(self, host, port, timeout=300):
         self.ibuffer = ""
         self.obuffer = ""
-        self.oqueue = Queue.Queue()  # lines to be sent out
-        self.iqueue = Queue.Queue()  # lines that were received
+        self.oqueue = Queue.Queue()    # lines to be sent out
+        self.iqueue = Queue.Queue()    # lines that were received
         self.socket = self.create_socket()
         self.host = host
         self.port = port
@@ -99,14 +98,16 @@ class crlf_tcp(object):
 
 class crlf_ssl_tcp(crlf_tcp):
     "Handles ssl tcp connetions that consist of utf-8 lines ending with crlf"
+
     def __init__(self, host, port, ignore_cert_errors, timeout=300):
         self.ignore_cert_errors = ignore_cert_errors
         crlf_tcp.__init__(self, host, port, timeout)
 
     def create_socket(self):
-        return wrap_socket(crlf_tcp.create_socket(self), server_side=False,
-                cert_reqs=CERT_NONE if self.ignore_cert_errors else
-                CERT_REQUIRED)
+        return wrap_socket(
+            crlf_tcp.create_socket(self),
+            server_side=False,
+            cert_reqs=CERT_NONE if self.ignore_cert_errors else CERT_REQUIRED)
 
     def recv_from_socket(self, nbytes):
         return self.socket.read(nbytes)
@@ -120,6 +121,7 @@ class crlf_ssl_tcp(crlf_tcp):
             raise
         return crlf_tcp.handle_receive_exception(self, error, last_timestamp)
 
+
 irc_prefix_rem = re.compile(r'(.*?) (.*?) (.*)').match
 irc_noprefix_rem = re.compile(r'()(.*?) (.*)').match
 irc_netmask_rem = re.compile(r':?([^!@]*)!?([^@]*)@?(.*)').match
@@ -128,6 +130,7 @@ irc_param_ref = re.compile(r'(?:^|(?<= ))(:.*|[^ ]+)').findall
 
 class IRC(object):
     "handles the IRC protocol"
+
     def __init__(self, name, server, nick, port=6667, channels=[], conf={}):
         self.name = name
         self.channels = channels
@@ -136,7 +139,7 @@ class IRC(object):
         self.port = port
         self.nick = nick
 
-        self.out = Queue.Queue()  # responses from the server are placed here
+        self.out = Queue.Queue()    # responses from the server are placed here
         # format: [rawline, prefix, command, params,
         # nick, user, host, paramlist, msg]
         self.connect()
@@ -151,9 +154,11 @@ class IRC(object):
         thread.start_new_thread(self.conn.run, ())
         self.set_pass(self.conf.get('server_password'))
         self.set_nick(self.nick)
-        self.cmd("USER",
-            [conf.get('user', 'uguubot'), "3", "*", conf.get('realname',
-                'UguuBot - http://github.com/infinitylabs/UguuBot')])
+        self.cmd("USER", [
+            conf.get('user', 'uguubot'), "3", "*",
+            conf.get('realname',
+                     'UguuBot - http://github.com/infinitylabs/UguuBot')
+        ])
 
     def parse_loop(self):
         while True:
@@ -165,7 +170,7 @@ class IRC(object):
                 continue
 
             # parse the message
-            if msg.startswith(":"):  # has a prefix
+            if msg.startswith(":"):    # has a prefix
                 prefix, command, params = irc_prefix_rem(msg).groups()
             else:
                 prefix, command, params = irc_noprefix_rem(msg).groups()
@@ -178,8 +183,10 @@ class IRC(object):
                     paramlist[-1] = paramlist[-1][1:]
                 lastparam = paramlist[-1]
             # put the parsed message in the response queue
-            self.out.put([msg, prefix, command, params, nick, user, host,
-                    mask, paramlist, lastparam])
+            self.out.put([
+                msg, prefix, command, params, nick, user, host, mask,
+                paramlist, lastparam
+            ])
             # if the server pings us, pong them back
             if command == "PING":
                 self.cmd("PONG", paramlist)
@@ -191,9 +198,14 @@ class IRC(object):
     def set_nick(self, nick):
         self.cmd("NICK", [nick])
 
-    def join(self, channel):
+    def join(self, channel, key=None):
         """ makes the bot join a channel """
-        self.send("JOIN %s" % channel)
+        if key:
+            out = "JOIN " + channel + " " + key
+            self.send(out)
+        else:
+            self.send("JOIN %s" % channel)
+
         if channel not in self.channels:
             if ',' not in channel:
                 self.channels.append(channel)
@@ -225,7 +237,14 @@ class IRC(object):
 
 
 class SSLIRC(IRC):
-    def __init__(self, name, server, nick, port=6667, channels=[], conf={},
+
+    def __init__(self,
+                 name,
+                 server,
+                 nick,
+                 port=6667,
+                 channels=[],
+                 conf={},
                  ignore_certificate_errors=True):
         self.ignore_cert_errors = ignore_certificate_errors
         IRC.__init__(self, name, server, nick, port, channels, conf)

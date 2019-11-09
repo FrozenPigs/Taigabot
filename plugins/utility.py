@@ -1,33 +1,31 @@
-from util import hook, text, http, web
-import hashlib
 import collections
+import hashlib
 import re
+import subprocess
+
+from util import hook, http, text, web
 
 # variables
 
-colors = collections.OrderedDict([
-  ('red',     '\x0304'),
-  ('ornage',  '\x0307'),
-  ('yellow',  '\x0308'),
-  ('green',   '\x0309'),
-  ('cyan',    '\x0303'),
-  ('ltblue',  '\x0310'),
-  ('rylblue', '\x0312'),
-  ('blue',    '\x0302'),
-  ('magenta', '\x0306'),
-  ('pink',    '\x0313'),
-  ('maroon',  '\x0305')
-])
+colors = collections.OrderedDict([('red', '\x0304'), ('ornage', '\x0307'),
+                                  ('yellow', '\x0308'), ('green', '\x0309'),
+                                  ('cyan', '\x0303'), ('ltblue', '\x0310'),
+                                  ('rylblue', '\x0312'), ('blue', '\x0302'),
+                                  ('magenta', '\x0306'), ('pink', '\x0313'),
+                                  ('maroon', '\x0305')])
 
 # helper functions
 
-strip_re = re.compile("(\x03|\x02|\x1f)(?:,?\d{1,2}(?:,\d{1,2})?)?", re.UNICODE)
+strip_re = re.compile("(\x03|\x02|\x1f)(?:,?\d{1,2}(?:,\d{1,2})?)?",
+                      re.UNICODE)
 
 
 def strip(text):
     return strip_re.sub('', text)
 
+
 # basic text tools
+
 
 ## TODO: make this capitalize sentences correctly
 @hook.command("capitalise")
@@ -59,6 +57,7 @@ def titlecase(inp):
 def swapcase(inp):
     """swapcase <string> -- Swaps the capitalization of <string>."""
     return inp.swapcase()
+
 
 # encoding
 @hook.command
@@ -133,6 +132,7 @@ def hash(inp):
     return ', '.join(x + ": " + getattr(hashlib, x)(inp).hexdigest()
                      for x in ['md5', 'sha1', 'sha256'])
 
+
 # novelty
 @hook.command
 def munge(inp):
@@ -141,9 +141,9 @@ def munge(inp):
 
 
 # colors - based on code by Reece Selwood - <https://github.com/hitzler/homero>
-@hook.command("gay")
-@hook.command
-def rainbow(inp):
+
+
+def make_rainbow(inp):
     inp = unicode(inp)
     inp = strip(inp)
     col = colors.items()
@@ -155,6 +155,33 @@ def rainbow(inp):
         else:
             out += col[i % l][1] + t
     return out
+
+
+@hook.command("gay")
+@hook.command
+def rainbow(inp):
+    return make_rainbow(inp)
+
+
+@hook.command
+def gaycow(inp, reply=None):
+    reply(make_rainbow(' ' + '_' * (len(inp) + 2)))
+    reply(make_rainbow('< {0} >'.format(inp)))
+    reply(make_rainbow(' ' + '-' * (len(inp) + 2)))
+    reply(make_rainbow('      \\   ^__^'))
+    reply(make_rainbow('       \\  (oo)\\_______'))
+    reply(make_rainbow('          (__)\\       )\\/\\'))
+    reply(make_rainbow('              ||----w |'))
+    reply(make_rainbow('              ||     ||'))
+
+
+@hook.command
+def gayfiglet(inp, reply=None):
+    inp = inp.encode('utf-8')[:11]
+    for line in subprocess.check_output(['figlet',
+                                         '{0}'.format(inp)]).split('\n'):
+        if line != ' ' * (len(line)):
+            reply(make_rainbow(line))
 
 
 @hook.command
@@ -189,4 +216,3 @@ def shorten(inp):
         return web.isgd(inp)
     except (web.ShortenError, http.HTTPError) as error:
         return error
-

@@ -5,6 +5,7 @@ import urllib
 import re
 import time
 import math
+import subprocess
 
 # HONK HONK
 actions = {
@@ -499,6 +500,24 @@ def storyofpomfface(inp, reply=None):
    reply(':C3')
    reply(':3')
    return
+
+@hook.command
+def cowsay(inp, reply=None):
+    reply(' ' + '_' * (len(inp) + 2))
+    reply('< {0} >'.format(inp))
+    reply(' ' + '-' * (len(inp) + 2))
+    reply('      \\   ^__^')
+    reply('       \\  (oo)\\_______')
+    reply('          (__)\\       )\\/\\')
+    reply('              ||----w |')
+    reply('              ||     ||')
+    
+@hook.command
+def figlet(inp, reply=None):
+    inp = inp.encode('utf-8')[:11]
+    for line in subprocess.check_output(['figlet', '{0}'.format(inp)]).split('\n'):
+        if line != ' ' * (len(line)):
+            reply(line)
 
 
 @hook.regex(r'^(same)$')
