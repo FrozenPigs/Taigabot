@@ -71,7 +71,12 @@ def search_quote(db, nick, search, bot):
         num+=1
     print results
     if len(results) >= 5:
-        pastebin_vars = {'api_dev_key': bot.config.get('api_keys', {}).get('pastebin'), 'api_option': 'paste', 'api_paste_code': '\n'.join(results)}
+        # too many results, throw them to pastebin
+        # api_paste_name - name / title
+        # api_paste_private - public = 0, unlisted = 1, private = 2
+        # api_paste_expire_date - expiration date. N = never, 10M = 10 mins, 1D = one day, 1W = one week...
+        # more at https://pastebin.com/api#4
+        pastebin_vars = {'api_dev_key': bot.config.get('api_keys', {}).get('pastebin'), 'api_option': 'paste', 'api_paste_name': 'irc quotes - search result', 'api_paste_private': 1, 'api_paste_expire_date': '1W', 'api_paste_code': '\n'.join(results)}
         response = urllib.urlopen('http://pastebin.com/api/api_post.php', urllib.urlencode(pastebin_vars))
         results = response.read()
         print results
