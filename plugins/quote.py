@@ -80,6 +80,9 @@ def search_quote(db, nick, search, bot):
         pastebin_vars = {
             'api_dev_key': bot.config.get('api_keys', {}).get('pastebin'),
             'api_option': 'paste',
+            'api_paste_name': 'irc quotes - search result',
+            'api_paste_private': 1,
+            'api_paste_expire_date': '1W',
             'api_paste_code': '\n'.join(results)
         }
         response = urllib.urlopen('http://pastebin.com/api/api_post.php',
