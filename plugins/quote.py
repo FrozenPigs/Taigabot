@@ -83,7 +83,7 @@ def search_quote(db, nick, search, bot):
             'api_paste_name': 'irc quotes - search result',
             'api_paste_private': 1,
             'api_paste_expire_date': '1W',
-            'api_paste_code': '\n'.join(results)
+            'api_paste_code': '\n'.join(results).encode('utf-8')
         }
         response = urllib.urlopen('http://pastebin.com/api/api_post.php',
                                   urllib.urlencode(pastebin_vars))

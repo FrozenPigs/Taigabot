@@ -14,11 +14,11 @@ from cStringIO import StringIO
 from lxml import etree
 from util import hook, http, web
 
-
 base_url = "http://thetvdb.com/api/"
 api_key = "469B73127CA0C411"
 
 # http://thetvdb.com/api/GetSeries.php?seriesname=clannad
+
 
 def get_zipped_xml(*args, **kwargs):
     try:
@@ -28,18 +28,21 @@ def get_zipped_xml(*args, **kwargs):
     zip_buffer = StringIO(http.get(*args, **kwargs))
     return etree.parse(ZipFile(zip_buffer, "r").open(path))
 
+
 def get_series_info(seriesname):
     res = {"error": None, "ended": False, "episodes": None, "name": None}
     # http://thetvdb.com/wiki/index.php/API:GetSeries
     try:
-        query = http.get_xml(base_url + 'GetSeries.php', seriesname=seriesname)
+        query = http.get_xml(
+            base_url + 'GetSeries.php', seriesname=seriesname)
     except URLError:
         res["error"] = "error contacting thetvdb.com"
         return res
     series_id = ""
-    try: series_id = query.xpath('//id/text()')
-    except: print "Failed"
-
+    try:
+        series_id = query.xpath('//id/text()')
+    except:
+        print "Failed"
 
     if not series_id:
         result = "\x02Could not find show:\x02 %s" % seriesname
@@ -49,17 +52,21 @@ def get_series_info(seriesname):
         firstaired = query.xpath('//FirstAired/text()')[0]
         #imdb_id = query.xpath('//IMDB_ID/text()')[0]
         #imdb_url = web.isgd("http://www.imdb.com/title/%s" % imdb_id)
-        tvdb_url = web.isgd("http://thetvdb.com/?tab=series&id=%s" % series_id[0])
+        tvdb_url = web.isgd("http://thetvdb.com/?tab=series&id=%s" %
+                            series_id[0])
         status = tv_next(seriesname)
-        result = '\x02%s\x02 (%s) \x02-\x02 \x02%s\x02 - [%s] - %s' % (series_name, firstaired, status, tvdb_url, overview)
+        result = '\x02%s\x02 (%s) \x02-\x02 \x02%s\x02 - [%s] - %s' % (
+            series_name, firstaired, status, tvdb_url, overview)
 
     return result
+
 
 def get_episodes_for_series(seriesname):
     res = {"error": None, "ended": False, "episodes": None, "name": None}
     # http://thetvdb.com/wiki/index.php/API:GetSeries
     try:
-        query = http.get_xml(base_url + 'GetSeries.php', seriesname=seriesname)
+        query = http.get_xml(
+            base_url + 'GetSeries.php', seriesname=seriesname)
     except URLError:
         res["error"] = "error contacting thetvdb.com"
         return res
@@ -73,8 +80,9 @@ def get_episodes_for_series(seriesname):
     series_id = series_id[0]
 
     try:
-        series = get_zipped_xml(base_url + '%s/series/%s/all/en.zip' %
-                                    (api_key, series_id), path="en.xml")
+        series = get_zipped_xml(
+            base_url + '%s/series/%s/all/en.zip' % (api_key, series_id),
+            path="en.xml")
     except URLError:
         res["error"] = "error contacting thetvdb.com"
         return res
@@ -112,14 +120,13 @@ def get_episode_info(episode):
     return (first_aired, airdate, episode_desc)
 
 
-
-
 @hook.command
 @hook.command('show')
 @hook.command('series')
 def tv(inp):
     ".tv <series> -- get info for the <series>"
     return get_series_info(inp)
+
 
 @hook.command('next')
 @hook.command
@@ -207,19 +214,21 @@ def tv_last(inp):
     return "The last episode of %s aired %s" % (series_name, prev_ep)
 
 
-
 id_re = re.compile("tt\d+")
+
 
 @hook.command('movie')
 @hook.command
 def imdb(inp):
     "imdb <movie> -- Gets information about <movie> from IMDb."
-    print urllib.quote(inp)
     base_url = 'http://www.imdb.com'
-    search = base_url + "/find?q={}&s=all".format(urllib.quote(inp))
+    search = base_url + "/find?q={}&s=all".format(
+        urllib.quote(inp.encode('utf-8')))
     response = urllib2.urlopen(search)
     soup = BeautifulSoup(response.read(), 'lxml')
-    result = base_url + soup.find_all('table', 'findList')[0].find_all('td')[1].find_all('a', href=True)[0]['href']
+    result = base_url + soup.find_all(
+        'table', 'findList')[0].find_all('td')[1].find_all(
+            'a', href=True)[0]['href']
     response = urllib2.urlopen(result)
     soup = BeautifulSoup(response.read())
     title = soup.find_all('h1')[1].get_text()[0:-8].strip()
@@ -227,16 +236,19 @@ def imdb(inp):
     genres = soup.find_all('div', 'subtext')[0].find_all('span', 'itemprop')
     tmp = []
     if len(genres) >= 2:
-         for i in genres:
-             tmp.append(i.get_text())
+        for i in genres:
+            tmp.append(i.get_text())
     else:
         tmp = genres[0].get_text()
     genres = ', '.join(tmp)
     plot = soup.find_all('div', 'summary_text')[0].get_text().strip()
-    runtime = soup.find_all('div', 'subtext')[0].find_all('time')[0].get_text().strip()
+    runtime = soup.find_all('div', 'subtext')[0].find_all('time')[0].get_text(
+    ).strip()
     score = soup.find_all('div', 'ratingValue')[0].get_text().strip()
     votes = soup.find_all('span', 'small')[0].get_text().strip()
-    return u"\x02{}\x02 {} ({}): {} {}. {} with {} votes. {}".format(title, year, genres, plot, runtime, score, votes, result.split('?')[0])
+    return u"\x02{}\x02 {} ({}): {} {}. {} with {} votes. {}".format(
+        title, year, genres, plot, runtime, score, votes,
+        result.split('?')[0])
 
     #strip = inp.strip()
 
@@ -262,14 +274,14 @@ def imdb(inp):
     #    return 'Unknown error.'
 
 
-
 api_root = 'http://api.rottentomatoes.com/api/public/v1.0/'
 movie_search_url = api_root + 'movies.json'
 movie_reviews_url = api_root + 'movies/%s/reviews.json'
 
+
 @hook.command('rt')
 @hook.command
-def rottentomatoes(inp,bot=None):
+def rottentomatoes(inp, bot=None):
     '.rt <title> -- gets ratings for <title> from Rotten Tomatoes'
 
     api_key = bot.config.get("api_keys", {}).get("rottentomatoes", None)
@@ -290,10 +302,12 @@ def rottentomatoes(inp,bot=None):
     if critics_score == -1:
         return
 
-    reviews = http.get_json(movie_reviews_url % id, apikey=api_key, review_type='all')
+    reviews = http.get_json(
+        movie_reviews_url % id, apikey=api_key, review_type='all')
     review_count = reviews['total']
 
     fresh = critics_score * review_count / 100
     rotten = review_count - fresh
 
-    return u"%s - critics: \x02%d%%\x02 (%d\u2191/%d\u2193) audience: \x02%d%%\x02 - %s" % (title, critics_score, fresh, rotten, audience_score, url)
+    return u"%s - critics: \x02%d%%\x02 (%d\u2191/%d\u2193) audience: \x02%d%%\x02 - %s" % (
+        title, critics_score, fresh, rotten, audience_score, url)
