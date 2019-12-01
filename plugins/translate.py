@@ -132,19 +132,20 @@ def translate(inp, chan=None, notice=None):
     }
 
     inp = inp.lower()
-    if 'from ' in inp and 'to ' in inp:
+    print inp.startswith('from')
+    if inp.startswith('from') and inp.split()[2] == 'to':
         from_language = inp.split()[1]
         to_language = inp.split()[3]
         to_translate = inp.split(to_language)[1].strip()
         if to_language in langs.keys():
             to_language = langs[to_language]
             from_language = langs[from_language]
-    elif 'from ' in inp:
+    elif inp.startswith('from'):
         from_language = inp.split()[1]
         to_language = "auto"
         to_translate = inp.split(from_language)[1].strip()
         from_language = langs[from_language]
-    elif 'to ' in inp:
+    elif inp.startswith('to'):
         from_language = "auto"
         to_language = inp.split()[1]
         to_translate = inp.split(to_language)[1].strip()
