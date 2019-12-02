@@ -132,7 +132,6 @@ def translate(inp, chan=None, notice=None):
     }
 
     inp = inp.lower()
-    print inp.startswith('from')
     if inp.startswith('from') and inp.split()[2] == 'to':
         from_language = inp.split()[1]
         to_language = inp.split()[3]
@@ -155,7 +154,7 @@ def translate(inp, chan=None, notice=None):
         to_language = "auto"
         to_translate = inp
 
-    to_translate = to_translate.replace(" ", "+")    #.encode('utf-8')
+    to_translate = to_translate
     result = google_translate(to_translate, to_language, from_language)
     return '[%s to %s]: %s' % (from_language, to_language,
                                http.decode_html(result))
