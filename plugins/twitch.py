@@ -1,13 +1,15 @@
 import re
-from util import hook, http
 from HTMLParser import HTMLParser
+
+from util import hook, http
 
 twitch_re = (r'(.*:)//(twitch.tv|www.twitch.tv)(:[0-9]+)?(.*)', re.I)
 multitwitch_re = (r'(.*:)//(www.multitwitch.tv|multitwitch.tv)/(.*)', re.I)
 
 
 def test(s):
-    valid = set('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_/')
+    valid = set(
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_/')
     return set(s) <= valid
 
 
@@ -61,23 +63,24 @@ def twitch(inp):
         location = inp
     else:
         return "Not a valid channel name."
-    return twitch_lookup(location).split("(")[-1].split(")")[0].replace("Online now! ", "")
+    return twitch_lookup(location).split("(")[-1].split(")")[0].replace(
+        "Online now! ", "")
 
 
 def twitch_lookup(location):
     locsplit = location.split("/")
     if len(locsplit) > 1 and len(locsplit) == 3:
         channel = locsplit[0]
-        type = locsplit[1]  # should be b or c
+        type = locsplit[1]    # should be b or c
         id = locsplit[2]
     else:
         channel = locsplit[0]
         type = None
         id = None
     h = HTMLParser()
-    fmt = "{}: {} playing {} ({})"  # Title: nickname playing Game (x views)
+    fmt = "{}: {} playing {} ({})"    # Title: nickname playing Game (x views)
     if type and id:
-        if type == "b":  # I haven't found an API to retrieve broadcast info
+        if type == "b":    # I haven't found an API to retrieve broadcast info
             soup = http.get_soup("http://twitch.tv/" + location)
             title = soup.find('span', {'class': 'real_title js-title'}).text
             playing = soup.find('a', {'class': 'game js-game'}).text
@@ -85,26 +88,29 @@ def twitch_lookup(location):
             views = views + "s" if not views[0:2] == "1 " else views
             return h.unescape(fmt.format(title, channel, playing, views))
         elif type == "c":
-            data = http.get_json("https://api.twitch.tv/kraken/videos/" + type + id)
+            data = http.get_json(
+                "https://api.twitch.tv/kraken/videos/" + type + id)
             title = data['title']
             playing = data['game']
             views = str(data['views']) + " view"
             views = views + "s" if not views[0:2] == "1 " else views
             return h.unescape(fmt.format(title, channel, playing, views))
     else:
-        data = http.get_json("http://api.justin.tv/api/stream/list.json?channel=" + channel)
+        data = http.get_json("http://api.twitch.tv/kraken/channels/" + channel)
         if data and len(data) >= 1:
             data = data[0]
             title = data['title']
             playing = data['meta_game']
-            viewers = "\x033\x02Online now!\x02\x0f " + str(data["channel_count"]) + " viewer"
+            viewers = "\x033\x02Online now!\x02\x0f " + str(
+                data["channel_count"]) + " viewer"
             print viewers
             viewers = viewers + "s" if not " 1 view" in viewers else viewers
             print viewers
             return h.unescape(fmt.format(title, channel, playing, viewers))
         else:
             try:
-                data = http.get_json("https://api.twitch.tv/kraken/channels/" + channel)
+                data = http.get_json(
+                    "https://api.twitch.tv/kraken/channels/" + channel)
             except:
                 return
             title = data['status']
