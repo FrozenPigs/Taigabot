@@ -333,7 +333,7 @@ def wolframalpha(inp, bot=None):
     try:
         waquery = re.sub(' (?:\||) +', ' ', ' '.join(results[0][0].splitlines(
         ))).strip().replace(u'\xc2 ', '')
-        if results[1][0] == []:
+        if results[1][0] == [] or u'irreducible' in results[1][0]:
             waresult = ' '.join(results[2][0].splitlines()).replace(
                 u'\xc2 ', '')
         else:
