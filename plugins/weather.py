@@ -48,7 +48,10 @@ def weather(inp, bot=None, reply=None, db=None, nick=None, notice=None, paraml=N
                 nick.encode('ascii', 'ignore'))
     else:
         userloc = database.get(db, 'users', 'location', 'nick', nick)
-        latlong, address = getlocation(db, userloc)
+        try:
+            latlong, address = getlocation(db, userloc)
+        except AttributeError:
+            pass
         if not inp:
             if userloc == 'None':
                 userloc = None
@@ -103,7 +106,6 @@ def weather(inp, bot=None, reply=None, db=None, nick=None, notice=None, paraml=N
         weather_data = {
             'place': address,
             'summary': current['summary'],
-            'forecast': daily_current['summary'][:-1],
             'high_f': int(round(daily_current['temperatureMax'])),
             'high_c': int(round((daily_current['temperatureMax'] - 32) * 5 / 9)),
             'low_f': int(round(daily_current['temperatureMin'])),
@@ -114,10 +116,18 @@ def weather(inp, bot=None, reply=None, db=None, nick=None, notice=None, paraml=N
             'wind_kph': int(round(current['windSpeed'] * 1.609)),
             'wind_direction': wind_dir(current['windBearing']),
             'pressure': int(round(current['pressure'])),
-            'uv_index': current['uvIndex'],
-            'sunrise': datetime.fromtimestamp(daily_current['sunriseTime'], tz).strftime('%I:%M:%S %p'),
-            'sunset': datetime.fromtimestamp(daily_current['sunsetTime'], tz).strftime('%I:%M:%S %p')
+            'uv_index': current['uvIndex']
         }
+        try:
+            weather_data['forecast'] = daily_current['summary'][:-1]
+            weather_data['sunrise'] = datetime.fromtimestamp(daily_current['sunriseTime'], tz).strftime('%I:%M:%S %p')
+            weather_data['sunset'] = datetime.fromtimestamp(daily_current['sunsetTime'], tz).strftime('%I:%M:%S %p')
+
+        except KeyError:
+            weather_data['forecast'] = 'no forecast'
+            weather_data['sunrise'] = 'no sunrise'
+            weather_data['sunset'] = 'no sunset'
+
         if command != 'forecast':
             weather_data['temp_f'] = int(round(current['temperature']))
             weather_data['temp_c'] = int(round((current['temperature'] - 32) * 5 / 9))
