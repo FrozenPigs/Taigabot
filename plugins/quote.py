@@ -266,7 +266,7 @@ def quote(inp, nick='', chan='', db=None, notice=None, reply=None, bot=None):
     notice(quote.__doc__)
 
 
-@hook.command()
+@hook.command(adminonly=True)
 def rquote(inp, db=None, notice=None, nick=None, bot=None, reply=None):
     """rquote <nick> <number/*> - Deletes a quote from a nick"""
     target = inp.split(' ')[0]

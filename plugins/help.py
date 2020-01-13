@@ -86,7 +86,7 @@ def commands(inp,
 @hook.command(autohelp=False)
 def help(inp, say=None, notice=None, input=None, conn=None, bot=None):
     if not inp:
-        say("For help visit http://uguubot.com or see .COMMANDS")
+        say("For help see .COMMANDS")
     else:
         commands(inp, say, notice, input, conn, bot)
     return

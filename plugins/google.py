@@ -26,9 +26,13 @@ def api_get(kind, query):
 
 @hook.command('search')
 @hook.command('g')
+@hook.command('wiki')
 @hook.command
-def google(inp, bot=None, db=None, chan=None):
+def google(inp, bot=None, db=None, chan=None, paraml=None):
     """google <query> -- Returns first google search result for <query>."""
+    command = paraml[-1].split(' ')[0][1:].lower()
+    if command == 'wiki':
+        inp = 'site:wikipedia.org {}'.format(inp)
     trimlength = database.get(db,'channels','trimlength','chan',chan)
     if not trimlength: trimlength = 9999
     try:

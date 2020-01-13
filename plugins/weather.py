@@ -25,32 +25,62 @@ def weather(inp, bot=None, reply=None, db=None, nick=None, notice=None, paraml=N
     if '@' in inp:
         save = False
         nick = inp.split('@')[1].strip()
-        dbloc = database.get(db, 'users', 'location', 'nick', nick)
-        locator = Nominatim(user_agent="Taiga").geocode(dbloc)
-        latlong = (locator.latitude, locator.longitude)
-        if not dbloc:
+        userloc = database.get(db, 'users', 'location', 'nick', nick)
+        latlong = database.get(db, 'location', 'latlong', 'location', userloc)
+        address = database.get(db, 'location', 'address', 'location', userloc)
+        if not latlong:
+            locator = Nominatim(user_agent="Taiga").geocode(userloc)
+            latlong = (locator.latitude, locator.longitude)
+            database.set(db, 'location', 'latlong', '{},{}'.format(latlong[0], latlong[1]),
+                         'location', userloc)
+            address = locator.address.replace('United States of America', 'USA').replace(
+                'United Kingdom', 'UK').encode('utf-8')
+            database.set(db, 'location', 'address', address, 'location', userloc)
+        else:
+            latlong = latlong.split(',')
+        if not userloc:
             return "No location stored for {}.".format(
                 nick.encode('ascii', 'ignore'))
     else:
-        dbloc = database.get(db, 'users', 'location', 'nick', nick)
-        if not inp:
-            locator = Nominatim(user_agent="Taiga").geocode(dbloc)
+        userloc = database.get(db, 'users', 'location', 'nick', nick)
+        latlong = database.get(db, 'location', 'latlong', 'location', userloc)
+        address = database.get(db, 'location', 'address', 'location', userloc)
+        if not latlong:
+            locator = Nominatim(user_agent="Taiga").geocode(userloc)
             latlong = (locator.latitude, locator.longitude)
-            if dbloc == 'None':
-                dbloc = None
-            if not dbloc or dbloc is None:
+            database.set(db, 'location', 'latlong', '{},{}'.format(latlong[0], latlong[1]),
+                         'location', userloc)
+            address = locator.address.replace('United States of America', 'USA').replace(
+                'United Kingdom', 'UK').encode('utf-8')
+            database.set(db, 'location', 'address', address, 'location', userloc)
+        else:
+            latlong = latlong.split(',')
+
+        if not inp:
+            if userloc == 'None':
+                userloc = None
+            if not userloc or userloc is None:
                 notice(weather.__doc__)
                 return
         else:
-            # if not loc: save = True
             if " dontsave" in inp:
                 inp = inp.replace(' dontsave', '')
                 save = False
 
     if inp and '@' not in inp:
         try:
-            locator = Nominatim(user_agent="Taiga").geocode(inp)
-            latlong = (locator.latitude, locator.longitude)
+            latlong = database.get(db, 'location', 'latlong', 'location', inp)
+            address = database.get(db, 'location', 'address', 'location', inp)
+            if not latlong:
+                locator = Nominatim(user_agent="Taiga").geocode(inp)
+                latlong = (locator.latitude, locator.longitude)
+                database.set(db, 'location', 'latlong', '{},{}'.format(latlong[0], latlong[1]),
+                             'location', userloc)
+                address = locator.address.replace('United States of America', 'USA').replace(
+                    'United Kingdom', 'UK').encode('utf-8')
+                database.set(db, 'location', 'address', address, 'location', userloc)
+            else:
+                latlong = latlong.split(',')
         except AttributeError:
             notice("Could not find your location, try again.")
             notice(weather.__doc__)
@@ -59,14 +89,14 @@ def weather(inp, bot=None, reply=None, db=None, nick=None, notice=None, paraml=N
     if inp and save:
         database.set(db, 'users', 'location', inp.encode('utf-8'), 'nick',
                      nick)
+        
     secret = bot.config.get("api_keys", {}).get("darksky")
     baseurl = 'https://api.darksky.net/forecast/{}/{},{}?exclude=minutely,flags,hourly'.format(
         secret, latlong[0], latlong[1])
     reply = json.loads(urllib.urlopen(baseurl).read())
     current = reply['currently']
     daily_current = reply['daily']['data'][0]
-    print json.dumps(reply, indent=4)
-    print locator.address
+
     if command == 'forecast':
         current = reply['daily']['data'][1]
         daily_current = reply['daily']['data'][1]
@@ -85,11 +115,11 @@ def weather(inp, bot=None, reply=None, db=None, nick=None, notice=None, paraml=N
     elif command == 'time' or command == 't':
         tz = pytz.timezone(reply['timezone'])
         time = datetime.fromtimestamp(current['time'], tz)
-        return '\x02{}\x02: {}/{}'.format(locator.address.replace('United States of America', 'USA').replace('United Kingdom', 'UK').encode('utf-8'), time.strftime('%Y-%m-%d %I:%M:%S %p'), time.strftime('%H:%M:%S'))
+        return '\x02{}\x02: {}/{}'.format(address, time.strftime('%Y-%m-%d %I:%M:%S %p'), time.strftime('%H:%M:%S'))
     else: 
         tz = pytz.timezone(reply['timezone'])
         weather_data = {
-            'place': locator.address.replace('United States of America', 'USA').replace('United Kingdom', 'UK').replace('United States', 'USA').encode('utf-8'),
+            'place': address,
             'summary': current['summary'],
             'forecast': daily_current['summary'][:-1],
             'high_f': int(round(daily_current['temperatureMax'])),

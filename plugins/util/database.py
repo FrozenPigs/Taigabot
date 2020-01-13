@@ -6,8 +6,10 @@ channel_columns = ['chan NOT NULL',
 		   'admins', 'permissions', 'ops', 'bans', 'disabled', 'ignored', 'badwords', 'flood', 'cmdflood', 'trimlength', 'autoop', 'votekick', 'voteban',
 		   'primary key(chan)']
 user_columns	= ['nick NOT NULL',
-		   'mask', 'version', 'location', 'lastfm', 'fines', 'battlestation', 'desktop', 'horoscope', 'greeting', 'waifu', 'husbando', 'birthday', 'homescreen', 'snapchat', 'mal', 'selfie', 'fit', 'handwriting', 'steam', 'woeid',
+		   'mask', 'version', 'location', 'lastfm', 'fines', 'battlestation', 'desktop', 'horoscope', 'greeting', 'waifu', 'husbando', 'birthday', 'homescreen', 'snapchat', 'mal', 'selfie', 'fit', 'handwriting', 'steam', 'location',
 		   'primary key(nick)']
+location_columns	= ['location NOT NULL', 'latlong', 'address',
+		   'primary key(location)']
 
 db_ready = False
 
@@ -19,6 +21,8 @@ def init(db):
                    format(', '.join(channel_columns)))
         db.execute('create table if not exists users({});'.
                    format(', '.join(user_columns)))
+        db.execute('create table if not exists location({});'.
+                   format(', '.join(location_columns)))
         db.commit()
         db_ready = True
 
@@ -34,6 +38,12 @@ def update(db):
     for i in user_columns[1:-1]:
         try:
             db.execute('alter table users add column {}'.
+                       format(i))
+        except OperationalError:
+            pass
+    for i in location_columns[1:-1]:
+        try:
+            db.execute('alter table location add column {}'.
                        format(i))
         except OperationalError:
             pass

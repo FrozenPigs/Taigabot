@@ -293,7 +293,6 @@ def unmatched_url(match, chan, db):
                 if len(data) > 48336: break
 
             body = html.fromstring(data)
-
             try:
                 title = body.xpath('//title/text()')[0]
             except:
