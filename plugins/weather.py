@@ -11,6 +11,22 @@ from datetime import datetime
 import pytz
 import time
 
+def getlocation(db, location):
+    latlong = database.get(db, 'location', 'latlong', 'location', location)
+    address = database.get(db, 'location', 'address', 'location', location)
+    if not latlong:
+        locator = Nominatim(user_agent="Taiga").geocode(location)
+        latlong = (locator.latitude, locator.longitude)
+        database.set(db, 'location', 'latlong', '{},{}'.format(latlong[0], latlong[1]),
+                     'location', location)
+        address = locator.address.replace('United States of America', 'USA').replace(
+            'United Kingdom', 'UK').encode('utf-8')
+        database.set(db, 'location', 'address', address, 'location', location)
+    else:
+        latlong = latlong.split(',')
+    return latlong, address
+    
+
 
 @hook.command('alerts', autohelp=False)
 @hook.command('time', autohelp=False)
@@ -26,36 +42,13 @@ def weather(inp, bot=None, reply=None, db=None, nick=None, notice=None, paraml=N
         save = False
         nick = inp.split('@')[1].strip()
         userloc = database.get(db, 'users', 'location', 'nick', nick)
-        latlong = database.get(db, 'location', 'latlong', 'location', userloc)
-        address = database.get(db, 'location', 'address', 'location', userloc)
-        if not latlong:
-            locator = Nominatim(user_agent="Taiga").geocode(userloc)
-            latlong = (locator.latitude, locator.longitude)
-            database.set(db, 'location', 'latlong', '{},{}'.format(latlong[0], latlong[1]),
-                         'location', userloc)
-            address = locator.address.replace('United States of America', 'USA').replace(
-                'United Kingdom', 'UK').encode('utf-8')
-            database.set(db, 'location', 'address', address, 'location', userloc)
-        else:
-            latlong = latlong.split(',')
+        latlong, address = getlocation(db, userloc)
         if not userloc:
             return "No location stored for {}.".format(
                 nick.encode('ascii', 'ignore'))
     else:
         userloc = database.get(db, 'users', 'location', 'nick', nick)
-        latlong = database.get(db, 'location', 'latlong', 'location', userloc)
-        address = database.get(db, 'location', 'address', 'location', userloc)
-        if not latlong:
-            locator = Nominatim(user_agent="Taiga").geocode(userloc)
-            latlong = (locator.latitude, locator.longitude)
-            database.set(db, 'location', 'latlong', '{},{}'.format(latlong[0], latlong[1]),
-                         'location', userloc)
-            address = locator.address.replace('United States of America', 'USA').replace(
-                'United Kingdom', 'UK').encode('utf-8')
-            database.set(db, 'location', 'address', address, 'location', userloc)
-        else:
-            latlong = latlong.split(',')
-
+        latlong, address = getlocation(db, userloc)
         if not inp:
             if userloc == 'None':
                 userloc = None
@@ -69,18 +62,7 @@ def weather(inp, bot=None, reply=None, db=None, nick=None, notice=None, paraml=N
 
     if inp and '@' not in inp:
         try:
-            latlong = database.get(db, 'location', 'latlong', 'location', inp)
-            address = database.get(db, 'location', 'address', 'location', inp)
-            if not latlong:
-                locator = Nominatim(user_agent="Taiga").geocode(inp)
-                latlong = (locator.latitude, locator.longitude)
-                database.set(db, 'location', 'latlong', '{},{}'.format(latlong[0], latlong[1]),
-                             'location', userloc)
-                address = locator.address.replace('United States of America', 'USA').replace(
-                    'United Kingdom', 'UK').encode('utf-8')
-                database.set(db, 'location', 'address', address, 'location', userloc)
-            else:
-                latlong = latlong.split(',')
+            latlong, address = getlocation(db, inp)
         except AttributeError:
             notice("Could not find your location, try again.")
             notice(weather.__doc__)
