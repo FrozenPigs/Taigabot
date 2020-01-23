@@ -264,11 +264,13 @@ def donate(inp, db=None, nick=None, chan=None, conn=None, notice=None):
     donation = float(inp[-1])
     if math.isnan(donation):
         return
-    try:
-        donation = inp[-1].split('.')[0] + '.' + inp[-1].split('.')[1][0:2]
-	donation = float(donation)
-    except:
-        return
+    # try:
+    #     donation = inp[-1].split('.')[0] + '.' + inp[-1].split('.')[1][0:2]
+    #     print donation
+    #     donation = float(donation)
+    # except Exception as e:
+    #     print e
+    #     return
     #if donation > 10000.00:
     #    donation = 10000.00
     if user.lower() == nick.lower():
@@ -448,6 +450,11 @@ def shekels(inp, conn=None, chan=None):
 def hump(inp, conn=None, chan=None):
     "humps"
     conn.send(u"PRIVMSG {} :\x01ACTION humps {}.\x01".format(chan, inp))
+
+@hook.command(autohelp=False)
+def marry(inp, conn=None, chan=None, nick=None):
+    "marrys person"
+    conn.send(u"PRIVMSG {} :\x01ACTION pronounces {} and {} husbando and waifu.\x01".format(chan, nick, inp))
 
 @hook.command(autohelp=False)
 def pantsumap(inp, chan=None, notice=None):

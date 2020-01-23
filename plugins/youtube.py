@@ -20,8 +20,13 @@ def plural(num=0, text=''):
     return "{:,} {}{}".format(num, text, "s" [num == 1:])
 
 
-def get_video_description(key, video_id):
-    request = http.get_json(api_url, key=key, id=video_id)
+def get_video_description(key, video_id, bot):
+    try:
+        request = http.get_json(api_url, key=key, id=video_id)
+    except:
+        key = bot.config.get("api_keys", {}).get("public_google_key")
+        request = http.get_json(api_url, key=key, id=video_id)
+
 
     if request.get('error'):
         return
@@ -105,12 +110,12 @@ def randomtube(inp, bot=None):
         length = len(urllist)
         url = urllist[random.randint(0, length - 1)]
         try:
-            description = get_video_description(key, url.split('=')[1])
+            description = get_video_description(key, url.split('=', bot)[1])
             f.close()
             return url + ' - ' + description
         except Exception as e:
             print url
-            description = get_video_description(key, url.split('/')[-1])
+            description = get_video_description(key, url.split('/', bot)[-1])
             f.close()
             return url + ' - ' + description
 
@@ -119,7 +124,7 @@ def randomtube(inp, bot=None):
 def youtube_url(match, bot=None, chan=None):
     key = bot.config.get("api_keys", {}).get("google")
 
-    return get_video_description(key, match.group(1))
+    return get_video_description(key, match.group(1), bot)
 
 
 @hook.command('yt')
@@ -130,8 +135,12 @@ def youtube(inp, bot=None, input=None):
     """youtube <query> -- Returns the first YouTube search result for <query>."""
     key = bot.config.get("api_keys", {}).get("google")
 
-    request = http.get_json(search_api_url, key=key, type='video', q=inp)
-
+    try:
+        request = http.get_json(search_api_url, key=key, type='video', q=inp)
+    except:
+        key = bot.config.get("api_keys", {}).get("public_google_key")
+        request = http.get_json(search_api_url, key=key, type='video', q=inp)
+        
     if 'error' in request:
         return 'Error performing search.'
 
@@ -143,10 +152,10 @@ def youtube(inp, bot=None, input=None):
         print "penis"
         return get_video_description(
             key, video_id) + u" - " + video_url.replace(
-                'youtu.be', 'hooktube.com') % video_id
+                'youtu.be', 'hooktube.com', bot) % video_id
     else:
         return get_video_description(key,
-                                     video_id) + u" - " + video_url % video_id
+                                     video_id, bot) + u" - " + video_url % video_id
 
 
 @hook.command('ytime')

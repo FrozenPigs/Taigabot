@@ -12,9 +12,15 @@ import pytz
 import time
 
 def getlocation(db, location):
+    print location
+    try:
+        location = location.decode("utf-8")
+    except:
+        pass
     latlong = database.get(db, 'location', 'latlong', 'location', location)
     address = database.get(db, 'location', 'address', 'location', location)
     if not latlong:
+        location = location.encode('utf-8')
         locator = Nominatim(user_agent="Taiga").geocode(location)
         latlong = (locator.latitude, locator.longitude)
         database.set(db, 'location', 'latlong', '{},{}'.format(latlong[0], latlong[1]),
