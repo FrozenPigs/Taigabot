@@ -6,7 +6,7 @@ channel_columns = ['chan NOT NULL',
 		   'admins', 'permissions', 'ops', 'bans', 'disabled', 'ignored', 'badwords', 'flood', 'cmdflood', 'trimlength', 'autoop', 'votekick', 'voteban',
 		   'primary key(chan)']
 user_columns	= ['nick NOT NULL',
-		   'mask', 'version', 'location', 'lastfm', 'fines', 'battlestation', 'desktop', 'horoscope', 'greeting', 'waifu', 'husbando', 'birthday', 'homescreen', 'snapchat', 'mal', 'selfie', 'fit', 'handwriting', 'steam', 'location',
+		   'mask', 'version', 'location', 'lastfm', 'fines', 'battlestation', 'desktop', 'horoscope', 'greeting', 'waifu', 'husbando', 'birthday', 'homescreen', 'snapchat', 'mal', 'selfie', 'fit', 'handwriting', 'steam',
 		   'primary key(nick)']
 location_columns	= ['location NOT NULL', 'latlong', 'address',
 		   'primary key(location)']
