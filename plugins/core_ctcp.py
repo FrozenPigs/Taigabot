@@ -48,6 +48,11 @@ def ctcp(inp, conn=None, chan=None, notice=None):
     command = command.upper()
     result = conn.send('PRIVMSG {} :\x01{}\x01'.format( destination, command ) )
 
+@hook.event('PRIVMSG')
+def umad(inp, input=None, conn=None, chan=None):
+    if input.nick == "Thidran":
+        conn.send('PRIVMSG {} :u mad bro'.format(chan))
+
 
 @hook.command('ver', autohelp=False)
 @hook.command(autohelp=False)

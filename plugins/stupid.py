@@ -262,7 +262,7 @@ def donate(inp, db=None, nick=None, chan=None, conn=None, notice=None):
     inp = ' '.join(inp[0:2]).split('.')[0].split()
     user = str(' '.join(inp[0:-1]).split('.')[0])
     donation = float(inp[-1])
-    if math.isnan(donation):
+    if math.isnan(donation) or math.isinf(donation):
         return
     # try:
     #     donation = inp[-1].split('.')[0] + '.' + inp[-1].split('.')[1][0:2]
@@ -283,6 +283,8 @@ def donate(inp, db=None, nick=None, chan=None, conn=None, notice=None):
         taker = float(database.get(db,'users','fines','nick',user))
     except:
         taker = 0.0
+    if donation > giver or donation < 0:
+        return
     if str(giver)[0] == '-':
         giver = giver + donation
     else:
