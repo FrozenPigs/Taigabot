@@ -213,7 +213,10 @@ def hashes(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
         pastebin_vars = {
             'api_dev_key': bot.config.get('api_keys', {}).get('pastebin'),
             'api_option': 'paste',
-            'api_paste_code': output.encode('utf-8')
+            'api_paste_code': ("\n".join(output)).encode('utf-8'),
+            'api_paste_name': 'search result',
+            'api_paste_private': 1,
+            'api_paste_expire_date': '1W'
         }
         response = urllib.urlopen('http://pastebin.com/api/api_post.php',
                                   urllib.urlencode(pastebin_vars))
