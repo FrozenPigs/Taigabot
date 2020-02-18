@@ -209,7 +209,7 @@ def hashes(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
         rows = db.execute(search).fetchall()
 
     if rows:
-        output = "{}".format([x[0] for x in rows])
+        output = [x[0] for x in rows]
         pastebin_vars = {
             'api_dev_key': bot.config.get('api_keys', {}).get('pastebin'),
             'api_option': 'paste',
