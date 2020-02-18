@@ -15,7 +15,7 @@
 
 Linux packages needed for install: python, python-dev, libenchant-dev, libenchant1c2a, libxslt-dev, libxml2-dev.
 
-UguuBot runs on **Python** *2.7.x*. It is developed on **Ubuntu** *12.04* with **Python** *2.7.3*.
+UguuBot runs on **Python** *2.7.x*. It is developed on **Ubuntu** *18.04* with **Python** *2.7.17*.
 
 It **requires the Python module** `lXML`, and `Enchant` is needed for the spellcheck plugin.
 
@@ -25,7 +25,7 @@ The programs `daemon` or `screen` are recomended for the launcher to run optimal
 
 ### Install required Linux packages 
     
-    Install python, python-dev, libenchant-dev, libenchant1c2a, libxslt-dev, libxml2-dev
+    Install python, python-dev, libenchant-dev, libenchant1c2a, libxslt1-dev, libxml2-dev
     
 Before you can run the bot, you need to install a few Python dependencies. These can be installed with `pip` (The Python package manager):
 
