@@ -306,7 +306,7 @@ def unmatched_url(match, chan, db):
             except:
                 title_formatted = body.xpath('//title/text()')[0]
             return formatting.output('URL', [
-                '{} ({})'.format(title_formatted.encode('utf-8'), domain)
+                '{} ({})'.format(title_formatted.encode('utf-8').strip(), domain)
             ]).strip()
         else:
             if disabled_commands:
