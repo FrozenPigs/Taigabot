@@ -9,20 +9,21 @@ def refresh_cache(inp):
     global furry_cache
     furry_cache = []
     num = 0
-    search = inp.replace(' ','+').replace('explicit','rating:explicit').replace('nsfw','rating:explicit').replace('safe','rating:safe').replace('sfw','rating:safe')
+    search = inp.replace(' ','%20').replace('explicit','rating:explicit').replace('nsfw','rating:explicit').replace('safe','rating:safe').replace('sfw','rating:safe')
     if inp == '':
-        soup = http.get_soup('http://e621.net/post/index.xml?limit=20&page=1')
+        postjson = http.get_json('http://e621.net/posts.json?limit=20')
     else:
-        soup = http.get_soup('http://e621.net/post/index.xml?limit=20&page=1&tags={}'.format(inp))
-    posts = soup.find_all('post')
+        postjson = http.get_json(f"http://e621.net/posts.json?limit=20&tags={search}")
+    posts = postjson.posts
 
-    for post in posts:
-        id = post.find_all('id')[0].get_text()
-        score = post.find_all('score')[0].get_text()
-        url = post.find_all('file_url')[0].get_text()
-        rating = post.find_all('rating')[0].get_text()
-        tags = post.find_all('tags')[0].get_text()
-        furry_cache.append((id, score, url, rating,tags))
+    for i in range(len(posts)):
+        post = posts[i]
+        id = post.id.get_text()
+        score = post.score.total.get_text()
+        url = post.file.url
+        rating = post.rating
+        tags = post.tags.general.join(", ")
+        furry_cache.append((id, score, url, rating, tags))
 
     random.shuffle(furry_cache)
     return
