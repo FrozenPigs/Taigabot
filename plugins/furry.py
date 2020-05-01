@@ -7,9 +7,11 @@ lastsearch = ''
 
 def refresh_cache(inp):
     global furry_cache
+    global lastsearch
     furry_cache = []
     num = 0
     search = inp.replace(' ','%20').replace('explicit','rating:explicit').replace('nsfw','rating:explicit').replace('safe','rating:safe').replace('sfw','rating:safe')
+    lastsearch = search
     if inp == '':
         postjson = http.get_json('http://e621.net/posts.json?limit=20')
     else:
@@ -18,8 +20,8 @@ def refresh_cache(inp):
 
     for i in range(len(posts)):
         post = posts[i]
-        id = post.id.get_text()
-        score = post.score.total.get_text()
+        id = post.id
+        score = post.score.total
         url = post.file.url
         rating = post.rating
         tags = post.tags.general.join(", ")
@@ -30,7 +32,7 @@ def refresh_cache(inp):
 
 @hook.command('e621', autohelp=False)
 @hook.command(autohelp=False)
-def furry(inp, reply=None):
+def furry(inp):
     global lastsearch
     global furry_cache
 
