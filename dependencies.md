@@ -1,5 +1,5 @@
 ## about this fork
-taigabot is ancient software that runs on unmantained versions of software and the existing uguubot instructions no longer work.
+taigabot is ancient software that runs on an unmantained python version. the existing uguubot instructions no longer work.
 
 the main piece of software, the uguu irc bot, is more than 10 years old and some dependencies can't be found on repositories (ubuntu, pip or even github), so they've been bundled with the bot in this repository.
 
