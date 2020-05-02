@@ -13,7 +13,7 @@ def refresh_cache(inp):
     if inp == '':
         postjson = http.get_json('http://e621.net/posts.json?limit=20')
     else:
-        postjson = http.get_json(f"http://e621.net/posts.json?limit=20&tags={search}")
+        postjson = http.get_json('http://e621.net/posts.json?limit=20&tags={}'.format(search))
     posts = postjson.posts
 
     for i in range(len(posts)):
