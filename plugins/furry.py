@@ -16,15 +16,15 @@ def refresh_cache(inp):
         postjson = http.get_json('http://e621.net/posts.json?limit=20')
     else:
         postjson = http.get_json('http://e621.net/posts.json?limit=20&tags={}'.format(search))
-    posts = postjson.posts
+    posts = postjson["posts"]
 
     for i in range(len(posts)):
         post = posts[i]
-        id = post.id
-        score = post.score.total
-        url = post.file.url
-        rating = post.rating
-        tags = post.tags.general.join(", ")
+        id = post["id"]
+        score = post["score"]["total"]
+        url = post["file"]["url"]
+        rating = post["rating"]
+        tags = ", ".join(post["tags"]["general"])
         furry_cache.append((id, score, url, rating, tags))
 
     random.shuffle(furry_cache)
