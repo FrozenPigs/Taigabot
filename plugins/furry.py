@@ -10,7 +10,7 @@ def refresh_cache(inp):
     global lastsearch
     furry_cache = []
     num = 0
-    search = inp.replace(' ','%20').replace('explicit','rating:explicit').replace('nsfw','rating:explicit').replace('safe','rating:safe').replace('sfw','rating:safe')
+    search = inp.replace(' ','%20').replace('explicit','rating:explicit').replace('nsfw','rating:explicit').replace('safe','rating:safe').replace('sfw','rating:safe').replace('questionable','rating:questionable')
     lastsearch = search
     if inp == '':
         postjson = http.get_json('http://e621.net/posts.json?limit=20')
