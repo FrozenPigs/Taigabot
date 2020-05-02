@@ -11,31 +11,47 @@
   * Automatic reloading
   * Little boilerplate
 
-### Requirements
+### Dependencies
+Taigabot requires Python 2.7 and its developed on Ubuntu 18.04.
 
-Linux packages needed for install: python, python-dev, libenchant-dev, libenchant1c2a, libxslt-dev, libxml2-dev.
+You can read more about the dependencies in [dependencies.md](dependencies.md)
 
-UguuBot runs on **Python** *2.7.x*. It is developed on **Ubuntu** *18.04* with **Python** *2.7.17*.
+The following system dependencies are needed (`apt install`):
 
-It **requires the Python module** `lXML`, and `Enchant` is needed for the spellcheck plugin.
+    python2.7 python-pip git python2.7-dev build-essential libxml2-dev libxslt1-dev
 
-The programs `daemon` or `screen` are recomended for the launcher to run optimally.
+and these python dependencies are required (__already in requirements.txt__: `pip2 install -r requirements.txt`):
 
-**Windows** users: Windows compatibility with the launcher and some plugins is **broken** (such as ping), but we do intend to add it.³
+    BeautifulSoup==3.2.1 httplib2==0.7.5 BeautifulSoup4==4.1.3 lxml==3.3.6 tweepy==3.5.0 simplejson==2.0.7 requests
 
-### Install required Linux packages 
-    
-    Install python, python-dev, libenchant-dev, libenchant1c2a, libxslt1-dev, libxml2-dev
-    
-Before you can run the bot, you need to install a few Python dependencies. These can be installed with `pip` (The Python package manager):
+It is strongly recommended to install dependencies in a virtual environment.
 
-    [sudo] pip install -r requirements.txt
+With all of these, the bot will run and almost all plugins will work.
 
-#### How to install `pip`
+#### Others
 
-    curl -O http://python-distribute.org/distribute_setup.py # or download with your browser on windows
-    python distribute_setup.py
-    easy_install pip
+Some other plugins require these python packages, notably `weather`:
+
+    GitPython==0.3.2.RC1 Nominatim pygeoip pydns pywhois mygengo pytz timezones pycrypto
+
+Enchant is needed on the system for the spellcheck plugin (`libenchant-dev libenchant1c2a`).
+
+The system packages `daemon` or `screen` are recomended for the launcher to run optimally.
+
+### Installation
+On Ubuntu:
+
+    sudo apt-get install python2.7 python-pip git
+    sudo apt-get install python2.7-dev build-essential libxml2-dev libxslt1-dev
+    git clone https://github.com/inexist3nce/Taigabot.git
+    cd Taigabot
+    pip2 install virtualenv
+    python2 -m virtualenv venv
+    source venv/bin/activate
+    pip2 install -r requirements.txt
+    cp config.default config
+    vim config
+    python2 bot.py
 
 ### Run
 
@@ -71,8 +87,6 @@ To manually run the bot and get console output, run it with:
 
 `python bot.py`
 
-On Windows you can usually just double-click the `bot.py` file to start the bot, as long as you have Python installed correctly.
-
 (note: running the bot without the launcher breaks the start and restart commands)
 
 ## License
@@ -99,7 +113,3 @@ UguuBot is **licensed** under the **GPL v3** license. The terms are as follows.
 ## Contact
 
 Need to contact someone? Head on over to #uguubot at irc.rizon.net for assistance or any other needs.
-
-## Notes
-
-³ eventually
