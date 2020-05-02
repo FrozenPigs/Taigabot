@@ -1,0 +1,14 @@
+GitPython==0.3.2.RC1
+oauth2
+pygeoip
+tweepy
+BeautifulSoup==3.2.1
+lxml==3.1beta1
+pydns>=2.3.6
+BeautifulSoup4
+requests
+pywhois
+mygengo
+pytz>=2013b
+timezones
+pycrypto
