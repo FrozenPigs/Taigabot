@@ -404,6 +404,14 @@ def hug(inp, nick=None):
 
 
 @hook.command(autohelp=False)
+def dab(inp, nick=None, me=None):
+    "dab <nick> -- dab on dem haters"
+    if not inp: inp = nick
+    me("dabs on {}".format(inp))
+    return
+
+
+@hook.command(autohelp=False)
 def poke(inp, nick=None, me=None):
     "poke <nick> -- pokes someone"
     if not inp: inp = nick
