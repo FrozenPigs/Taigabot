@@ -32,11 +32,11 @@ the bare minimum is listed below.
   - as of 2020-05, versions older than 3.2 don't compile because of some long error i didnt feel like reading.
   - https://pypi.org/project/lxml/3.3.6/
 - beautifulsoap
-  - needs 3.2.1 and 4.1.3
+  - needs 3.2.1 and 4.1.3, works with 4.9.0
   - used for scraping websites.
-  - taiga uses both bs3 and bs4. install 3.2.1 and 4.1.3.
+  - taiga uses both bs3 and bs4. install 3.2.1 and 4.9.0
   - https://pypi.org/project/BeautifulSoup/3.2.1/
-  - https://pypi.org/project/beautifulsoup4/4.1.3/
+  - https://pypi.org/project/beautifulsoup4/4.9.0/
 - yql
   - needs custom version (0.7.5?)
   - some helper for yahoo query language by stuart colville.
@@ -83,7 +83,7 @@ get the bot and make a virtual env
 
 install dependencies:
 
-    pip2 install BeautifulSoup==3.2.1 httplib2==0.7.5 BeautifulSoup4==4.1.3 lxml==3.3.6 tweepy==3.5.0 simplejson==2.0.7 requests
+    pip2 install -r requirements.txt
 
 make your own configuration:
 
