@@ -106,7 +106,7 @@ run the bot, finally:
 
 
 ## details
-- amazon, bash, debt
+- amazon, bash, debt, dictionary
   - bs4
   - requests (from util.request)
 - wolframalpha
@@ -119,6 +119,8 @@ run the bot, finally:
 ### plugins with no external dependencies
 - choose
 - coin
-- heartbleed
-- smileys
 - countdown
+- dice
+- heartbleed
+- potato
+- smileys
