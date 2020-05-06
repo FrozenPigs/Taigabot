@@ -4,10 +4,11 @@ import re
 
 cache = []
 
+
 def refresh_cache():
     """ gets a page of random FMLs and puts them into a dictionary """
     print "[+] refreshing fmylife cache"
-    html = request.get_html('http://www.fmylife.com/random/')
+    html = request.get_html('https://www.fmylife.com/random/')
     soup = BeautifulSoup(html, 'lxml')
     posts = soup.find_all('a', attrs={'class': 'article-link'})
 
@@ -16,7 +17,6 @@ def refresh_cache():
         text = post.text.strip()
         cache.append((id, text))
 
-refresh_cache()
 
 @hook.command(autohelp=False)
 def fml(inp):
@@ -27,3 +27,6 @@ def fml(inp):
 
     id, text = cache.pop()
     return '(#%s) %s' % (id, text)
+
+
+refresh_cache()

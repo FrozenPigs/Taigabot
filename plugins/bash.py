@@ -3,8 +3,10 @@ from bs4 import BeautifulSoup
 
 cache = []
 
+
 def refresh_cache():
     "gets a page of random bash.org quotes and puts them into a dictionary "
+    print "[+] refreshing bash cache"
     html = request.get_html('http://bash.org/?random')
     soup = BeautifulSoup(html, 'lxml')
     quote_infos = soup.find_all('p', {'class': 'quote'})
@@ -26,16 +28,13 @@ def get_bash_quote(inp):
         soup = BeautifulSoup(html, 'lxml')
         quote_info = soup.find('p', {'class': 'quote'})
         quote = soup.find('p', {'class': 'qt'}).text.replace('\n', ' ').replace('\r', ' |')
-        
+
         id = quote_info.contents[0].text
         votes = quote_info.find('font').text
         return u'\x02{}\x02 ({} votes): {}'.format(id, votes, quote)
     except:
         return "No quote found."
 
-
-#do an initial refresh of the cache
-refresh_cache()
 
 @hook.command(autohelp=False)
 def bash(inp, reply=None):
@@ -48,3 +47,6 @@ def bash(inp, reply=None):
         refresh_cache()
 
     return u'\x02{}\x02 ({} votes): {}'.format(id, votes, text)
+
+
+refresh_cache()
