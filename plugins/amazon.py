@@ -1,62 +1,96 @@
-from util import hook, http, text, web
-import json
+from util import hook, request
+from bs4 import BeautifulSoup
 import re
 
-## CONSTANTS
-def removeNonAscii(s): return "".join(i for i in s if ord(i)<128)
-trans_table = ''.join( [chr(i) for i in range(128)] + ['?'] * 128 )
+# If find_all() can’t find anything, it returns an empty list. If find() can’t find anything, it returns None
+# https://www.crummy.com/software/BeautifulSoup/bs4/doc/#find
 
-AMAZON_RE = (r"(http.*(www\.)?amazon\.com/[^ ]+)", re.I)
+def parse(html):
+    soup = BeautifulSoup(html, 'lxml')
+    container = soup.find(attrs={'data-component-type': 's-search-results'})
+    if container is None:
+        return []
 
-## HOOK FUNCTIONS
+    results = container.find_all(attrs={'data-component-type': 's-search-result'})
 
-@hook.regex(*AMAZON_RE)
-def amazon_url(match):
-    item = http.get_html(match.group(1))
-    title = item.xpath('//title/text()')[0]
-    try: price = item.xpath("//span[@id='priceblock_ourprice']/text()")[0]
-    except: price = "$?"
-    rating = item.xpath("//div[@id='avgRating']/span/text()")[0].strip()
+    if len(results) == 0:
+        return []
 
-    star_count = round(float(rating.split(' ')[0]),0)
-    stars=""
-    for x in xrange(0,int(star_count)):
-        stars = "{}{}".format(stars,'★')
-    for y in xrange(int(star_count),5):
-        stars = "{}{}".format(stars,'☆')
+    links = []
+    for result in results:
+        title = result.find('h2')
+        price = result.find('span', attrs={'class': 'a-offscreen'})
 
-    try: return ('\x02{}\x02 - \x02{}\x02 - \x034{}\x034'.format(title, stars, price)).decode('utf-8')
-    except: return http.process_text('\x02{}\x02 - \x02{}\x02 - \x034{}\x034'.format(title, stars, price))
+        if title is None or price is None:
+            continue
+
+        id = result['data-asin']
+        title = title.text.strip()
+        price = price.text.strip()
+        url = 'https://www.amazon.com/dp/%s/' % id
+
+        # avoids spam if they change urls in the future
+        if len(id) > 20:
+            continue
+
+        links.append((title, price, url))
+
+    return links
 
 
-@hook.command('az')
+def parse_product(html):
+    soup = BeautifulSoup(html, 'lxml')
+    title = soup.find(id='productTitle')
+    price = soup.find(id='priceblock_ourprice')
+
+    if title is None:
+        title = soup.find('title')
+
+        if title is None:
+            title = 'Untitled'
+
+        title = title.text.replace('Amazon.com: ', '')
+    else:
+        title = title.text.strip()
+
+    if price is None:
+        price = 'various prices'
+    else:
+        price = price.text.strip()
+
+    return title, price
+
+
 @hook.command
 def amazon(inp):
     """az [query] -- Searches amazon for query"""
-    href = "http://www.amazon.com/s/url=search-alias%3Daps&field-keywords={}".format(inp.replace(" ","%20"))
-    results = http.get_html(href)
-    # title = results.xpath('//title/text()')[0]
-    try:
-        title = results.xpath("//li[@id='result_0']/div/div/div/div/div/a/h2/text()")[0]
-        url = results.xpath("//li[@id='result_0']/div/div/div/div/div/a/@href")[0]
-        price = results.xpath("//li[@id='result_0']/div/div/div/div/div/div/div/a/span/text()")[0]
-        rating = results.xpath("//li[@id='result_0']/div/div/div/div/div/div/div/span/span/a/i/span/text()")[0]
-    except:
-        try:
-            title = results.xpath("//li[@id='result_1']/div/div/div/div/div/a/h2/text()")[0]
-            url = results.xpath("//li[@id='result_1']/div/div/div/div/div/a/@href")[0]
-            price = results.xpath("//li[@id='result_1']/div/div/div/div/div/div/div/a/span/text()")[0]
-            rating = results.xpath("//li[@id='result_1']/div/div/div/div/div/div/div/span/span/a/i/span/text()")[0]
-        except:
-            return 'No results'
+    if not inp:
+        return "usage: amazon <search>"
 
-    azid = re.match(r'^.*\/dp\/([\w]+)\/.*',url).group(1)
+    html = request.get_html('https://www.amazon.com/s?k=' + inp)
+    results = parse(html)
 
-    star_count = round(float(rating.split(' ')[0]),0)
-    stars=""
-    for x in xrange(0,int(star_count)):
-        stars = "{}{}".format(stars,'★')
-    for y in xrange(int(star_count),5):
-        stars = "{}{}".format(stars,'☆')
+    if len(results) == 0:
+        return 'No results found'
 
-    return '\x02{}\x02 - {} - \x034{}\x02 - http://amzn.com/{}'.format(title, stars, price, azid).decode('utf-8')
+    title, price, url = results[0]
+
+    if len(title) > 80:
+        title = title[:80] + '...'
+
+    # \x03 = color, 03 = green
+    return u'[Amazon] {} \x0303{}\x03 {}'.format(title, price, url)
+
+
+AMAZON_RE = (r"https?:\/\/(www\.)?amazon.com\/[^\s]*dp\/([A-Za-z0-9]+)[^\s]*", re.I)
+@hook.regex(*AMAZON_RE)
+def amazon_url(match):
+    id = match.group(2).strip()
+    html = request.get_html('https://www.amazon.com/dp/' + id + '/')
+    title, price = parse_product(html)
+    url = 'https://www.amazon.com/dp/%s/' % id
+
+    if len(title) > 80:
+        title = title[:80] + '...'
+
+    return u'[Amazon] {} \x0303{}\x03 {}'.format(title, price, url)
