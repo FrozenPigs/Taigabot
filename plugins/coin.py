@@ -14,6 +14,9 @@ def coin(inp, me=None):
     else:
         amount = 1
 
+    if amount > 1000:
+        return "thats too many coins"
+
     if amount == 1:
         me("flips a coin and gets {}.".format(random.choice(["heads", "tails"])))
     elif amount == 0:
