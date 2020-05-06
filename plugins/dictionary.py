@@ -14,6 +14,7 @@ def condense_spaces(text):
 
     return text
 
+
 @hook.command('dictionary')
 @hook.command
 def define(inp):
