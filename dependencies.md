@@ -103,3 +103,19 @@ make your own configuration:
 run the bot, finally:
 
     python2 bot.py
+
+
+## details
+- amazon, bash, debt
+  - bs4
+  - requests
+- wolframalpha
+  - urllib2
+  - simplejson
+  - [!] util.http
+
+### plugins with no external dependencies
+- choose
+- coin
+- heartbleed
+- smileys
