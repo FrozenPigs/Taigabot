@@ -108,14 +108,17 @@ run the bot, finally:
 ## details
 - amazon, bash, debt
   - bs4
-  - requests
+  - requests (from util.request)
 - wolframalpha
   - urllib2
   - simplejson
   - [!] util.http
+- furry, translate
+  - requests (from util.request)
 
 ### plugins with no external dependencies
 - choose
 - coin
 - heartbleed
 - smileys
+- countdown
