@@ -106,15 +106,17 @@ run the bot, finally:
 
 
 ## details
-- amazon, bash, debt, dictionary
+to get the plugin working, the listed python dependencies are needed
+
+- amazon, bash, debt, dictionary, drama, fmylife
   - bs4
-  - requests (from util.request)
+  - requests (in util.request)
 - wolframalpha
   - urllib2
   - simplejson
   - [!] util.http
 - furry, translate
-  - requests (from util.request)
+  - requests (in util.request)
 
 ### plugins with no external dependencies
 - choose
