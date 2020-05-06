@@ -17,7 +17,7 @@ import socket
 import time
 import select
 import re
-import netaddr
+#import netaddr
 import json
 import os
 import datetime
