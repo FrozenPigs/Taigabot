@@ -1,5 +1,6 @@
 from urllib import quote
 import requests
+from json import loads as json_load
 
 fake_ua = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3745.0 Safari/537.36'
 
@@ -16,6 +17,10 @@ def urlencode(inp):
         inp = force_decode(inp)
 
     return quote(inp.encode('utf8'))
+
+
+def get_json(url):
+    return json_load(get_text(url))
 
 
 def get_html(url):
