@@ -1,87 +1,79 @@
 # Plugin by GhettoWizard and Scaevolus
 import re
-from util import hook
-from util import http
+from util import hook, request
+from bs4 import BeautifulSoup
 
+dict_url = 'http://ninjawords.com/'
+eth_url = 'https://www.etymonline.com/word/'
+
+
+# merges spaces into just one
+def condense_spaces(text):
+    while '  ' in text:
+        text = text.replace('  ', ' ')
+
+    return text
 
 @hook.command('dictionary')
 @hook.command
 def define(inp):
     "define <word> -- Fetches definition of <word>."
 
-    url = 'http://ninjawords.com/'
+    html = request.get_html(dict_url + request.urlencode(inp))
+    soup = BeautifulSoup(html, 'lxml')
 
-    h = http.get_html(url + http.quote_plus(inp))
+    definitions = soup.find_all('dd')
 
-    definition = h.xpath('//dd[@class="article"] | '
-                         '//div[@class="definition"]')
+    if len(definitions) == 0:
+        return "Definition not found"
 
-    if not definition:
-        return 'No results for ' + inp + ' :('
+    output = 'Definition of "' + inp + '":'
 
-    def format_output(show_examples):
-        result = '%s: ' % h.xpath('//dt[@class="title-word"]/a/text()')[0]
+    i = 1
 
-        correction = h.xpath('//span[@class="correct-word"]/text()')
-        if correction:
-            result = 'Definition for "%s": ' % correction[0]
+    for definition in definitions:
+        if 'article' in definition['class']:
+            text = condense_spaces(definition.text.strip())
+            output = output + ' \x02' + text + '\x02'
+            i = 1
 
-        sections = []
-        for section in definition:
-            if section.attrib['class'] == 'article':
-                sections += [[section.text_content() + ': ']]
-            elif section.attrib['class'] == 'example':
-                if show_examples:
-                    sections[-1][-1] += ' ' + section.text_content()
-            else:
-                sections[-1] += [section.text_content()]
+        elif 'entry' in definition['class']:
+            definition = definition.find('div', attrs={'class': 'definition'})
+            text = condense_spaces(definition.text.strip())
+            output = output + text.replace(u'\xb0', ' \x02%s.\x02 ' % i)
+            i = i + 1
 
-        for article in sections:
-            result += article[0]
-            if len(article) > 2:
-                result += ' '.join('%d. %s' % (n + 1, section)
-                                    for n, section in enumerate(article[1:]))
-            else:
-                result += article[1] + ' '
+        # theres 'synonyms' and 'examples' too
 
-        synonyms = h.xpath('//dd[@class="synonyms"]')
-        if synonyms:
-            result += synonyms[0].text_content()
+    # arbitrary length limit
+    if len(output) > 360:
+        output = output[:360] + '\x0f... More at https://en.wiktionary.org/wiki/' + inp
 
-        result = re.sub(r'\s+', ' ', result)
-        result = re.sub('\xb0', '', result)
-        return result
-
-    result = format_output(True)
-    if len(result) > 450:
-        result = format_output(False)
-
-    if len(result) > 450:
-        result = result[:result.rfind(' ', 0, 450)]
-        result = re.sub(r'[^A-Za-z]+\.?$', '', result) + ' ...'
-
-    return result
+    return output
 
 
-@hook.command('e')
 @hook.command
 def etymology(inp):
     "etymology <word> -- Retrieves the etymology of <word>."
 
-    url = 'http://www.etymonline.com/index.php'
+    html = request.get_html(eth_url + request.urlencode(inp))
+    soup = BeautifulSoup(html, 'lxml')
+    # the page uses weird class names like section.word__definatieon--81fc4ae
+    # try changing the whole selector to  [class~="word_"]  if it breaks
+    results = soup.select('div[class^="word"] section[class^="word__def"] > p')
 
-    h = http.get_html(url, term=inp)
-
-    etym = h.xpath('//dl')
-
-    if not etym:
+    if len(results) == 0:
         return 'No etymology found for ' + inp + ' :('
 
-    etym = etym[0].text_content()
+    output = 'Ethymology of "' + inp + '":'
+    i = 1
 
-    etym = ' '.join(etym.split())
+    for result in results:
+        text = condense_spaces(result.text.strip())
+        output = output + ' \x02{}.\x02 {}'.format(i, text)
+        i = i + 1
 
-    if len(etym) > 400:
-        etym = etym[:etym.rfind(' ', 0, 400)] + ' ...'
+    if len(output) > 400:
+        output = output[:400] + '\x0f... More at https://www.etymonline.com/word/select'
 
-    return etym
+    return output
