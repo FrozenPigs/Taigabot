@@ -6,6 +6,7 @@ from urllib import FancyURLopener
 from urlparse import urlparse
 
 import requests
+import ipaddress
 from lxml import html
 
 import gelbooru
@@ -29,7 +30,7 @@ def process_url(match, bot=None, input=None, chan=None, db=None, reply=None):
 
     parsed = urlparse(url)
     print parsed
-    import ipaddress
+
     if ':' in parsed.netloc:
         return
     else:

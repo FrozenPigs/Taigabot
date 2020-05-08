@@ -1,4 +1,4 @@
-## about this fork
+# taigabot dependencies
 taigabot is ancient software that runs on an unmantained python version. the existing uguubot instructions no longer work.
 
 the main piece of software, the uguu irc bot, is more than 10 years old and some dependencies can't be found on repositories (ubuntu, pip or even github), so they've been bundled with the bot in this repository.
@@ -7,36 +7,50 @@ taiga runs only on python 2. its unmantained, but its too much work to port ever
 
 this is an attempt to get taiga properly documented for running on ubuntu 18.04, and eventually other distros.
 
-the bare minimum is listed below.
-
 ## system dependencies (ubuntu)
 - python2.7
-  - its python.
 - python-pip
-  - package manager, particularly useful for installing very old versions
-- git
-  - allows for cloning/updating the bot
-  - alternative  - wget github's auto-generated .zip
-- build-essential python2.7-dev
-  - everything needed to compile, plus python headers
-- libxml2-dev libxslt1-dev
-  - libraries that need to be installed to compile lxml
+- build-essential
+  - everything needed to compile lxml
+- python2.7-dev libxml2-dev libxslt1-dev
+  - headers/libraries needed to compile lxml
+
+optionally `git` to clone this repo, but you can download it however you want.
 
 ## python dependencies
+you __need__ these to run the bot
+
 - virtualenv
-  - helps keep the trash contained in a single place
+  - helps keep the trash contained. please use this.
 - lxml
-  - works on 3.3.6
-  - not sure what this library does, but its used to parse html
-  - taiga needs 3.1beta1, but it doesn't compile anymore, so you can install 3.3.6.
+  - works on 3.3.6 (originally used 3.1beta1, doesnt work anymore)
+  - used to parse html
   - as of 2020-05, versions older than 3.2 don't compile because of some long error i didnt feel like reading.
   - https://pypi.org/project/lxml/3.3.6/
+  - __required__ to work
+- requests
+  - 2.23.0 works fine
+  - __required__ to work
+
+with the aforementioned requirements, taigabot is guaranteed to run and these core plugins will work:
+- core_admin_channel.py
+- core_admin_global.py
+- core_ctcp.py
+- core_misc.py
+- core_sieve.py
+- core_user.py
+- log.py
+- all internal `util` plugins
+
+## python dependencies for plugins
+plugins need these. they're "optional" but the bot is __useless without plugins__.
+
 - beautifulsoap
-  - needs 3.2.1 and 4.1.3
+  - needs 3.2.1 and 4.1.3, works with 4.9.0
   - used for scraping websites.
-  - taiga uses both bs3 and bs4. install 3.2.1 and 4.1.3.
+  - taiga uses both bs3 and bs4. install 3.2.1 and 4.9.0
   - https://pypi.org/project/BeautifulSoup/3.2.1/
-  - https://pypi.org/project/beautifulsoup4/4.1.3/
+  - https://pypi.org/project/beautifulsoup4/4.9.0/
 - yql
   - needs custom version (0.7.5?)
   - some helper for yahoo query language by stuart colville.
@@ -51,9 +65,6 @@ the bare minimum is listed below.
   - dependency of yql
   - this is an unknown version, its not "oauth", "oauth2" or "oauth2.3" (from pip).
   - it's been bundled with the bot, in the "lib/" folder
-- requests
-  - whatever last version works
-  - used by like everything
 - tweepy
   - needs 3.5.0
   - *optional*: not used by a lot of plugins
@@ -62,7 +73,6 @@ the bare minimum is listed below.
   - needs 2.0.7
   - *optional*: not used by a lot of plugins
   - https://pypi.org/project/simplejson/2.0.7/
-- 
 
 ## instructions
 basic system requirements:
@@ -83,7 +93,7 @@ get the bot and make a virtual env
 
 install dependencies:
 
-    pip2 install BeautifulSoup==3.2.1 httplib2==0.7.5 BeautifulSoup4==4.1.3 lxml==3.3.6 tweepy==3.5.0 simplejson==2.0.7 requests
+    pip2 install -r requirements.txt
 
 make your own configuration:
 
@@ -93,3 +103,26 @@ make your own configuration:
 run the bot, finally:
 
     python2 bot.py
+
+
+## details
+to get the plugin working, the listed python dependencies are needed
+
+- amazon, bash, debt, dictionary, drama, fmylife
+  - bs4
+  - requests (in util.request)
+- wolframalpha
+  - urllib2
+  - simplejson
+  - [!] util.http
+- furry, translate
+  - requests (in util.request)
+
+### plugins with no external dependencies
+- choose
+- coin
+- countdown
+- dice
+- heartbleed
+- potato
+- smileys

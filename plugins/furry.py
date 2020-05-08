@@ -1,4 +1,4 @@
-from util import hook, http
+from util import hook, request
 import random
 import re
 
@@ -6,16 +6,19 @@ furry_cache = []
 lastsearch = ''
 
 def refresh_cache(inp):
+    print "[+] refreshing furry cache"
+
     global furry_cache
     global lastsearch
     furry_cache = []
     num = 0
-    lastsearch = inp
-    search = inp.replace(' ','%20').replace('explicit','rating:explicit').replace('nsfw','rating:explicit').replace('safe','rating:safe').replace('sfw','rating:safe').replace('questionable','rating:questionable')
+    search = inp.replace('explicit','rating:explicit').replace('nsfw','rating:explicit').replace('safe','rating:safe').replace('sfw','rating:safe')
+    lastsearch = search
+
     if inp == '':
-        postjson = http.get_json('http://e621.net/posts.json?limit=20')
+        postjson = request.get_json('http://e621.net/posts.json?limit=10')
     else:
-        postjson = http.get_json('http://e621.net/posts.json?limit=20&tags={}'.format(search))
+        postjson = request.get_json('http://e621.net/posts.json?limit=10&tags={}'.format(request.urlencode(search)))
     posts = postjson["posts"]
 
     for i in range(len(posts)):
@@ -30,6 +33,7 @@ def refresh_cache(inp):
     random.shuffle(furry_cache)
     return
 
+
 @hook.command('e621', autohelp=False)
 @hook.command(autohelp=False)
 def furry(inp):
@@ -37,7 +41,8 @@ def furry(inp):
     global furry_cache
 
     inp = inp.lower()
-    if not inp in lastsearch or len(furry_cache) < 2: refresh_cache(inp)
+    if not inp in lastsearch or len(furry_cache) < 2:
+        refresh_cache(inp)
 
     lastsearch = inp
 

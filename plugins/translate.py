@@ -1,6 +1,5 @@
-from util import hook, http
+from util import hook, request
 import re
-import urllib2
 
 kataLetters = range(0x30A0, 0x30FF)
 hiraLetters = range(0x3040, 0x309F)
@@ -10,126 +9,143 @@ japanese_characters = ''.join([unichr(aLetter) for aLetter in all_letters])
 japanese_characters = (r'.*(([' + japanese_characters + '])).*', re.UNICODE)
 
 
+# how to update this mess:
+# go to https://translate.google.com/m?sl=auto&tl=auto&mui=tl&hl=en
+# and run this shady code in ur browser console:
+#     copy(Array.prototype.map.call(document.querySelector('div.small').querySelectorAll('a'), e => ' '.repeat(8)+'\'' + e.textContent.trim().toLowerCase().replace(/[\(\)]/g, '').replace(/\s+/g, '_') + '\': \'' + e.href.split('&tl=')[1].split('&')[0] + '\'').join(',\n'))
+# it'll fill your clipboard with stuff, paste it inside the { }
+langs = {
+    'afrikaans': 'af',
+    'albanian': 'sq',
+    'amharic': 'am',
+    'arabic': 'ar',
+    'armenian': 'hy',
+    'azerbaijani': 'az',
+    'basque': 'eu',
+    'belarusian': 'be',
+    'bengali': 'bn',
+    'bosnian': 'bs',
+    'bulgarian': 'bg',
+    'catalan': 'ca',
+    'cebuano': 'ceb',
+    'chichewa': 'ny',
+    'chinese_simplified': 'zh-CN',
+    'chinese_traditional': 'zh-TW',
+    'corsican': 'co',
+    'croatian': 'hr',
+    'czech': 'cs',
+    'danish': 'da',
+    'dutch': 'nl',
+    'english': 'en',
+    'esperanto': 'eo',
+    'estonian': 'et',
+    'filipino': 'tl',
+    'finnish': 'fi',
+    'french': 'fr',
+    'frisian': 'fy',
+    'galician': 'gl',
+    'georgian': 'ka',
+    'german': 'de',
+    'greek': 'el',
+    'gujarati': 'gu',
+    'haitian_creole': 'ht',
+    'hausa': 'ha',
+    'hawaiian': 'haw',
+    'hebrew': 'iw',
+    'hindi': 'hi',
+    'hmong': 'hmn',
+    'hungarian': 'hu',
+    'icelandic': 'is',
+    'igbo': 'ig',
+    'indonesian': 'id',
+    'irish': 'ga',
+    'italian': 'it',
+    'japanese': 'ja',
+    'javanese': 'jw',
+    'kannada': 'kn',
+    'kazakh': 'kk',
+    'khmer': 'km',
+    'kinyarwanda': 'rw',
+    'korean': 'ko',
+    'kurdish_kurmanji': 'ku',
+    'kyrgyz': 'ky',
+    'lao': 'lo',
+    'latin': 'la',
+    'latvian': 'lv',
+    'lithuanian': 'lt',
+    'luxembourgish': 'lb',
+    'macedonian': 'mk',
+    'malagasy': 'mg',
+    'malay': 'ms',
+    'malayalam': 'ml',
+    'maltese': 'mt',
+    'maori': 'mi',
+    'marathi': 'mr',
+    'mongolian': 'mn',
+    'myanmar_burmese': 'my',
+    'nepali': 'ne',
+    'norwegian': 'no',
+    'oriya': 'or',
+    'pashto': 'ps',
+    'persian': 'fa',
+    'polish': 'pl',
+    'portuguese': 'pt',
+    'punjabi': 'pa',
+    'romanian': 'ro',
+    'russian': 'ru',
+    'samoan': 'sm',
+    'scots_gaelic': 'gd',
+    'serbian': 'sr',
+    'sesotho': 'st',
+    'shona': 'sn',
+    'sindhi': 'sd',
+    'sinhala': 'si',
+    'slovak': 'sk',
+    'slovenian': 'sl',
+    'somali': 'so',
+    'spanish': 'es',
+    'sundanese': 'su',
+    'swahili': 'sw',
+    'swedish': 'sv',
+    'tajik': 'tg',
+    'tamil': 'ta',
+    'tatar': 'tt',
+    'telugu': 'te',
+    'thai': 'th',
+    'turkish': 'tr',
+    'turkmen': 'tk',
+    'uighur': 'ug',
+    'ukrainian': 'uk',
+    'urdu': 'ur',
+    'uzbek': 'uz',
+    'vietnamese': 'vi',
+    'welsh': 'cy',
+    'xhosa': 'xh',
+    'yiddish': 'yi',
+    'yoruba': 'yo',
+    'zulu': 'zu'
+}
+
+
 def google_translate(to_translate, to_language="auto", from_language="auto"):
-    '''Return the translation using google translate
-    you must shortcut the langage you define (French = fr, English = en, Spanish = es, etc...)
-    if you don't define anything it will detect it or use english by default
-    Example:
-    print(translate("salut tu vas bien?", "en"))
-    hello you alright?'''
-    header = {
-        'User-Agent':
-        "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)"
-    }
+    url = 'https://translate.google.com/m?'
+    url = url + "hl=" + to_language
+    url = url + "&sl=" + from_language
+    url = url + "&tl=" + to_language
+    url = url + "&ie=UTF-8&oe=UTF-8"
+    url = url + "&q=" + request.urlencode(to_translate)
+
+    page = request.get_text(url)
+    # this will break super badly if google changes their html
     before_trans = 'class="t0">'
-    link = "http://translate.google.com/m?hl=%s&sl=%s&q=%s&ie=UTF-8&oe=UTF-8" % (
-        to_language, from_language, urllib2.quote(
-            to_translate.encode('utf-8')))
-    request = urllib2.Request(link, headers=header)
-    page = urllib2.urlopen(request).read().decode('utf-8')
     result = page[page.find(before_trans) + len(before_trans):]
     result = result.split("<")[0]
     return '%s' % (result)
 
 
 @hook.command
-def translate(inp, chan=None, notice=None):
+def translate(inp):
     "translate [from language] [to language] <text> -- Will usually autotranslate from other languages to english."
-
-    langs = {
-        'auto': '',
-        'afrikaans': 'af',
-        'albanian': 'sq',
-        'amharic': 'am',
-        'arabic': 'ar',
-        'armenian': 'hy',
-        'azerbaijani': 'az',
-        'basque': 'e',
-        'belarusian': 'be',
-        'bengali': 'bn',
-        'bihari': 'bh',
-        'bulgarian': 'bg',
-        'burmese': 'my',
-        'catalan': 'ca',
-        'cherokee': 'chr',
-        'chinese': 'zh',
-        'chinese_simplified': 'zh-CN',
-        'chinese_traditional': 'zh-TW',
-        'croatian': 'hr',
-        'czech': 'cs',
-        'danish': 'da',
-        'dhivehi': 'dv',
-        'dutch': 'nl',
-        'english': 'en',
-        'esperanto': 'eo',
-        'estonian': 'et',
-        'filipino': 'tl',
-        'finnish': 'fi',
-        'french': 'fr',
-        'galician': 'gl',
-        'georgian': 'ka',
-        'german': 'de',
-        'greek': 'el',
-        'guarani': 'gn',
-        'gujarati': 'g',
-        'hebrew': 'iw',
-        'hindi': 'hi',
-        'hungarian': 'h',
-        'icelandic': 'is',
-        'indonesian': 'id',
-        'inuktitut': 'i',
-        'irish': 'ga',
-        'italian': 'it',
-        'japanese': 'ja',
-        'kannada': 'kn',
-        'kazakh': 'kk',
-        'khmer': 'km',
-        'korean': 'ko',
-        'kurdish': 'k',
-        'kyrgyz': 'ky',
-        'laothian': 'lo',
-        'latvian': 'lv',
-        'lithuanian': 'lt',
-        'macedonian': 'mk',
-        'malay': 'ms',
-        'malayalam': 'ml',
-        'maltese': 'mt',
-        'marathi': 'mr',
-        'mongolian': 'mn',
-        'nepali': 'ne',
-        'norwegian': 'no',
-        'oriya': 'or',
-        'pashto': 'ps',
-        'persian': 'fa',
-        'polish': 'pl',
-        'portuguese': 'pt-PT',
-        'punjabi': 'pa',
-        'romanian': 'ro',
-        'russian': 'r',
-        'sanskrit': 'sa',
-        'serbian': 'sr',
-        'sindhi': 'sd',
-        'sinhalese': 'si',
-        'slovak': 'sk',
-        'slovenian': 'sl',
-        'spanish': 'es',
-        'swahili': 'sw',
-        'swedish': 'sv',
-        'tagalog': 'tl',
-        'tajik': 'tg',
-        'tamil': 'ta',
-        'telug': 'te',
-        'thai': 'th',
-        'tibetan': 'bo',
-        'turkish': 'tr',
-        'uighur': 'ug',
-        'ukrainian': 'uk',
-        'urd': 'ur',
-        'uzbek': 'uz',
-        'vietnamese': 'vi',
-        'welsh': 'cy',
-        'yiddish': 'yi'
-    }
 
     inp = inp.lower()
     if inp.startswith('from') and inp.split()[2] == 'to':
@@ -154,404 +170,30 @@ def translate(inp, chan=None, notice=None):
         to_language = "auto"
         to_translate = inp
 
-    to_translate = to_translate
+    label = '%s to %s' % (from_language, to_language)
+    
+    if from_language == 'auto' and to_language == 'auto':
+        label = 'translate'
+
     result = google_translate(to_translate, to_language, from_language)
-    return '[%s to %s]: %s' % (from_language, to_language,
-                               http.decode_html(result))
+    return '[%s] %s' % (label, result)
 
 
-@hook.regex(*(japanese_characters))
-def autotranslate(inp, bot=None, chan=None):
-    "Automatically translates any japanese text detected."
+#@hook.regex(*(japanese_characters))
+#def autotranslate(inp, bot=None, chan=None):
+#    "Automatically translates any japanese text detected."
 
-    try:
-        if 'autotrans' in database.get(db, 'channels', 'disabled', 'chan',
-                                       chan):
-            return None
-    except:
-        pass
+#    try:
+#        if 'autotrans' in database.get(db, 'channels', 'disabled', 'chan',
+#                                       chan):
+#            return None
+#    except:
+#        pass
 
-    if 'translate' in inp.group(0): return None
-    if ']:' in inp.group(0).strip(): return None
+#    if 'translate' in inp.group(0): return None
+#    if ']:' in inp.group(0).strip(): return None
 
-    result = translate(inp.group(0))
-    if result.split(':')[1].strip() in inp.group(0).strip(): return None
+#    result = translate(inp.group(0))
+#    if result.split(':')[1].strip() in inp.group(0).strip(): return None
 
-    return '[%s]: %s' % (inp.group(0), result.split(':')[1].strip())
-
-
-### This uses the mygengo_translate plugin located in the disabled_plugins folder. It is sometimes more accurate than google translate
-# @hook.command
-# def gwapanese(inp):
-#     "wapanese <text> -- Translate english text into japanese romanji"
-#     import mygengo_translate
-#     print inp.strip()
-#     jp_result = unicode(mygengo_translate.gengo_translate(inp.strip(), 'en', 'ja'))
-#
-#     jp_result = jp_result.split(')')[1].strip()
-#     print jp_result
-#     rj_result = romaji(jp_result)
-#     return '%s' %  (rj_result)
-
-# @hook.command
-# def wapanese(inp): #googletranslate
-#     "wapanese <text> -- Translate english text into japanese romanji"
-#     jp_result = google_translate(inp.replace(" ", "+").encode('utf-8'), 'ja', 'en')
-#     rj_result = romaji(jp_result)
-#     return '%s' %  (rj_result)
-
-# @hook.command('romanji')
-# @hook.command
-# def romaji(inp):
-#     "romaji <text> -- Translates japanese text (Kanji,Hiragana,Katakana) into Romaji"
-#     agents = {'Content-Type':"application/x-www-form-urlencoded"}
-#     before_trans = 'font color="red">'
-#     link = "http://romaji.me/romaji.cgi?mode=2&text=%s" % inp.encode('cp932')
-#     request = urllib2.Request(link, headers=agents)
-#     page = urllib2.urlopen(request).read()
-#     result = page[page.find(before_trans):]
-#     result = result.split(">")[1].split("<")[0]
-#     return '[%s]: %s' %  (inp, result)
-
-hiragana = {
-    #https://gist.github.com/711089
-    ' ': 'a',
-    ' ': 'i',
-    ' ': '',
-    ' ': 'e',
-    ' ': 'o',
-    ' ': 'ka',
-    ' ': 'ki',
-    ' ': 'k',
-    ' ': 'ke',
-    ' ': 'ko',
-    ' ': 'sa',
-    ' ': 'si',
-    ' ': 's',
-    ' ': 'se',
-    ' ': 'so',
-    ' ': 'ta',
-    ' ': 'chi',
-    ' ': 't',
-    ' ': 'te',
-    ' ': 'to',
-    ' ': 'na',
-    ' ': 'ni',
-    ' ': 'n',
-    ' ': 'ne',
-    ' ': 'no',
-    ' ': 'ha',
-    ' ': 'hi',
-    ' ': 'h',
-    ' ': 'he',
-    ' ': 'ho',
-    ' ': 'ma',
-    ' ': 'mi',
-    ' ': 'm',
-    ' ': 'me',
-    ' ': 'mo',
-    ' ': 'ya',
-    ' ': 'y',
-    ' ': 'yo',
-    ' ': 'ra',
-    ' ': 'ri',
-    ' ': 'r',
-    ' ': 're',
-    ' ': 'ro',
-    ' ': 'wa',
-    ' ': 'wo',
-    ' ': 'n',
-    ' ': 'ga',
-    ' ': 'gi',
-    ' ': 'g',
-    ' ': 'ge',
-    ' ': 'go',
-    ' ': 'za',
-    ' ': 'zi',
-    ' ': 'z',
-    ' ': 'ze',
-    ' ': 'zo',
-    ' ': 'da',
-    ' ': 'di',
-    ' ': 'd',
-    ' ': 'de',
-    ' ': 'do',
-    ' ': 'ba',
-    ' ': 'bi',
-    ' ': 'b',
-    ' ': 'be',
-    ' ': 'bo',
-    ' ': 'pa',
-    ' ': 'pi',
-    ' ': 'p',
-    ' ': 'pe',
-    ' ': 'po',
-    ' ': 'xa',
-    ' ': 'xi',
-    ' ': 'x',
-    ' ': 'xe',
-    ' ': 'xo',
-    #' ':'ya',' ':'y',' ':'yo',
-    #' ':'wa',
-    ' ': 'wi',
-    ' ': 'we',
-    ' ': '',
-    ' ': 'sokuon',
-    '  ': 'kya',
-    '  ': 'ky',
-    '  ': 'kyo',
-    '  ': 'sha',
-    '  ': 'sh',
-    '  ': 'sho',
-    '  ': 'cha',
-    '  ': 'ch',
-    '  ': 'cho',
-    '  ': 'nya',
-    '  ': 'ny',
-    '  ': 'nyo',
-    '  ': 'hya',
-    '  ': 'hy',
-    '  ': 'hyo',
-    '  ': 'mya',
-    '  ': 'my',
-    '  ': 'myo',
-    '  ': 'rya',
-    '  ': 'ry',
-    '  ': 'ryo',
-    '  ': 'gya',
-    '  ': 'gy',
-    '  ': 'gyo',
-    '  ': 'ja',
-    '  ': 'j',
-    '  ': 'jo',
-    '  ': 'bya',
-    '  ': 'by',
-    '  ': 'byo',
-    '  ': 'pya',
-    '  ': 'py',
-    '  ': 'pyo',
-    ' ': 'v'
-}
-
-alphanumerics = {
-    ' ': '0',
-    ' ': '1',
-    ' ': '2',
-    ' ': '3',
-    ' ': '4',
-    ' ': '5',
-    ' ': '6',
-    ' ': '7',
-    ' ': '8',
-    ' ': '9',
-    ' ': 'a',
-    ' ': 'b',
-    ' ': 'c',
-    ' ': 'd',
-    ' ': 'e',
-    ' ': 'f',
-    ' ': 'g',
-    ' ': 'h',
-    ' ': 'i',
-    ' ': 'j',
-    ' ': 'k',
-    ' ': 'l',
-    ' ': 'm',
-    ' ': 'n',
-    ' ': 'o',
-    ' ': 'p',
-    ' ': 'q',
-    ' ': 'r',
-    ' ': 's',
-    ' ': 't',
-    ' ': '',
-    ' ': 'v',
-    ' ': 'w',
-    ' ': 'x',
-    ' ': 'y',
-    ' ': 'z',
-    ' ': 'a',
-    ' ': 'b',
-    ' ': 'c',
-    ' ': 'd',
-    ' ': 'e',
-    ' ': 'f',
-    ' ': 'g',
-    ' ': 'h',
-    ' ': 'i',
-    ' ': 'j',
-    ' ': 'k',
-    ' ': 'l',
-    ' ': 'm',
-    ' ': 'n',
-    ' ': 'o',
-    ' ': 'p',
-    ' ': 'q',
-    ' ': 'r',
-    ' ': 's',
-    ' ': 't',
-    ' ': '',
-    ' ': 'v',
-    ' ': 'w',
-    ' ': 'x',
-    ' ': 'y',
-    ' ': 'z',
-    ' ': '!',
-    ' ': '"',
-    ' ': '#',
-    ' ': '$',
-    ' ': '%',
-    ' ': '&',
-    ' ': "'",
-    ' ': '(',
-    ' ': ')',
-    ' ': '*',
-    ' ': '+',
-    ' ': ',',
-    ' ': '-',
-    ' ': '.',
-    ' ': '/'
-}
-katakana = {
-    ' ': 'a',
-    ' ': 'i',
-    ' ': '',
-    ' ': 'e',
-    ' ': 'o',
-    ' ': 'n',
-    ' ': 'ka',
-    ' ': 'ki',
-    ' ': 'k',
-    ' ': 'ke',
-    ' ': 'ko',
-    ' ': 'sa',
-    ' ': 'si',
-    ' ': 's',
-    ' ': 'se',
-    ' ': 'so',
-    ' ': 'ta',
-    ' ': 'ti',
-    ' ': 't',
-    ' ': 'te',
-    ' ': 'to',
-    ' ': 'na',
-    ' ': 'ni',
-    ' ': 'n',
-    ' ': 'ne',
-    ' ': 'no',
-    ' ': 'ha',
-    ' ': 'hi',
-    ' ': 'f',
-    ' ': 'he',
-    ' ': 'ho',
-    ' ': 'ma',
-    ' ': 'mi',
-    ' ': 'm',
-    ' ': 'me',
-    ' ': 'mo',
-    ' ': 'ya',
-    ' ': 'y',
-    ' ': 'yo',
-    ' ': 'ra',
-    ' ': 'ri',
-    ' ': 'r',
-    ' ': 're',
-    ' ': 'ro',
-    ' ': 'wa',
-    ' ': 'wo',
-    ' ': 'ga',
-    ' ': 'gi',
-    ' ': 'g',
-    ' ': 'ge',
-    ' ': 'go',
-    ' ': 'za',
-    ' ': 'zi',
-    ' ': 'z',
-    ' ': 'ze',
-    ' ': 'zo',
-    ' ': 'da',
-    ' ': 'di',
-    ' ': 'd',
-    ' ': 'de',
-    ' ': 'do',
-    ' ': 'ba',
-    ' ': 'bi',
-    ' ': 'b',
-    ' ': 'be',
-    ' ': 'bo',
-    ' ': 'pa',
-    ' ': 'pi',
-    ' ': 'p',
-    ' ': 'pe',
-    ' ': 'po',
-    '  ': 'ja',
-    'j': '  ',
-    'jo': '  ',
-    ' ': 'ji',
-    '  ': 'vi',
-    ' ': 'xa',
-    ' ': 'xi',
-    ' ': 'x',
-    ' ': 'xe',
-    ' ': 'xo',
-    '  ': 'kya',
-    '  ': 'ky',
-    '  ': 'kyo',
-    '  ': 'sha',
-    '  ': 'sh',
-    '  ': 'sho',
-    ' ': 'shi',
-    ' ': 'ts',
-    '  ': 'cha',
-    '  ': 'ch',
-    '  ': 'cho',
-    ' ': 'chi',
-    '  ': 'nya',
-    '  ': 'ny',
-    '  ': 'nyo',
-    '  ': 'hya',
-    '  ': 'hy',
-    '  ': 'hyo',
-    '  ': 'mya',
-    '  ': 'my',
-    '  ': 'myo',
-    '  ': 'rya',
-    '  ': 'ry',
-    '  ': 'ryo',
-    '  ': 'gya',
-    '  ': 'gy',
-    '  ': 'gyo',
-    '  ': 'bya',
-    '  ': 'by',
-    '  ': 'byo',
-    '  ': 'pya',
-    '  ': 'py',
-    '  ': 'pyo',
-    ' ': 'sokuon'
-}
-
-romanizeText = ''
-
-hiraganaReversed = dict((v, k) for k, v in hiragana.iteritems())
-katakanaReversed = dict((v, k) for k, v in katakana.iteritems())
-alphanumericsReversed = dict((v, k) for k, v in alphanumerics.iteritems())
-dictionaries = [hiragana, katakana, alphanumerics]
-
-
-def romanizer(romanizeMe):
-    global romanizeText
-    romanizeMe = romanizeMe.encode('ascii', 'ignore')
-    for dictToUse in dictionaries:
-        for char in romanizeMe:
-            try:
-                value = dictToUse[char]
-                romanizeMe = romanizeMe.replace(char, value)
-            except KeyError, e:
-                continue
-    # romanizeMe = romanizeMe
-    return romanizeMe    #.decode('utf-8','ignore')
-
-
-@hook.command
-def romanize(inp):
-    return romanizer(inp)
+#    return '[%s]: %s' % (inp.group(0), result.split(':')[1].strip())
