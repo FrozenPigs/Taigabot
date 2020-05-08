@@ -1,32 +1,32 @@
-from util import hook, http
+from util import hook, request
+from bs4 import BeautifulSoup
 import re
 
-fml_cache = []
+cache = []
+
 
 def refresh_cache():
     """ gets a page of random FMLs and puts them into a dictionary """
-    soup = http.get_soup('http://www.fmylife.com/random/')
+    print "[+] refreshing fmylife cache"
+    html = request.get_html('https://www.fmylife.com/random/')
+    soup = BeautifulSoup(html, 'lxml')
+    posts = soup.find_all('a', attrs={'class': 'article-link'})
 
-    for e in soup.find_all('p', attrs={'class': 'block'}):
-        id = int(e.find_all('a', href=True)[0]['href'].split('_')[1].split('.')[0])
-        text = e.find_all('a')[0].text.strip()
-        fml_cache.append((id, text))
+    for post in posts:
+        id = post['href'].split('_')[1].split('.')[0]
+        text = post.text.strip()
+        cache.append((id, text))
 
-# do an initial refresh of the cache
-refresh_cache()
 
 @hook.command(autohelp=False)
-def fml(inp, reply=None):
+def fml(inp):
     "fml -- Gets a random quote from fmyfife.com."
 
-    # grab the last item in the fml cache and remove it
-    try:
-        id, text = fml_cache.pop()
-    except IndexError:
+    if len(cache) < 2:
         refresh_cache()
-        id, text = fml_cache.pop()
-    # reply with the fml we grabbed
-    reply('(#%d) %s' % (id, text))
-    # refresh fml cache if its getting empty
-    if len(fml_cache) < 3:
-        refresh_cache()
+
+    id, text = cache.pop()
+    return '(#%s) %s' % (id, text)
+
+
+refresh_cache()

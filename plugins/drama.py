@@ -1,7 +1,8 @@
-from util import hook, http
+from util import hook, request
+from bs4 import BeautifulSoup
 
-api_url = "http://encyclopediadramatica.se/api.php?action=opensearch"
-ed_url = "http://encyclopediadramatica.se/"
+api_url = "https://encyclopediadramatica.fyi/api.php?action=opensearch"
+ed_url = "https://encyclopediadramatica.fyi/index.php/"
 
 
 @hook.command
@@ -9,19 +10,25 @@ def drama(inp):
     "drama <phrase> -- Gets the first paragraph of" \
     " the Encyclopedia Dramatica article on <phrase>."
 
-    j = http.get_json(api_url, search=inp)
-    if not j[1]:
+    search = request.get_json(api_url + "&search=" + request.urlencode(inp))
+
+    if not search[1]:
         return "No results found."
-    article_name = j[1][0].replace(' ', '_').encode('utf8')
 
-    url = ed_url + http.quote(article_name, '')
-    page = http.get_html(url)
+    title = search[1][0].replace(' ', '_').encode('utf8')
 
-    for p in page.xpath('//div[@id="bodyContent"]/p'):
-        if p.text_content():
-            summary = " ".join(p.text_content().splitlines())
-            if len(summary) > 300:
-                summary = summary[:summary.rfind(' ', 0, 300)] + "..."
-            return "%s :: \x02%s\x02" % (summary, url)
+    html = request.get_html(ed_url + request.urlencode(title))
+    soup = BeautifulSoup(html, 'lxml')
+    body = soup.find('div', attrs={'id': 'mw-content-text'})
 
-    return "Unknown Error."
+    if body is None:
+        return "Error finding the results"
+
+    output = ''
+    for paragraph in body.find_all('p'):
+        output = output + " " + paragraph.text.strip()
+
+    if len(output) > 320:
+        output = output[:320] + '...'
+
+    return title + " ::" + output

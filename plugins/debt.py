@@ -1,12 +1,23 @@
-from util import hook, http, text, web
-import json
+from util import hook, request
+from bs4 import BeautifulSoup
+
+
+def parse(html):
+    soup = BeautifulSoup(html, 'lxml')
+    query = soup.find(id='debtDisplay')
+    
+    if query is None:
+        return "unknown"
+    else:
+        return "$" + query.get_text()
+
 
 @hook.command(autohelp=False)
 def debt(inp):
     """debt -- returns the us national debt"""
-    href = "http://www.nationaldebtclocks.org/debtclock/unitedstates"
-    results = http.get_html(href)
-    debt = results.xpath("//span[@id='debtDisplayFast']/text()")[0]
-    householdshare = results.xpath("//span[@id='SCS']/text()")[0]
 
-    return("Current US Debt: \x02${:,}\x02 - Amount Per Citizen: \x02{}\x02".format(int(debt), householdshare))
+    url = "https://commodity.com/debt-clock/us/"
+    html = request.get_html(url)
+    debt = parse(html)
+
+    return "Current US Debt: \x02{}\x02".format(debt)
