@@ -86,13 +86,20 @@ def get_video_description(key, video_id, bot):
 
     uploader = data['snippet']['channelTitle']
 
-    upload_time = time.strptime(data['snippet']['publishedAt'],
-                                "%Y-%m-%dT%H:%M:%S.000Z")
+    try:
+        upload_time = time.strptime(data['snippet']['publishedAt'],
+                                    "%Y-%m-%dT%H:%M:%S.000Z")
+    except Exception as e:
+        print e
+        upload_time = time.strptime(data['snippet']['publishedAt'],
+                                "%Y-%m-%dT%H:%M:%SZ")
     out += u' - \x02{}\x02 on \x02{}\x02'.format(
         uploader, time.strftime("%Y.%m.%d", upload_time))
 
     try:
         data['contentDetails']['contentRating']
+        if data['contentDetails']['contentRating'] == {}:
+            return out
     except KeyError:
         return out
 
