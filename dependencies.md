@@ -106,7 +106,7 @@ run the bot, finally:
 
 
 ## details
-if `bs4` and `requests` are installed, these plugins will be enabled:
+if `bs4` and `requests` are installed, these plugins will work:
 - amazon
 - bash
 - debt
@@ -116,13 +116,16 @@ if `bs4` and `requests` are installed, these plugins will be enabled:
 - fmylife
 - validate
 
+if `requests` is installed, these plugins will work:
+- furry
+- translate
+- urbandict
+
 to get these plugins working, you need to install these specific dependencies:
 - wolframalpha
   - urllib2
   - simplejson
-  - [!] util.http
-- furry, translate
-  - requests (in util.request)
+  - old urllib? (see util/http.py)
 
 ### plugins with no external dependencies
 - choose
