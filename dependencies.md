@@ -108,7 +108,7 @@ run the bot, finally:
 ## details
 to get the plugin working, the listed python dependencies are needed
 
-- amazon, bash, debt, dictionary, drama, fmylife
+- amazon, bash, debt, dictionary, distro, drama, fmylife
   - bs4
   - requests (in util.request)
 - wolframalpha
