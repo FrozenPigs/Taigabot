@@ -120,6 +120,7 @@ if `requests` is installed, these plugins will work:
 - furry
 - translate
 - urbandict
+- vimeo
 
 to get these plugins working, you need to install these specific dependencies:
 - wolframalpha
