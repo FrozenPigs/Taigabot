@@ -119,6 +119,7 @@ if `bs4` and `requests` are installed, these plugins will work:
 if `requests` is installed, these plugins will work:
 - furry
 - translate
+- kernel
 - urbandict
 - vimeo
 
@@ -127,6 +128,7 @@ to get these plugins working, you need to install these specific dependencies:
   - urllib2
   - simplejson
   - old urllib? (see util/http.py)
+- 
 
 ### plugins with no external dependencies
 - choose
