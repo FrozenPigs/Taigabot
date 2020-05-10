@@ -106,11 +106,17 @@ run the bot, finally:
 
 
 ## details
-to get the plugin working, the listed python dependencies are needed
+if `bs4` and `requests` are installed, these plugins will be enabled:
+- amazon
+- bash
+- debt
+- dictionary
+- distro
+- drama
+- fmylife
+- validate
 
-- amazon, bash, debt, dictionary, distro, drama, fmylife
-  - bs4
-  - requests (in util.request)
+to get these plugins working, you need to install these specific dependencies:
 - wolframalpha
   - urllib2
   - simplejson
