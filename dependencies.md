@@ -130,9 +130,6 @@ to get these plugins working, you need to install these specific dependencies:
   - simplejson
   - old urllib? (see util/http.py)
 
-these plugins need an api key on the `config` file:
-- religion: [link](https://api.esv.org/docs/)
-
 ### plugins with no external dependencies
 - choose
 - coin
@@ -141,3 +138,9 @@ these plugins need an api key on the `config` file:
 - heartbleed
 - potato
 - smileys
+
+### api keys
+these plugins need an api key on the `config` file
+| plugin    | key name           | where to find |
+|-----------|--------------------|---------------|
+| religion  | `"english_bible"`  | [here](https://api.esv.org/docs/) |
