@@ -800,3 +800,4 @@ Yo momma's so ugly she has to use bulletproof glass to see her reflection in one
 Yo momma's so fat the hospital had to implant an extra heart in order to maintain adequete fluid flow.
 Yo momma's so stupid she has to study how to do track running for P.E.
 Spodes
+Error: 'NoneType' object has no attribute 'lower'
