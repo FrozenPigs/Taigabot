@@ -19,15 +19,25 @@ def urlencode(inp):
     return quote(inp.encode('utf8'))
 
 
-def get_json(url):
-    return json_load(get_text(url))
+def get_json(url, **kwargs):
+    return json_load(get_text(url, **kwargs))
 
 
-def get_html(url):
-    return get_text(url)
+def get_html(url, **kwargs):
+    return get_text(url, **kwargs)
 
 
-def get_text(url):
-    headers = {'User-Agent': fake_ua}
-    r = requests.get(url, headers=headers)
+def get_text(url, **kwargs):
+    # accept custom headers
+    if 'headers' in kwargs:
+        headers = kwargs.pop('headers')
+        # but set a default user-agent
+        if 'User-Agent' not in headers:
+            headers['User-Agent'] = fake_ua
+    else:
+        headers = {'User-Agent': fake_ua}
+
+    for key, value in kwargs.iteritems():
+        print "%s = %s" % (key, value)
+    r = requests.get(url, headers=headers, **kwargs)
     return r.text
