@@ -106,17 +106,29 @@ run the bot, finally:
 
 
 ## details
-to get the plugin working, the listed python dependencies are needed
+if `bs4` and `requests` are installed, these plugins will work:
+- amazon
+- bash
+- debt
+- dictionary
+- distro
+- drama
+- fmylife
+- religion
+- validate
 
-- amazon, bash, debt, dictionary, drama, fmylife
-  - bs4
-  - requests (in util.request)
+if `requests` is installed, these plugins will work:
+- furry
+- translate
+- kernel
+- urbandict
+- vimeo
+
+to get these plugins working, you need to install these specific dependencies:
 - wolframalpha
   - urllib2
   - simplejson
-  - [!] util.http
-- furry, translate
-  - requests (in util.request)
+  - old urllib? (see util/http.py)
 
 ### plugins with no external dependencies
 - choose
@@ -126,3 +138,9 @@ to get the plugin working, the listed python dependencies are needed
 - heartbleed
 - potato
 - smileys
+
+### api keys
+these plugins need an api key on the `config` file
+| plugin    | key name           | where to find |
+|-----------|--------------------|---------------|
+| religion  | `"english_bible"`  | [here](https://api.esv.org/docs/) |
