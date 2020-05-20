@@ -114,6 +114,7 @@ if `bs4` and `requests` are installed, these plugins will work:
 - distro
 - drama
 - fmylife
+- religion
 - validate
 
 if `requests` is installed, these plugins will work:
@@ -128,7 +129,9 @@ to get these plugins working, you need to install these specific dependencies:
   - urllib2
   - simplejson
   - old urllib? (see util/http.py)
-- 
+
+these plugins need an api key on the `config` file:
+- religion: [link](https://api.esv.org/docs/)
 
 ### plugins with no external dependencies
 - choose
