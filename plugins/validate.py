@@ -1,3 +1,4 @@
+# w3c validator plugin by ine (2020)
 from util import hook
 from utilities import request
 from bs4 import BeautifulSoup
@@ -23,4 +24,4 @@ def validate(inp):
     if errors == 0 and warns == 0 and info == 0:
         return "[w3c] Successfully validated with no errors"
 
-    return "[w3c] Found %s errors, %s warnings and %s notices." % (errors, warns, info)
+    return "[w3c] Found {} errors, {} warnings and {} notices.".format(errors, warns, info)

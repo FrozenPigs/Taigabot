@@ -1,3 +1,4 @@
+# bible/koran plugin by ine (2020)
 from util import hook
 from utilities import request, iterable
 from utilities.formatting import compress_whitespace

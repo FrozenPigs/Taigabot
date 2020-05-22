@@ -1,3 +1,4 @@
+# furry booru plugin by ararouge (2020)
 from util import hook
 from utilities import request
 import random

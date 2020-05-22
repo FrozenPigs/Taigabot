@@ -1,3 +1,4 @@
+# us debt plugin by ine (2020)
 from util import hook
 from utilities import request
 from bs4 import BeautifulSoup

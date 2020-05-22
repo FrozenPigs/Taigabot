@@ -1,3 +1,4 @@
+# vimeo info plugin by ine (2020)
 from util import hook, timeformat
 from utilities import request
 
