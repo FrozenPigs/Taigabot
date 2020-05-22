@@ -94,6 +94,7 @@ get the bot and make a virtual env
 install dependencies:
 
     pip2 install -r requirements.txt
+    pip2 install -r requirements_extra.txt
 
 make your own configuration:
 

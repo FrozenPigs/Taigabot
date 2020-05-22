@@ -1,0 +1,4 @@
+tweepy==3.5.0
+simplejson==2.0.7
+geopy==1.22.0
+pytz==2020.1
