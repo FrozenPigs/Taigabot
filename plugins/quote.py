@@ -219,6 +219,9 @@ def quote(inp, nick='', chan='', db=None, notice=None, reply=None, bot=None):
 
     if add:
         quoted_nick, msg = add.groups()
+        if msg.endswith('-ye'):
+            notice('Quote added.')
+            return
         notice(add_quote(db, chan, quoted_nick, nick, msg))
         return
     elif retrieve:

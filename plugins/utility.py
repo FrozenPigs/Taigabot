@@ -2,6 +2,7 @@ import collections
 import hashlib
 import re
 import subprocess
+import time
 
 from util import hook, http, text, web
 
@@ -171,6 +172,7 @@ def gaycow(inp, reply=None):
     reply(make_rainbow('      \\   ^__^'))
     reply(make_rainbow('       \\  (oo)\\_______'))
     reply(make_rainbow('          (__)\\       )\\/\\'))
+    time.sleep(1)
     reply(make_rainbow('              ||----w |'))
     reply(make_rainbow('              ||     ||'))
 
