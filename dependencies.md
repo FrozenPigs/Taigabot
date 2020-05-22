@@ -1,9 +1,9 @@
 # taigabot dependencies
 taigabot is ancient software that runs on an unmantained python version. the existing uguubot instructions no longer work.
 
-the main piece of software, the uguu irc bot, is more than 10 years old and some dependencies can't be found on repositories (ubuntu, pip or even github), so they've been bundled with the bot in this repository.
+the main piece of software, the irc bot, is more than 12 years old and some dependencies can't be found on repositories (ubuntu, pip or even github), so they've been bundled with the bot in this repository.
 
-taiga runs only on python 2. its unmantained, but its too much work to port everything to python 3.
+taiga runs only on python 2.7.
 
 this is an attempt to get taiga properly documented for running on ubuntu 18.04, and eventually other distros.
 
@@ -18,19 +18,23 @@ this is an attempt to get taiga properly documented for running on ubuntu 18.04,
 optionally `git` to clone this repo, but you can download it however you want.
 
 ## python dependencies
-you __need__ these to run the bot
+you __need__ these to run the bot.
+
+    pip install -r requirements.txt
 
 - virtualenv
   - helps keep the trash contained. please use this.
 - lxml
-  - works on 3.3.6 (originally used 3.1beta1, doesnt work anymore)
-  - used to parse html
-  - as of 2020-05, versions older than 3.2 don't compile because of some long error i didnt feel like reading.
+  - works on 3.3.6
+  - used to parse html and xml
   - https://pypi.org/project/lxml/3.3.6/
-  - __required__ to work
+  - __required__
 - requests
   - 2.23.0 works fine
-  - __required__ to work
+  - __required__
+- beautifulsoup4
+  - 4.9.0 works fine
+  - __required__
 
 with the aforementioned requirements, taigabot is guaranteed to run and these core plugins will work:
 - core_admin_channel.py
@@ -42,37 +46,12 @@ with the aforementioned requirements, taigabot is guaranteed to run and these co
 - log.py
 - all internal `util` plugins
 
-## python dependencies for plugins
-plugins need these. they're "optional" but the bot is __useless without plugins__.
+## plugins
+plugins need some dependencies. they're "optional" but the bot is __useless without plugins__.
 
-- beautifulsoap
-  - needs 3.2.1 and 4.1.3, works with 4.9.0
-  - used for scraping websites.
-  - taiga uses both bs3 and bs4. install 3.2.1 and 4.9.0
-  - https://pypi.org/project/BeautifulSoup/3.2.1/
-  - https://pypi.org/project/beautifulsoup4/4.9.0/
-- yql
-  - needs custom version (0.7.5?)
-  - some helper for yahoo query language by stuart colville.
-  - this version isnt the same as the one on pip, so it's been bundled with the bot in the "lib/" folder.
-  - depends on httplib2 and a specific oauth (read below)
-- httplib2
-  - needs 0.7.5
-  - dependency of yql
-  - https://pypi.org/project/httplib2/0.7.5/
-- oauth
-  - needs custom version (a modified 1.5.211?)
-  - dependency of yql
-  - this is an unknown version, its not "oauth", "oauth2" or "oauth2.3" (from pip).
-  - it's been bundled with the bot, in the "lib/" folder
-- tweepy
-  - needs 3.5.0
-  - *optional*: not used by a lot of plugins
-  - https://pypi.org/project/tweepy/3.5.0/
-- simplejson
-  - needs 2.0.7
-  - *optional*: not used by a lot of plugins
-  - https://pypi.org/project/simplejson/2.0.7/
+    pip2 install -r requirements_extra.txt
+
+you can find details below.
 
 ## instructions
 basic system requirements:
