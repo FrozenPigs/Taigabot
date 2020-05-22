@@ -22,7 +22,7 @@ The following system dependencies are needed (`apt install`):
 
 and these python dependencies are required (__already in requirements.txt__: `pip2 install -r requirements.txt`):
 
-    BeautifulSoup==3.2.1 httplib2==0.7.5 BeautifulSoup4==4.1.3 lxml==3.3.6 requests
+    httplib2==0.7.5 BeautifulSoup4==4.1.3 lxml==3.3.6 requests
 
 you can install the additional dependencies for more plugins:
 

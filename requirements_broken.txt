@@ -1,7 +1,7 @@
 GitPython==0.3.2.RC1
 oauth2
 pygeoip
-tweepy
+tweepy==3.5.0
 BeautifulSoup==3.2.1
 lxml==3.1beta1
 pydns>=2.3.6
@@ -12,3 +12,4 @@ mygengo
 pytz>=2013b
 timezones
 pycrypto
+ipaddress==1.0.23
