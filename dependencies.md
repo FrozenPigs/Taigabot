@@ -127,10 +127,6 @@ if `requests` is installed, these plugins will work:
 - vimeo
 
 to get these plugins working, you need to install these specific dependencies:
-- wolframalpha
-  - urllib?
-  - urllib2
-  - simplejson
 - weather
   - urllib
   - requests
@@ -145,10 +141,12 @@ to get these plugins working, you need to install these specific dependencies:
 - heartbleed
 - potato
 - smileys
+- wolframalpha
 
 ### api keys
 these plugins need an api key on the `config` file
-| plugin    | key name           | where to find |
-|-----------|--------------------|---------------|
-| religion  | `"english_bible"`  | [here](https://api.esv.org/docs/) |
-| weather   | `"darksky"`        | not possible to get anymore |
+| plugin       | key name           | where to find |
+|--------------|--------------------|---------------|
+| religion     | `"english_bible"`  | [here](https://api.esv.org/docs/) |
+| weather      | `"darksky"`        | not possible to get anymore |
+| wolframalpha | `"wolframalpha"`   | [here](https://products.wolframalpha.com/api/) |

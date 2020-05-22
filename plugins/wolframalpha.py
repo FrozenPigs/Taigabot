@@ -1,6 +1,6 @@
 import re
 
-from util import hook, http, text, web, formatting
+from util import hook, http, formatting
 import random
 
 #
@@ -25,7 +25,7 @@ __version__ = '1.1-devel'
 
 import urllib2
 from xml.dom import minidom
-import simplejson as json
+#import simplejson as json
 
 
 class WolframAlphaEngine:
@@ -110,7 +110,7 @@ class WolframAlphaQueryResult:
         self.tree = runtree(self.dom.documentElement)
 
     def JsonResult(self):
-        return json.dumps(self.tree)
+        return ''  # json.dumps(self.tree)
 
     def IsSuccess(self):
         return scanbranches(self.tree, 'success')
