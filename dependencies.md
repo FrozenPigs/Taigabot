@@ -151,3 +151,4 @@ these plugins need an api key on the `config` file
 | plugin    | key name           | where to find |
 |-----------|--------------------|---------------|
 | religion  | `"english_bible"`  | [here](https://api.esv.org/docs/) |
+| weather   | `"darksky"`        | not possible to get anymore |
