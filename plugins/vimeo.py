@@ -1,10 +1,9 @@
-from util import hook, request, timeformat
+from util import hook, timeformat
+from utilities import request
 
 # the v2 api is deprecated and only does simple public video information
 # new one is at https://api.vimeo.com/videos/{id} but needs a key
 
-# youtube:
-# $title - length $length - ^$upvote, v$downvote (??%) - $views views - $uploader on $date
 
 def info(id):
     info = request.get_json('http://vimeo.com/api/v2/video/%s.json' % id)
@@ -18,11 +17,11 @@ def info(id):
     views = format(info[0]['stats_number_of_plays'], ',d')
     uploader = info[0]['user_name']
     upload_date = info[0]['upload_date']
-    
+
     output = '\x02' + title + '\x02 - length \x02' + length + '\x02 - '
     output = output + likes + ' likes - ' + views + ' views - '
     output = output + '\x02' + uploader + '\x02 on ' + upload_date
-    
+
     return output
 
 

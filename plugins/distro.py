@@ -1,4 +1,5 @@
-from util import hook, request
+from util import hook
+from utilities import request, iterable
 from bs4 import BeautifulSoup
 from time import time
 
@@ -24,19 +25,14 @@ def refresh_cache():
     def parse_table(data):
         global data_limit
         distro_names = []
-        limit = data_limit
 
-        for distro in data:
-            if limit < 1:
-                break
-            limit = limit - 1
-
+        for distro in iterable.limit(data_limit, data):
             distro_names.append(distro.text.strip())
-        
+
         return ', '.join(distro_names)
 
     # most popular distros in the last 12, 6 and 1 months
-    html = request.get_html('https://distrowatch.com/dwres.php?resource=popularity')
+    html = request.get('https://distrowatch.com/dwres.php?resource=popularity')
     soup = BeautifulSoup(html, 'lxml')
     tables = soup.select('td.NewsText tr td table')
 
@@ -57,7 +53,7 @@ def refresh_cache():
         output = output + parse_table(data) + '.'
 
     # trending distros in the past 12, 6 and 1 months
-    html = request.get_html('https://distrowatch.com/dwres.php?resource=trending')
+    html = request.get('https://distrowatch.com/dwres.php?resource=trending')
     soup = BeautifulSoup(html, 'lxml')
     tables = soup.select('table table table table.News')
 
@@ -80,7 +76,7 @@ def refresh_cache():
     cache = output
 
 
-@hook.command()
+@hook.command
 def distro(inp):
     # update if time passed is more than cache_stale
     global last_refresh, cache_stale, cache

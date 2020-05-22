@@ -1,18 +1,22 @@
 from util import hook, request
 import random
-import re
 
-furry_cache = []
+cache = []
 lastsearch = ''
+
 
 def refresh_cache(inp):
     print "[+] refreshing furry cache"
 
-    global furry_cache
+    global cache
     global lastsearch
-    furry_cache = []
-    num = 0
-    search = inp.replace('explicit','rating:explicit').replace('nsfw','rating:explicit').replace('safe','rating:safe').replace('sfw','rating:safe')
+    cache = []
+    search = inp
+
+    # these are special search queries in the booru
+    for word in ['explicit', 'safe', 'nsfw', 'sfw']:
+        search = search.replace(word, 'rating:' + word)
+
     lastsearch = search
 
     if inp == '':
@@ -28,9 +32,9 @@ def refresh_cache(inp):
         url = post["file"]["url"]
         rating = post["rating"]
         tags = ", ".join(post["tags"]["general"])
-        furry_cache.append((id, score, url, rating, tags))
+        cache.append((id, score, url, rating, tags))
 
-    random.shuffle(furry_cache)
+    random.shuffle(cache)
     return
 
 
@@ -38,18 +42,18 @@ def refresh_cache(inp):
 @hook.command(autohelp=False)
 def furry(inp):
     global lastsearch
-    global furry_cache
+    global cache
 
     inp = inp.lower()
-    if not inp in lastsearch or len(furry_cache) < 2:
+    if inp not in lastsearch or len(cache) < 2:
         refresh_cache(inp)
 
     lastsearch = inp
 
-    if len(furry_cache) == 0:
+    if len(cache) == 0:
         return 'No Results'
 
-    id, score, url, rating, tags = furry_cache.pop()
+    id, score, url, rating, tags = cache.pop()
 
     if rating == 'e':
         rating = "\x02\x034NSFW\x03\x02"

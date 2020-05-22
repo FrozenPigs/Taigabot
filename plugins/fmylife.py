@@ -1,12 +1,10 @@
 from util import hook, request
 from bs4 import BeautifulSoup
-import re
 
 cache = []
 
 
 def refresh_cache():
-    """ gets a page of random FMLs and puts them into a dictionary """
     print "[+] refreshing fmylife cache"
     html = request.get_html('https://www.fmylife.com/random/')
     soup = BeautifulSoup(html, 'lxml')
@@ -26,7 +24,7 @@ def fml(inp):
         refresh_cache()
 
     id, text = cache.pop()
-    return '(#%s) %s' % (id, text)
+    return '(#{}) {}'.format(id, text)
 
 
 refresh_cache()

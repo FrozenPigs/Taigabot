@@ -1,14 +1,14 @@
-from util import hook, request
+from util import hook
+from utilities import request
 from bs4 import BeautifulSoup
 
 api_url = "https://encyclopediadramatica.fyi/api.php?action=opensearch"
-ed_url = "https://encyclopediadramatica.fyi/index.php/"
+article_url = "https://encyclopediadramatica.fyi/index.php/"
 
 
 @hook.command
 def drama(inp):
-    "drama <phrase> -- Gets the first paragraph of" \
-    " the Encyclopedia Dramatica article on <phrase>."
+    "drama <article> -- search an Encyclopedia Dramatica article"
 
     search = request.get_json(api_url + "&search=" + request.urlencode(inp))
 
@@ -17,7 +17,7 @@ def drama(inp):
 
     title = search[1][0].replace(' ', '_').encode('utf8')
 
-    html = request.get_html(ed_url + request.urlencode(title))
+    html = request.get(article_url + request.urlencode(title))
     soup = BeautifulSoup(html, 'lxml')
     body = soup.find('div', attrs={'id': 'mw-content-text'})
 
