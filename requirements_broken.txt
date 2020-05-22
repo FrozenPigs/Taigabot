@@ -1,5 +1,4 @@
 GitPython==0.3.2.RC1
-oauth2
 pygeoip
 tweepy==3.5.0
 BeautifulSoup==3.2.1
