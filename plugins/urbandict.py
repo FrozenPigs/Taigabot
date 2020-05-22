@@ -1,4 +1,5 @@
-from util import hook, request
+from util import hook
+from utilities import request
 
 base_url = 'https://api.urbandictionary.com/v0/define?term='
 

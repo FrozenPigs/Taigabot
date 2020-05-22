@@ -1,10 +1,11 @@
-from util import hook, request
+from util import hook
+from utilities import request
 import re
 
 
 @hook.command(autohelp=False)
 def kernel(inp, reply=None):
-    data = request.get_text("https://www.kernel.org/finger_banner")
+    data = request.get("https://www.kernel.org/finger_banner")
     lines = data.split('\n')
 
     versions = []
