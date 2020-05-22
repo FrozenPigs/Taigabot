@@ -1,4 +1,5 @@
-from util import hook, request
+from util import hook
+from utilities import request
 from bs4 import BeautifulSoup
 
 cache = []
@@ -6,7 +7,7 @@ cache = []
 
 def refresh_cache():
     print "[+] refreshing fmylife cache"
-    html = request.get_html('https://www.fmylife.com/random/')
+    html = request.get('https://www.fmylife.com/random/')
     soup = BeautifulSoup(html, 'lxml')
     posts = soup.find_all('a', attrs={'class': 'article-link'})
 
