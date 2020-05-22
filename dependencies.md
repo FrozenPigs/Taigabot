@@ -116,6 +116,7 @@ if `bs4` and `requests` are installed, these plugins will work:
 - fmylife
 - religion
 - validate
+- wordoftheday
 
 if `requests` is installed, these plugins will work:
 - furry
@@ -126,9 +127,14 @@ if `requests` is installed, these plugins will work:
 
 to get these plugins working, you need to install these specific dependencies:
 - wolframalpha
+  - urllib?
   - urllib2
   - simplejson
-  - old urllib? (see util/http.py)
+- weather
+  - urllib
+  - requests
+  - pytz
+  - geopy
 
 ### plugins with no external dependencies
 - choose

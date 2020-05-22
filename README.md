@@ -30,7 +30,7 @@ With all of these, the bot will run and almost all plugins will work.
 
 #### Others
 
-Some other plugins require these python packages, notably `weather`:
+Some plugins require other python packages, more information can be found on [dependencies.md § details](dependencies.md#details)
 
     GitPython==0.3.2.RC1 Nominatim pygeoip pydns pywhois mygengo pytz timezones pycrypto
 
