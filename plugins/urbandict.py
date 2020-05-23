@@ -1,8 +1,12 @@
 # urban dictionary plugin by ine (2020)
 from util import hook
-from utilities import request
+from utilities import request, formatting
 
 base_url = 'https://api.urbandictionary.com/v0/define?term='
+
+
+def clean_text(text):
+    return formatting.compress_whitespace(text.replace('[', '').replace(']', ''))
 
 
 def search(input):
@@ -19,7 +23,7 @@ def search(input):
         votes_up = item['thumbs_up']
         votes_down = item['thumbs_down']
 
-        output = '\x02%s\x02 ' % word
+        output = '\x02' + word + '\x02 '
 
         try:
             votes = int(votes_up) - int(votes_down)
@@ -29,12 +33,12 @@ def search(input):
             votes = 0
 
         if votes != 0:
-            output = output + '(%s) ' % votes
+            output = output + '(' + str(votes) + ') '
 
-        output = output + definition.replace('[', '').replace(']', '')
+        output = output + clean_text(definition)
 
         if example:
-            output = output + ' \x02Example:\x02 ' + example.replace('\n', ' ')
+            output = output + ' \x02Example:\x02 ' + clean_text(example)
 
         data.append(output)
 
@@ -52,6 +56,7 @@ def urban(inp):
     inp = inp.strip()
     results = search(inp)
 
+    # always return just the first one
     for result in results:
         return "[ud] " + result
 

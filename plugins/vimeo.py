@@ -7,7 +7,7 @@ from utilities import request
 
 
 def info(id):
-    info = request.get_json('http://vimeo.com/api/v2/video/%s.json' % id)
+    info = request.get_json('http://vimeo.com/api/v2/video/' + id + '.json')
 
     if not info or len(info) == 0:
         return
@@ -19,11 +19,14 @@ def info(id):
     uploader = info[0]['user_name']
     upload_date = info[0]['upload_date']
 
-    output = '\x02' + title + '\x02 - length \x02' + length + '\x02 - '
-    output = output + likes + ' likes - ' + views + ' views - '
-    output = output + '\x02' + uploader + '\x02 on ' + upload_date
+    output = []
+    output.append('\x02' + title + '\x02')
+    output.append('length \x02' + length + '\x02')
+    output.append(likes + ' likes')
+    output.append(views + ' views')
+    output.append('\x02' + uploader + '\x02 on ' + upload_date)
 
-    return output
+    return ' - '.join(output)
 
 
 @hook.regex(r'https?://player\.vimeo\.com/video/([0-9]+)')

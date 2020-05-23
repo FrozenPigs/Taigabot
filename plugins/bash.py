@@ -25,7 +25,8 @@ def refresh_cache():
 
 def get_bash_quote(inp):
     try:
-        html = request.get('http://bash.org/?%s' % inp)
+        inp = request.urlencode(inp)
+        html = request.get('http://bash.org/?' + inp)
         soup = BeautifulSoup(html, 'lxml')
         quote_info = soup.find('p', {'class': 'quote'})
         quote = soup.find('p', {'class': 'qt'}).text.replace('\n', ' ').replace('\r', ' |')
