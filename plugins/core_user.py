@@ -17,14 +17,17 @@ def battlestation(inp, nick=None, db=None, notice=None):
             notice("Deleted your battlestation.")
             return
         else:
-            if '@' in inp: nick = inp.split('@')[1].strip()
-            else: nick = inp.strip()
+            if '@' in inp:
+                nick = inp.split('@')[1].strip()
+            else:
+                nick = inp.strip()
 
     result = database.get(db, 'users', 'battlestation', 'nick', nick)
     if result:
         return '{}: {}'.format(nick, result)
     else:
-        if '@' not in inp: notice(battlestation.__doc__)
+        if '@' not in inp:
+            notice(battlestation.__doc__)
         return 'No battlestation saved for {}.'.format(nick)
 
 
@@ -42,14 +45,17 @@ def desktop(inp, nick=None, db=None, notice=None):
             notice("Deleted your desktop.")
             return
         else:
-            if '@' in inp: nick = inp.split('@')[1].strip()
-            else: nick = inp.strip()
+            if '@' in inp:
+                nick = inp.split('@')[1].strip()
+            else:
+                nick = inp.strip()
 
     result = database.get(db, 'users', 'desktop', 'nick', nick)
     if result:
         return '{}: {}'.format(nick, result)
     else:
-        if '@' not in inp: notice(desktop.__doc__)
+        if '@' not in inp:
+            notice(desktop.__doc__)
         return 'No desktop saved for {}.'.format(nick)
 
 
@@ -62,12 +68,14 @@ def greeting(inp, nick=None, db=None, notice=None):
         return
     try:
         if not inp or '@' in inp:
-            if '@' in inp: nick = inp.split('@')[1].strip()
+            if '@' in inp:
+                nick = inp.split('@')[1].strip()
             result = database.get(db, 'users', 'greeting', 'nick', nick)
             if result:
                 return '{}: {}'.format(nick, result)
             else:
-                if '@' not in inp: notice(greeting.__doc__)
+                if '@' not in inp:
+                    notice(greeting.__doc__)
                 return 'No greeting saved for {}.'.format(nick)
         elif 'del' in inp:
             database.set(db, 'users', 'greeting', '', 'nick', nick)
@@ -77,7 +85,8 @@ def greeting(inp, nick=None, db=None, notice=None):
             database.set(db, 'users', 'greeting', '{} '.format(inp.encode('utf8')), 'nick', nick)
             notice("Saved your greeting.")
         return
-    except: return "Uwaaahh~~?"
+    except:
+        return "Uwaaahh~~?"
 
 
 # Waifu & Husbando
@@ -86,12 +95,14 @@ def waifu(inp, nick=None, db=None, notice=None):
     "waifu <waifu | @ person> -- Shows a users Waifu or Husbando."
 
     if not inp or '@' in inp:
-        if '@' in inp: nick = inp.split('@')[1].strip()
+        if '@' in inp:
+            nick = inp.split('@')[1].strip()
         result = database.get(db, 'users', 'waifu', 'nick', nick)
         if result:
             return '{}: {}'.format(nick, result)
         else:
-            if '@' not in inp: notice(waifu.__doc__)
+            if '@' not in inp:
+                notice(waifu.__doc__)
             return 'No waifu saved for {}.'.format(nick)
     elif 'del' in inp:
         database.set(db, 'users', 'waifu', '', 'nick', nick)
@@ -107,12 +118,14 @@ def husbando(inp, nick=None, db=None, notice=None):
     "husbando <husbando | @ person> -- Shows a users husbando or Husbando."
 
     if not inp or '@' in inp:
-        if '@' in inp: nick = inp.split('@')[1].strip()
+        if '@' in inp:
+            nick = inp.split('@')[1].strip()
         result = database.get(db, 'users', 'husbando', 'nick', nick)
         if result:
             return '{}: {}'.format(nick, result)
         else:
-            if '@' not in inp: notice(husbando.__doc__)
+            if '@' not in inp:
+                notice(husbando.__doc__)
             return 'No husbando saved for {}.'.format(nick)
     elif 'del' in inp:
         database.set(db, 'users', 'husbando', '', 'nick', nick)
@@ -128,12 +141,14 @@ def imouto(inp, nick=None, db=None, notice=None):
     "imouto <imouto | @ person> -- Shows a users imouto or Husbando."
 
     if not inp or '@' in inp:
-        if '@' in inp: nick = inp.split('@')[1].strip()
+        if '@' in inp:
+            nick = inp.split('@')[1].strip()
         result = database.get(db, 'users', 'imouto', 'nick', nick)
         if result:
             return '{}: {}'.format(nick, result)
         else:
-            if '@' not in inp: notice(imouto.__doc__)
+            if '@' not in inp:
+                notice(imouto.__doc__)
             return 'No imouto saved for {}.'.format(nick)
     elif 'del' in inp:
         database.set(db, 'users', 'imouto', '', 'nick', nick)
@@ -149,12 +164,14 @@ def daughteru(inp, nick=None, db=None, notice=None):
     "daughteru <daughteru | @ person> -- Shows a users daughteru."
 
     if not inp or '@' in inp:
-        if '@' in inp: nick = inp.split('@')[1].strip()
+        if '@' in inp:
+            nick = inp.split('@')[1].strip()
         result = database.get(db, 'users', 'daughteru', 'nick', nick)
         if result:
             return '{}: {}'.format(nick, result)
         else:
-            if '@' not in inp: notice(imouto.__doc__)
+            if '@' not in inp:
+                notice(imouto.__doc__)
             return 'No daughteru saved for {}.'.format(nick)
     elif 'del' in inp:
         database.set(db, 'users', 'daughteru', '', 'nick', nick)
@@ -170,12 +187,14 @@ def mom(inp, nick=None, db=None, notice=None):
     "mom <mom | @ person> -- Shows a users mom."
 
     if not inp or '@' in inp:
-        if '@' in inp: nick = inp.split('@')[1].strip()
+        if '@' in inp:
+            nick = inp.split('@')[1].strip()
         result = database.get(db, 'users', 'mom', 'nick', nick)
         if result:
             return '{}: {}'.format(nick, result)
         else:
-            if '@' not in inp: notice(mom.__doc__)
+            if '@' not in inp:
+                notice(mom.__doc__)
             return 'No mom saved for {}.'.format(nick)
     elif 'del' in inp:
         database.set(db, 'users', 'mom', '', 'nick', nick)
@@ -191,12 +210,14 @@ def dad(inp, nick=None, db=None, notice=None):
     "dad <dad | @ person> -- Shows a users dad."
 
     if not inp or '@' in inp:
-        if '@' in inp: nick = inp.split('@')[1].strip()
+        if '@' in inp:
+            nick = inp.split('@')[1].strip()
         result = database.get(db, 'users', 'dad', 'nick', nick)
         if result:
             return '{}: {}'.format(nick, result)
         else:
-            if '@' not in inp: notice(dad.__doc__)
+            if '@' not in inp:
+                notice(dad.__doc__)
             return 'No dad saved for {}.'.format(nick)
     elif 'del' in inp:
         database.set(db, 'users', 'dad', '', 'nick', nick)
@@ -213,12 +234,14 @@ def birthday(inp, nick=None, db=None, notice=None):
     "birthday <01/01/2001> | <@ person> -- Shows a users Birthday."
 
     if not inp or '@' in inp:
-        if '@' in inp: nick = inp.split('@')[1].strip()
+        if '@' in inp:
+            nick = inp.split('@')[1].strip()
         result = database.get(db, 'users', 'birthday', 'nick', nick)
         if result:
             return '{}: {}'.format(nick, result)
         else:
-            if '@' not in inp: notice(birthday.__doc__)
+            if '@' not in inp:
+                notice(birthday.__doc__)
             return 'No birthday saved for {}.'.format(nick)
     elif 'del' in inp:
         database.set(db, 'users', 'birthday', '', 'nick', nick)
@@ -238,7 +261,8 @@ def horoscope(inp, db=None, notice=None, nick=None):
     if '@' in inp:
         nick = inp.split('@')[1].strip()
         sign = database.get(db, 'users', 'horoscope', 'nick', nick)
-        if not sign: return "No horoscope sign stored for {}.".format(nick)
+        if not sign:
+            return "No horoscope sign stored for {}.".format(nick)
     else:
         sign = database.get(db, 'users', 'horoscope', 'nick', nick)
         if not inp:
@@ -246,8 +270,10 @@ def horoscope(inp, db=None, notice=None, nick=None):
                 notice(horoscope.__doc__)
                 return
         else:
-            if not sign: save = True
-            if " save" in inp: save = True
+            if not sign:
+                save = True
+            if " save" in inp:
+                save = True
             sign = inp.split()[0]
 
     url = "http://my.horoscope.com/astrology/free-daily-horoscope-%s.html" % sign
@@ -255,9 +281,11 @@ def horoscope(inp, db=None, notice=None, nick=None):
         result = http.get_soup(url)
         title = result.find_all('h1', {'class': 'h1b'})[1].text
         horoscopetxt = result.find('div', {'id': 'textline'}).text
-    except: return "Could not get the horoscope for {}.".format(sign.encode('utf8'))
+    except:
+        return "Could not get the horoscope for {}.".format(sign.encode('utf8'))
 
-    if sign and save: database.set(db, 'users', 'horoscope', sign, 'nick', nick)
+    if sign and save:
+        database.set(db, 'users', 'horoscope', sign, 'nick', nick)
 
     return u"\x02{}\x02 {}".format(title, horoscopetxt)
 
@@ -276,8 +304,10 @@ def homescreen(inp, nick=None, db=None, notice=None):
     elif not inp:
         homescreen = database.get(db, 'users', 'homescreen', 'nick', nick)
     else:
-        if '@' in inp: nick = inp.split('@')[1].strip()
-        else: nick = inp.strip()
+        if '@' in inp:
+            nick = inp.split('@')[1].strip()
+        else:
+            nick = inp.strip()
 
     homescreen = database.get(db, 'users', 'homescreen', 'nick', nick)
     if homescreen:
@@ -292,12 +322,14 @@ def snapchat(inp, nick=None, db=None, notice=None):
     "snapchat <snapchatname | @ person> -- Shows a users snapchat name."
 
     if not inp or '@' in inp:
-        if '@' in inp: nick = inp.split('@')[1].strip()
+        if '@' in inp:
+            nick = inp.split('@')[1].strip()
         result = database.get(db, 'users', 'snapchat', 'nick', nick)
         if result:
             return '{}: {}'.format(nick, result)
         else:
-            if '@' not in inp: notice(snapchat.__doc__)
+            if '@' not in inp:
+                notice(snapchat.__doc__)
             return 'No snapchat saved for {}.'.format(nick)
     elif 'del' in inp:
         database.set(db, 'users', 'snapchat', '', 'nick', nick)
@@ -314,12 +346,14 @@ def socialmedia(inp, nick=None, db=None, notice=None):
     "socialmedia <socialmedianames | @ person> -- Shows a users social medias names."
 
     if not inp or '@' in inp:
-        if '@' in inp: nick = inp.split('@')[1].strip()
+        if '@' in inp:
+            nick = inp.split('@')[1].strip()
         result = database.get(db, 'users', 'socialmedias', 'nick', nick)
         if result:
             return '{}: {}'.format(nick, result)
         else:
-            if '@' not in inp: notice(snapchat.__doc__)
+            if '@' not in inp:
+                notice(snapchat.__doc__)
             return 'No social medias saved for {}.'.format(nick)
     elif 'del' in inp:
         database.set(db, 'users', 'socialmedias', '', 'nick', nick)
@@ -335,12 +369,14 @@ def myanime(inp, nick=None, db=None, notice=None):
     "myanime <mal name | @ person> -- Shows a users myanimelist profile."
 
     if not inp or '@' in inp:
-        if '@' in inp: nick = inp.split('@')[1].strip()
+        if '@' in inp:
+            nick = inp.split('@')[1].strip()
         result = database.get(db, 'users', 'mal', 'nick', nick)
         if result:
             return '{}: http://myanimelist.net/animelist/{}'.format(nick, result)
         else:
-            if '@' not in inp: notice(myanime.__doc__)
+            if '@' not in inp:
+                notice(myanime.__doc__)
             return 'No mal saved for {}.'.format(nick)
     elif 'del' in inp:
         database.set(db, 'users', 'mal', '', 'nick', nick)
@@ -356,12 +392,14 @@ def mymanga(inp, nick=None, db=None, notice=None):
     "mymanga <mal name | @ person> -- Shows a users myanimelist profile."
 
     if not inp or '@' in inp:
-        if '@' in inp: nick = inp.split('@')[1].strip()
+        if '@' in inp:
+            nick = inp.split('@')[1].strip()
         result = database.get(db, 'users', 'mal', 'nick', nick)
         if result:
             return '{}: http://myanimelist.net/mangalist/{}'.format(nick, result)
         else:
-            if '@' not in inp: notice(mymanga.__doc__)
+            if '@' not in inp:
+                notice(mymanga.__doc__)
             return 'No mal saved for {}.'.format(nick)
     elif 'del' in inp:
         database.set(db, 'users', 'mal', '', 'nick', nick)
@@ -385,14 +423,17 @@ def selfie(inp, nick=None, db=None, notice=None):
             notice("Deleted your selfie.")
             return
         else:
-            if '@' in inp: nick = inp.split('@')[1].strip()
-            else: nick = inp.strip()
+            if '@' in inp:
+                nick = inp.split('@')[1].strip()
+            else:
+                nick = inp.strip()
 
     result = database.get(db, 'users', 'selfie', 'nick', nick)
     if result:
         return '{}: {}'.format(nick, result)
     else:
-        if '@' not in inp: notice(selfie.__doc__)
+        if '@' not in inp:
+            notice(selfie.__doc__)
         return 'No selfie saved for {}.'.format(nick)
 
 
