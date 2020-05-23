@@ -1,3 +1,5 @@
+import re
+
 # smush multiple spaces into one
 def compress_whitespace(text):
     whitespace = re.compile(r"\s+")
