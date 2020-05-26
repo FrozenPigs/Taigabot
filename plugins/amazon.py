@@ -1,9 +1,9 @@
-from util import hook, request
+# amazon plugin by ine (2020)
+from util import hook
+from utilities import request
 from bs4 import BeautifulSoup
 import re
 
-# If find_all() can’t find anything, it returns an empty list. If find() can’t find anything, it returns None
-# https://www.crummy.com/software/BeautifulSoup/bs4/doc/#find
 
 def parse(html):
     soup = BeautifulSoup(html, 'lxml')
@@ -27,7 +27,7 @@ def parse(html):
         id = result['data-asin']
         title = title.text.strip()
         price = price.text.strip()
-        url = 'https://www.amazon.com/dp/%s/' % id
+        url = 'https://www.amazon.com/dp/' + id + '/'
 
         # avoids spam if they change urls in the future
         if len(id) > 20:
@@ -63,11 +63,12 @@ def parse_product(html):
 
 @hook.command
 def amazon(inp):
-    """az [query] -- Searches amazon for query"""
+    """amazon [query] -- Searches amazon for query"""
     if not inp:
         return "usage: amazon <search>"
 
-    html = request.get_html('https://www.amazon.com/s?k=' + inp)
+    inp = request.urlencode(inp)
+    html = request.get('https://www.amazon.com/s?k=' + inp)
     results = parse(html)
 
     if len(results) == 0:
@@ -86,9 +87,9 @@ AMAZON_RE = (r"https?:\/\/(www\.)?amazon.com\/[^\s]*dp\/([A-Za-z0-9]+)[^\s]*", r
 @hook.regex(*AMAZON_RE)
 def amazon_url(match):
     id = match.group(2).strip()
-    html = request.get_html('https://www.amazon.com/dp/' + id + '/')
+    url = 'https://www.amazon.com/dp/' + id + '/'
+    html = request.get(url)
     title, price = parse_product(html)
-    url = 'https://www.amazon.com/dp/%s/' % id
 
     if len(title) > 80:
         title = title[:80] + '...'

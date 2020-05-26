@@ -31,10 +31,10 @@ def countdown(inp, me=None):
     count = 6
 
     try:
-        if inp[0][0].isdigit(): 
+        if inp[0][0].isdigit():
             count = int(inp.split()[0]) + 1
             countdown_nicks = inp.split()[1:]
-            if count > 6: 
+            if count > 6:
                 count = 6
         else:
             countdown_nicks = inp.split()[0:]
@@ -51,10 +51,9 @@ def countdown(inp, me=None):
                 set_countdown_to_false()
                 return "Countdown expired."
                 break
-    
+
         me('Ready! The countdown will begin in 2 seconds...')
         time.sleep(2)
-
 
     for cur in range(1, count):
         me('*** %s ***' % (count - cur))

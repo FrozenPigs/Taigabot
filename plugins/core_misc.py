@@ -2,14 +2,9 @@ import json
 import re
 import socket
 import time
-
 from util import database, hook, user
 
-# import datetime
-
-
 socket.setdefaulttimeout(10)
-
 nick_re = re.compile(":(.+?)!")
 
 
@@ -89,10 +84,11 @@ def onjoined(inp, input=None, conn=None, chan=None, raw=None, db=None):
         input.mask.lower().replace('~', ''), 'nick', input.nick.lower())
     mask = user.format_hostmask(input.mask)
     disabled_commands = database.get(db, 'channels', 'disabled', 'chan', chan)
-    if not disabled_commands: disabled_commands = ""
+    if not disabled_commands:
+        disabled_commands = ""
 
-    if not 'banlist' in disabled_commands:
-        #check if bans
+    if 'banlist' not in disabled_commands:
+        # check if bans
         banlist = database.get(db, 'channels', 'bans', 'chan', chan)
         if banlist and mask in banlist:
             conn.send(u"MODE {} {} *{}".format(input.chan, '+b', mask))
@@ -100,8 +96,8 @@ def onjoined(inp, input=None, conn=None, chan=None, raw=None, db=None):
                 u"KICK {} {} :{}".format(
                     input.chan, input.nick, 'I dont think so Tim.'))
 
-    if not 'autoop' in disabled_commands:
-        #check if ops
+    if 'autoop' not in disabled_commands:
+        # check if ops
         autoop = database.get(db, 'channels', 'autoop', 'chan', chan)
         if autoop:
             autoops = database.get(db, 'channels', 'admins', 'chan', chan)
@@ -110,11 +106,13 @@ def onjoined(inp, input=None, conn=None, chan=None, raw=None, db=None):
 
         if autoops and mask in autoops:
             conn.send(u"MODE {} {} {}".format(input.chan, '+o', input.nick))
+
     if input.nick == "kimi":
         conn.send(
             'PRIVMSG {} :\x02[QUALITY OF CHANNEL SIGNIFICANTLY DECREASED]\x02'
             .format(input.chan))
-    if not 'greeting' in disabled_commands:
+
+    if 'greeting' not in disabled_commands:
         # send greeting
         greeting = database.get(db, 'users', 'greeting', 'nick', input.nick)
         if greeting:
@@ -154,8 +152,10 @@ def onmode(
             requires_param = 'klvhoaqbeI'
             modes = list(str(paraml[1]))
             for mode in modes:
-                if mode is '+': fixed_modes.append(mode.replace('+', '-'))
-                elif mode is '-': fixed_modes.append(mode.replace('-', '+'))
+                if mode == '+':
+                    fixed_modes.append(mode.replace('+', '-'))
+                elif mode == '-':
+                    fixed_modes.append(mode.replace('-', '+'))
                 else:
                     if mode not in accepted_modes:
                         if mode in doesnt_require_param:
@@ -166,7 +166,8 @@ def onmode(
                                 params.append(paraml[param_num])
                             param_num += 1
                     else:
-                        if mode in requires_param: param_num += 1
+                        if mode in requires_param:
+                            param_num += 1
 
             if len(fixed_modes) > 1:
                 conn.send(

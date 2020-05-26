@@ -1,14 +1,14 @@
-from util import hook, request
+# fuck my life plugin by ine (2020)
+from util import hook
+from utilities import request
 from bs4 import BeautifulSoup
-import re
 
 cache = []
 
 
 def refresh_cache():
-    """ gets a page of random FMLs and puts them into a dictionary """
     print "[+] refreshing fmylife cache"
-    html = request.get_html('https://www.fmylife.com/random/')
+    html = request.get('https://www.fmylife.com/random/')
     soup = BeautifulSoup(html, 'lxml')
     posts = soup.find_all('a', attrs={'class': 'article-link'})
 
@@ -26,7 +26,7 @@ def fml(inp):
         refresh_cache()
 
     id, text = cache.pop()
-    return '(#%s) %s' % (id, text)
+    return '(#{}) {}'.format(id, text)
 
 
 refresh_cache()

@@ -1,8 +1,10 @@
-from urllib import quote
 import requests
 from json import loads as json_load
+from urllib import quote
+# TODO python 3: from urllib.parse import quote
 
-fake_ua = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3745.0 Safari/537.36'
+# this needs to be kept updated (a few times a year is fine)
+fake_ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138'
 
 
 def urlencode(inp):
@@ -24,20 +26,22 @@ def get_json(url, **kwargs):
 
 
 def get_html(url, **kwargs):
-    return get_text(url, **kwargs)
+    return get(url, **kwargs)
 
 
 def get_text(url, **kwargs):
+    return get(url, **kwargs)
+
+
+def get(url, **kwargs):
     # accept custom headers
     if 'headers' in kwargs:
         headers = kwargs.pop('headers')
-        # but set a default user-agent
+        # set a default user-agent if none was set
         if 'User-Agent' not in headers:
             headers['User-Agent'] = fake_ua
     else:
         headers = {'User-Agent': fake_ua}
 
-    for key, value in kwargs.iteritems():
-        print "%s = %s" % (key, value)
-    r = requests.get(url, headers=headers, **kwargs)
+    r = requests.get(url, headers=headers, timeout=10, **kwargs)
     return r.text

@@ -1,4 +1,5 @@
-from util import hook, request
+from util import hook
+from utilities import request
 import re
 
 kataLetters = range(0x30A0, 0x30FF)
@@ -145,7 +146,7 @@ def google_translate(to_translate, to_language="auto", from_language="auto"):
 
 @hook.command
 def translate(inp):
-    "translate [from language] [to language] <text> -- Will usually autotranslate from other languages to english."
+    "translate [from language] [to language] <text> -- Run text through google translate, translate to english by default"
 
     inp = inp.lower()
     if inp.startswith('from') and inp.split()[2] == 'to':
@@ -171,29 +172,9 @@ def translate(inp):
         to_translate = inp
 
     label = '%s to %s' % (from_language, to_language)
-    
+
     if from_language == 'auto' and to_language == 'auto':
         label = 'translate'
 
     result = google_translate(to_translate, to_language, from_language)
     return '[%s] %s' % (label, result)
-
-
-#@hook.regex(*(japanese_characters))
-#def autotranslate(inp, bot=None, chan=None):
-#    "Automatically translates any japanese text detected."
-
-#    try:
-#        if 'autotrans' in database.get(db, 'channels', 'disabled', 'chan',
-#                                       chan):
-#            return None
-#    except:
-#        pass
-
-#    if 'translate' in inp.group(0): return None
-#    if ']:' in inp.group(0).strip(): return None
-
-#    result = translate(inp.group(0))
-#    if result.split(':')[1].strip() in inp.group(0).strip(): return None
-
-#    return '[%s]: %s' % (inp.group(0), result.split(':')[1].strip())

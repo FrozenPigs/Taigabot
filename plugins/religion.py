@@ -1,10 +1,8 @@
-from util import hook, request
+# bible/koran plugin by ine (2020)
+from util import hook
+from utilities import request, iterable
+from utilities.formatting import compress_whitespace
 from bs4 import BeautifulSoup
-import re
-
-def compress_whitespace(text):
-    whitespace = re.compile(r"\s+")
-    return whitespace.sub(' ', text).strip()
 
 
 @hook.command('god')
@@ -42,12 +40,11 @@ def bible(inp, bot=None):
 
 @hook.command('allah')
 @hook.command
-def koran(inp):  # Koran look-up plugin by Ghetto Wizard
+def koran(inp):
     "koran <chapter.verse> -- gets <chapter.verse> from the Koran. it can also search any text."
 
-    url = 'https://quod.lib.umich.edu/cgi/k/koran/koran-idx?type=simple&q1='
-
-    html = request.get_html(url + request.urlencode(inp))
+    url = 'https://quod.lib.umich.edu/cgi/k/koran/koran-idx?type=simple&q1=' + request.urlencode(inp)
+    html = request.get(url)
     soup = BeautifulSoup(html, 'lxml')
     query = soup.find_all('li')
 
@@ -56,13 +53,8 @@ def koran(inp):  # Koran look-up plugin by Ghetto Wizard
 
     output = '[Koran] '
     lines = []
-    limit = 4  # how many phrases
 
-    for li in query:
-        limit = limit - 1
-        if limit == 0:
-            break
-
+    for li in iterable.limit(4, query):
         lines.append(compress_whitespace(li.text))
 
     output = output + ' '.join(lines)

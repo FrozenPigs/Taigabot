@@ -4,13 +4,13 @@ import http
 import urlnorm
 import json
 import urllib
-import yql
+#import yql
 
 short_url = "http://is.gd/create.php"
 paste_url = "http://hastebin.com"
-yql_env = "http://datatables.org/alltables.env"
+#yql_env = "http://datatables.org/alltables.env"
 
-YQL = yql.Public()
+#YQL = yql.Public()
 
 
 class ShortenError(Exception):
@@ -52,4 +52,5 @@ def haste(text, ext='txt'):
 
 def query(query, params={}):
     """ runs a YQL query and returns the results """
-    return YQL.execute(query, params, env=yql_env)
+    print "[!] deprecation warning: something is trying to use yql"
+    return None  # YQL.execute(query, params, env=yql_env)

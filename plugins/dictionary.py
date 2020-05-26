@@ -1,6 +1,6 @@
-# Plugin by GhettoWizard and Scaevolus
-import re
-from util import hook, request
+# dictionary and etymology plugin by ine (2020)
+from util import hook
+from utilities import request
 from bs4 import BeautifulSoup
 
 dict_url = 'http://ninjawords.com/'
@@ -20,7 +20,7 @@ def condense_spaces(text):
 def define(inp):
     "define <word> -- Fetches definition of <word>."
 
-    html = request.get_html(dict_url + request.urlencode(inp))
+    html = request.get(dict_url + request.urlencode(inp))
     soup = BeautifulSoup(html, 'lxml')
 
     definitions = soup.find_all('dd')
@@ -30,6 +30,7 @@ def define(inp):
 
     output = 'Definition of "' + inp + '":'
 
+    # used to number the many definitions
     i = 1
 
     for definition in definitions:
@@ -57,14 +58,14 @@ def define(inp):
 def etymology(inp):
     "etymology <word> -- Retrieves the etymology of <word>."
 
-    html = request.get_html(eth_url + request.urlencode(inp))
+    html = request.get(eth_url + request.urlencode(inp))
     soup = BeautifulSoup(html, 'lxml')
-    # the page uses weird class names like section.word__definatieon--81fc4ae
-    # try changing the whole selector to  [class~="word_"]  if it breaks
+    # the page uses weird class names like "section.word__definatieon--81fc4ae"
+    # if it breaks change the selector to [class~="word_"]
     results = soup.select('div[class^="word"] section[class^="word__def"] > p')
 
     if len(results) == 0:
-        return 'No etymology found for ' + inp + ' :('
+        return 'No etymology found for ' + inp
 
     output = 'Ethymology of "' + inp + '":'
     i = 1

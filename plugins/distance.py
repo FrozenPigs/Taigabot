@@ -1,4 +1,5 @@
-from util import hook, http, request
+from util import hook
+from utilities import request
 from bs4 import BeautifulSoup
 
 
@@ -6,7 +7,7 @@ def fetch(start, dest):
     start = request.urlencode(start)
     dest = request.urlencode(dest)
     url = "http://www.travelmath.com/flying-distance/from/%s/to/%s" % (start, dest)
-    html = request.get_html(url)
+    html = request.get(url)
     return html
 
 
@@ -27,7 +28,7 @@ def parse(html):
 @hook.command
 def distance(inp):
     "distance <start> to <end> -- Calculate the distance between 2 places."
-    if 'from ' in inp: inp = inp.replace('from ','')
+    if 'from ' in inp: inp = inp.replace('from ', '')
     start = inp.split(" to ")[0].strip()
     dest = inp.split(" to ")[1].strip()
 

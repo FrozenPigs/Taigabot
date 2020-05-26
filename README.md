@@ -22,7 +22,11 @@ The following system dependencies are needed (`apt install`):
 
 and these python dependencies are required (__already in requirements.txt__: `pip2 install -r requirements.txt`):
 
-    BeautifulSoup==3.2.1 httplib2==0.7.5 BeautifulSoup4==4.1.3 lxml==3.3.6 tweepy==3.5.0 simplejson==2.0.7 requests
+    httplib2==0.7.5 BeautifulSoup4==4.1.3 lxml==3.3.6 requests
+
+you can install the additional dependencies for more plugins:
+
+    pip2 install -r requirements_extra.txt
 
 It is strongly recommended to install dependencies in a virtual environment.
 
@@ -30,7 +34,7 @@ With all of these, the bot will run and almost all plugins will work.
 
 #### Others
 
-Some other plugins require these python packages, notably `weather`:
+Some plugins require other python packages, more information can be found on [dependencies.md § details](dependencies.md#details)
 
     GitPython==0.3.2.RC1 Nominatim pygeoip pydns pywhois mygengo pytz timezones pycrypto
 

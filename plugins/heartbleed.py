@@ -2,7 +2,7 @@
 
 # Based on the original code by Jared Stafford.
 
-# NOTE: this code has been modified to test for OpenSSL versions vulnerable to 
+# NOTE: this code has been modified to test for OpenSSL versions vulnerable to
 # Heartbleed without exploiting the server, therefore the heartbeat request
 # does _not_ cause the server to leak any data from memory or expose any data
 # in an unauthorized manner.
@@ -11,17 +11,17 @@
 
 # Usage example: python ssltest.py example.com
 from util import hook
-import sys
+#import sys
 import struct
 import socket
 import time
 import select
-import re
+#import re
 #import netaddr
-import json
-import os
-import datetime
-import signal
+#import json
+#import os
+#import datetime
+#import signal
 from optparse import OptionParser
 from collections import defaultdict
 
@@ -205,15 +205,12 @@ def print_summary():
     return
 
 
-
-@hook.command(autohelp=False) #, adminonly=True
+@hook.command(autohelp=False)
 def heartbleed(inp, reply=None):
     "bash <id> -- Gets a random quote from Bash.org, or returns a specific id."
     global host_status
     host_status = {}
-        
+
     scan_host(inp)
 
     return print_summary()
-
-

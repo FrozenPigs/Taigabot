@@ -1,4 +1,6 @@
-from util import hook, request
+# bash.org plugin by ine (2020)
+from util import hook
+from utilities import request
 from bs4 import BeautifulSoup
 
 cache = []
@@ -7,14 +9,13 @@ cache = []
 def refresh_cache():
     "gets a page of random bash.org quotes and puts them into a dictionary "
     print "[+] refreshing bash cache"
-    html = request.get_html('http://bash.org/?random')
+    html = request.get('http://bash.org/?random')
     soup = BeautifulSoup(html, 'lxml')
     quote_infos = soup.find_all('p', {'class': 'quote'})
     quotes = soup.find_all('p', {'class': 'qt'})
 
     num = 0
     while num < len(quotes):
-        quote_info = quote_infos[num].text
         quote = quotes[num].text.replace('\n', ' ').replace('\r', ' |')
         id = quote_infos[num].contents[0].text
         votes = quote_infos[num].find('font').text
@@ -24,7 +25,8 @@ def refresh_cache():
 
 def get_bash_quote(inp):
     try:
-        html = request.get_html('http://bash.org/?%s' % inp)
+        inp = request.urlencode(inp)
+        html = request.get('http://bash.org/?' + inp)
         soup = BeautifulSoup(html, 'lxml')
         quote_info = soup.find('p', {'class': 'quote'})
         quote = soup.find('p', {'class': 'qt'}).text.replace('\n', ' ').replace('\r', ' |')

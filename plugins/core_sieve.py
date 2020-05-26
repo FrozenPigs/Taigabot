@@ -1,26 +1,10 @@
 import inspect
 import json
 import os
-import random
 import re
 import time
 
 from util import database, hook, user
-
-#count = 0
-
-# db.execute("CREATE TABLE if not exists channelsettings(channel, admins, permissions, aop, bans, disabled, ignored, badwords, flood, cmdflood, trim, primary key(channel))")
-# try: db.execute("select channel from channelsettings where channel=lower(?)", [chan]).fetchone()[0]
-# except: db.execute("INSERT INTO channelsettings VALUES(?,' ',' ',' ',' ',' ',' ',' ',' ',' ',' ')", [chan])
-# db.commit()
-
-# def compare_hostmasks(hostmask,matchmasks):
-#     mask = '{}'.format(hostmask).replace('.','\.').replace('*','\S+').replace('~','')
-#     result = re.match(mask, hostmask)
-#     if bool(result): print result.group(0)
-
-# print '{} - {}'.format(mask,matchmasks)
-# print True
 
 ledzep_counter = 0
 sudos_counter = 0
@@ -62,7 +46,8 @@ def ignoresieve(bot, input, func, type, args):
 
     # if user.is_admin(mask,chan,db,bot): return input
 
-    if ignorelist and user.compare_hostmasks(mask, ignorelist): return None
+    if ignorelist and user.compare_hostmasks(mask, ignorelist):
+        return None
     if globalignorelist and user.compare_hostmasks(mask, globalignorelist):
         return None
 
@@ -83,8 +68,9 @@ def sieve_suite(bot, input, func, kind, args):
     global sudos_counter
     # ignore any input from the bot
     if input.nick == input.conn.nick:
-        return None    # print "Ignoring {}".format(input.conn.nick)
-    if input.command == 'QUIT': return None    #fix for db issue???
+        return None  # print "Ignoring {}".format(input.conn.nick)
+    if input.command == 'QUIT':
+        return None  # fix for db issue???
 
     # ignore bots if ignorebots = true
     if input.command == 'PRIVMSG' and input.nick.lower().endswith(
@@ -190,13 +176,17 @@ def sieve_suite(bot, input, func, kind, args):
 
     globaladmin = user.is_globaladmin(input.mask, chan, bot)
     if args.get('adminonly', False):
-        if not globaladmin: return None
-    if globaladmin: return input
+        if not globaladmin:
+            return None
+    if globaladmin:
+        return input
 
     channeladmin = user.is_channeladmin(input.mask, chan, db)
     if args.get('channeladminonly', False):
-        if not channeladmin and not globaladmin: return None
-    if channeladmin: return input
+        if not channeladmin and not globaladmin:
+            return None
+    if channeladmin:
+        return input
 
     #badwords
     if not globaladmin and not channeladmin:
