@@ -1,111 +1,92 @@
-import md5
+# import md5
 import re
-import urllib
+# import urllib
 import urllib2
 from urllib import FancyURLopener
 from urlparse import urlparse
 
 import requests
-import ipaddress
+# import ipaddress
 from lxml import html
 
-import gelbooru
+# import gelbooru
 from bs4 import BeautifulSoup
-from util import database, formatting, hook, http, urlnorm
+from util import database, formatting, hook, http
 
 
 class urlopener(FancyURLopener):
     version = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
 
 
+MAX_LENGTH = 200
+trimlength = 320
+
+IGNORED_HOSTS = [
+    '.onion',
+    'localhost',
+
+    # these are handled by their respective plugin
+    # more info on some other file
+    'youtube.com',  # handled by youtube plugin
+    'youtu.be',
+    'music.youtube.com',
+    'vimeo.com',
+    'player.vimeo.com',
+    'newegg.com',
+    'amazon.com',
+    #'reddit.com',
+    'hulu.com',
+    'imdb.com',
+    'soundcloud.com',
+    'spotify.com',
+    'twitch.tv',
+    'twitter.com'
+]
+
+
 opener = urlopener()
 
-link_re = (r'((https?://([-\w\.]+)+(:\d+)?(/([\S/_\.]*(\?\S+)?)?)?))', re.I)
-
-
-@hook.regex(*link_re)
-def process_url(match, bot=None, input=None, chan=None, db=None, reply=None):
-    global trimlength
-    url = match.group(1).replace('https:', 'http:')
-
+# 'http' + s optional + ':// ' + anything + '.' + anything
+LINK_RE = (r'(https?://\S+\.\S*)', re.I)
+@hook.regex(*LINK_RE)
+def process_url(match, bot=None, chan=None, db=None):
+    url = match.group(1)
     parsed = urlparse(url)
-    print parsed
+    # parsed contains scheme, netloc, path, params, query, fragment
 
-    if ':' in parsed.netloc:
-        return
-    else:
-        try:
-            if ipaddress.ip_address(parsed.netloc).is_private:
-                return
-        except ValueError:
-            if ':' not in parsed.netloc:
-                pass
-            else:
-                return
+    # skip unwanted hosts
+    # most of them are handled somewhere else anyway
+    for ignored in IGNORED_HOSTS:
+        if ignored in parsed.netloc:
+            return
 
-    if 'localhost' in url.lower():
-        return
-
-    trimlength = database.get(db, 'channels', 'trimlength', 'chan', chan)
-    if not trimlength: trimlength = 9999
-    try:
-        trimlength = int(trimlength)
-    except:
-        trimlength = trimlength
-
-    if '.html' in url.lower(): return
-
-    if '.onion' in url.lower():
-        return
-    elif 'youtube.com' in url.lower():
-        return    #handled by youtube plugin: exiting
-    elif 'youtu.be' in url.lower():
-        return    #handled by youtube plugin: exiting
-    elif 'yooouuutuuube' in url.lower():
-        return    #handled by youtube plugin: exiting
-    elif 'vimeo.com' in url.lower():
-        return    #handled by vimeo plugin: exiting
-    elif 'newegg.com' in url.lower():
-        return    #handled by newegg plugin: exiting
-    elif 'amazon.com' in url.lower():
-        return    #handled by Amazon plugin: exiting
-#    elif 'reddit.com/r' in url.lower():
-#        return  #handled by Reddit plugin: exiting
-    elif 'hulu.com' in url.lower():
-        return    #handled by hulu plugin: exiting
-    elif 'imdb.com' in url.lower():
-        return    #handled by imbd plugin: exiting
-    elif 'soundcloud.com' in url.lower():
-        return    #handled by soundcloud plugin: exiting
-    elif 'spotify.com' in url.lower():
-        return    #handled by Spotify plugin: exiting
-    elif 'twitch.tv' in url.lower():
-        return    #handled by Twitch plugin: exiting
-    elif 'twitter.com' in url.lower():
-        return    #handled by Twitter plugin: exiting
-    elif 'simg.gelbooru.com' in url.lower():
-        return unmatched_url(url)    #handled by Gelbooru plugin: exiting
+    if 'simg.gelbooru.com' in url.lower():
+        return unmatched_url(url, parsed, bot, chan, db)  # handled by Gelbooru plugin: exiting
     elif 'gelbooru.com' in url.lower():
-        return    #handled by Gelbooru plugin: exiting
+        return  # handled by Gelbooru plugin: exiting
     elif 'craigslist.org' in url.lower():
-        return craigslist_url(url)    #Craigslist
+        return craigslist_url(url)  # Craigslist
     elif 'ebay.com' in url.lower():
-        return ebay_url(url, bot)    #Ebay
+        return ebay_url(url, bot)  # Ebay
     elif 'wikipedia.org' in url.lower():
-        return wikipedia_url(url)    #Wikipedia
+        return wikipedia_url(url)  # Wikipedia
     elif 'hentai.org' in url.lower():
-        return hentai_url(url, bot)    #Hentai
-    elif 'boards.4chan.org' in url.lower():    #4chan
-        if '4chan.org/b/' in url.lower(): reply('\x033>/b/\x03')
+        return hentai_url(url, bot)  # Hentai
+    elif 'boards.4chan.org' in url.lower():  # 4chan
+        if '4chan.org/b/' in url.lower():
+            return '\x033>/b/\x03'
         if '#p' in url.lower():
-            return fourchanquote_url(url)    #4chan Quoted Post
+            return fourchanquote_url(url)  # 4chan Quoted Post
         if '/thread/' in url.lower():
-            return fourchanthread_url(url)    #4chan Post
+            return fourchanthread_url(url)  # 4chan Post
         if '/res/' in url.lower():
-            return fourchanthread_url(url)    #4chan Post
-        if '/src/' in url.lower(): return unmatched_url(url)    #4chan Image
-        else: return fourchanboard_url(url)    #4chan Board
-    else: return unmatched_url(url, chan, db)    #process other url
+            return fourchanthread_url(url)  # 4chan Post
+        if '/src/' in url.lower():
+            return unmatched_url(url, parsed, bot, chan, db)  # 4chan Image
+        else:
+            return fourchanboard_url(url)  # 4chan Board
+    else:
+        return unmatched_url(url, parsed, bot, chan, db)  # process other url
 
 
 #@hook.regex(*fourchan_re)
@@ -160,7 +141,7 @@ def craigslist_url(match):
 
 # ebay_item_re = r'http:.+ebay.com/.+/(\d+).+'
 def ebay_url(match, bot):
-    apikey = bot.config.get("api_keys", {}).get("ebay")
+    #apikey = bot.config.get("api_keys", {}).get("ebay")
     # if apikey:
     #     # ebay_item_re = (r'http:.+ebay.com/.+/(\d+).+', re.I)
     #     itemid = re.match('http:.+ebay.com/.+/(\d+).+',match, re.I)
@@ -267,63 +248,97 @@ cookies = dict()
 headers = {'User-Agent': user_agent, 'Cookie': ''}
 
 
-def unmatched_url(match, chan, db):
-    disabled_commands = database.get(db, 'channels', 'disabled', 'chan', chan)
+def parse_html(stream):
+    data = ''
+    for chunk in stream.iter_content(chunk_size=1024):
+        data = data + chunk
 
+        if len(data) > (1024 * 8):  # use only first 8 KiB
+            break
+
+    parser = html.fromstring(data)
+
+    # try to use the <title> tag first
+    title = parser.xpath('//title/text()')
+    if not title:
+        # fall back to <h1> elements
+        title = parser.xpath('//h1/text()')
+
+    if title:
+        if type(title) is list and len(title) > 0:
+            return title[0].strip()
+
+        elif type(title) is str:
+            return title.strip()
+
+    # page definitely has no title
+    return 'Untitled'
+
+
+def unmatched_url(url, parsed, bot, chan, db):
+    disabled_commands = database.get(db, 'channels', 'disabled', 'chan', chan) or []
+
+    # don't bother if the channel has url titles disabled
+    if 'urltitles' in disabled_commands:
+        return
+
+    # fetch, and hide all errors from the output
     try:
-        r = requests.get(
-            match, headers=headers, allow_redirects=True, stream=True)
+        req = requests.get(url, headers=headers, allow_redirects=True, stream=True, timeout=8)
     except Exception as e:
+        print '[!] WARNING couldnt fetch url'
         print e
-        return formatting.output('URL', ['Error: {}'.format(e)])
+        return
 
-    domain = urlparse(match).netloc
+    # parsing
+    domain = parsed.netloc
+    content_type = req.headers.get('Content-Type', '')
+    output = ['[URL]']
 
-    if r.status_code != 404:
-        content_type = r.headers['Content-Type']
+    if 'html' in content_type:
         try:
-            encoding = r.headers['content-encoding']
-        except:
-            encoding = ''
+            title = parse_html(req)
+        except Exception as e:
+            print '[!] WARNING the url caused a parser error'
+            title = 'Untitled'
 
-        if content_type.find(
-                "html") != -1:    # and content_type is not 'gzip':
-            data = ''
-            for chunk in r.iter_content(chunk_size=1024):
-                data += chunk
-                if len(data) > 48336: break
+        output.append(title)
 
-            body = html.fromstring(data)
-            try:
-                title = body.xpath('//title/text()')[0]
-            except:
-                return formatting.output('URL', [
-                    'No Title ({})'.format(domain)
-                ])
+    else:
+        if 'filesize' in disabled_commands:
+            return
 
-            try:
-                title_formatted = text.fix_bad_unicode(
-                    body.xpath('//title/text()')[0])
-            except:
-                title_formatted = body.xpath('//title/text()')[0]
-            return formatting.output('URL', [
-                '{} ({})'.format(title_formatted.encode('utf-8').strip(), domain)
-            ]).strip()
+        if 'image' in content_type:
+            output.append(content_type.replace('image/', '') + ' image,')
         else:
-            if disabled_commands:
-                if 'filesize' in disabled_commands: return
-            try:
-                if r.headers['Content-Length']:
-                    length = int(r.headers['Content-Length'])
-                    if length < 0: length = 'Unknown size'
-                    else: length = formatting.filesize(length)
-                else:
-                    length = "Unknown size"
-            except:
-                length = "Unknown size"
-            if "503 B" in length: length = ""
-            if length is None: length = ""
-            return formatting.output('URL', [
-                '{} Size: {} ({})'.format(content_type, length, domain)
-            ])
-    return
+            output.append(content_type + ' file,')
+
+        size = req.headers.get('Content-Length', 0)
+        try:
+            size = int(size)
+        except:
+            size = 0
+
+        # some pages send exactly 503 or 513 bytes of empty padding as an
+        # internet explorer 5 and 6 workaround, but since that browser is
+        # super dead this should probably be removed.
+        # more at https://stackoverflow.com/a/11544049/4301778
+        if size == 0 or size == 503 or size == 513:
+            output.append('unknown size')
+        else:
+            output.append('size: ' + formatting.filesize(size))
+
+    # output formatting
+    output = ' '.join(output)
+
+    if len(output) > MAX_LENGTH:
+        output = output[:MAX_LENGTH] + '...'
+
+    # add domain to the end
+    output = output + ' (' + domain + ')'
+
+    # show error codes if they appear
+    if req.status_code >= 400 and req.status_code < 600:
+        output = output + ' (error {})'.format(req.status_code)
+
+    return output
