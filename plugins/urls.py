@@ -1,21 +1,12 @@
-# import md5
 import re
-# import urllib
 import urllib2
-from urllib import FancyURLopener
 from urlparse import urlparse
 
 import requests
-# import ipaddress
 from lxml import html
 
-# import gelbooru
 from bs4 import BeautifulSoup
 from util import database, formatting, hook, http
-
-
-class urlopener(FancyURLopener):
-    version = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
 
 
 MAX_LENGTH = 200
@@ -34,7 +25,7 @@ IGNORED_HOSTS = [
     'player.vimeo.com',
     'newegg.com',
     'amazon.com',
-    #'reddit.com',
+    # 'reddit.com',
     'hulu.com',
     'imdb.com',
     'soundcloud.com',
@@ -43,8 +34,6 @@ IGNORED_HOSTS = [
     'twitter.com'
 ]
 
-
-opener = urlopener()
 
 # 'http' + s optional + ':// ' + anything + '.' + anything
 LINK_RE = (r'(https?://\S+\.\S*)', re.I)
@@ -89,15 +78,15 @@ def process_url(match, bot=None, chan=None, db=None):
         return unmatched_url(url, parsed, bot, chan, db)  # process other url
 
 
-#@hook.regex(*fourchan_re)
+# @hook.regex(*fourchan_re)
 def fourchanboard_url(match):
     soup = http.get_soup(match)
     title = soup.title.renderContents().strip()
     return http.process_text("\x02{}\x02".format(title[:trimlength]))
 
 
-#fourchan_re = (r'.*((boards\.)?4chan\.org/[a-z]/res/[^ ]+)', re.I)
-#@hook.regex(*fourchan_re)
+# fourchan_re = (r'.*((boards\.)?4chan\.org/[a-z]/res/[^ ]+)', re.I)
+# @hook.regex(*fourchan_re)
 def fourchanthread_url(match):
     soup = http.get_soup(match)
     title = soup.title.renderContents().strip()
@@ -110,9 +99,9 @@ def fourchanthread_url(match):
         title, author, comment[:trimlength]))
 
 
-#fourchan_quote_re = (r'>>(\D\/\d+)', re.I)
-#fourchanquote_re = (r'.*((boards\.)?4chan\.org/[a-z]/res/(\d+)#p(\d+))', re.I)
-#@hook.regex(*fourchanquote_re)
+# fourchan_quote_re = (r'>>(\D\/\d+)', re.I)
+# fourchanquote_re = (r'.*((boards\.)?4chan\.org/[a-z]/res/(\d+)#p(\d+))', re.I)
+# @hook.regex(*fourchanquote_re)
 def fourchanquote_url(match):
     postid = match.split('#')[1]
     soup = http.get_soup(match)
@@ -141,22 +130,17 @@ def craigslist_url(match):
 
 # ebay_item_re = r'http:.+ebay.com/.+/(\d+).+'
 def ebay_url(match, bot):
-    #apikey = bot.config.get("api_keys", {}).get("ebay")
-    # if apikey:
-    #     # ebay_item_re = (r'http:.+ebay.com/.+/(\d+).+', re.I)
-    #     itemid = re.match('http:.+ebay.com/.+/(\d+).+',match, re.I)
-    #     url = 'http://open.api.ebay.com/shopping?callname=GetSingleItem&responseencoding=JSON&appid={}&siteid=0&version=515&ItemID={}&IncludeSelector=Description,ItemSpecifics'.format(apikey,itemid.group(1))
-    #     print url
-
-    # else:
-    print "No eBay api key set."
     item = http.get_html(match)
     title = item.xpath("//h1[@id='itemTitle']/text()")[0].strip()
     price = item.xpath("//span[@id='prcIsum_bidPrice']/text()")
-    if not price: price = item.xpath("//span[@id='prcIsum']/text()")
-    if not price: price = item.xpath("//span[@id='mm-saleDscPrc']/text()")
-    if price: price = price[0].strip()
-    else: price = '?'
+    if not price:
+        price = item.xpath("//span[@id='prcIsum']/text()")
+    if not price:
+        price = item.xpath("//span[@id='mm-saleDscPrc']/text()")
+    if price:
+        price = price[0].strip()
+    else:
+        price = '?'
 
     try:
         bids = item.xpath("//span[@id='qty-test']/text()")[0].strip()
@@ -164,19 +148,16 @@ def ebay_url(match, bot):
         bids = "Buy It Now"
 
     feedback = item.xpath("//span[@class='w2b-head']/text()")
-    if not feedback: feedback = item.xpath("//div[@id='si-fb']/text()")
-    if feedback: feedback = feedback[0].strip()
-    else: feedback = '?'
+    if not feedback:
+        feedback = item.xpath("//div[@id='si-fb']/text()")
+    if feedback:
+        feedback = feedback[0].strip()
+    else:
+        feedback = '?'
 
     return http.process_text(
         "\x02{}\x02 - \x02\x033{}\x03\x02 - Bids: {} - Feedback: {}".format(
             title, price, bids, feedback))
-
-    # url = 'http://open.api.ebay.com/shopping?callname=GetSingleItem&responseencoding=JSON&appid=YourAppIDHere&siteid=0&version=515&ItemID={}&IncludeSelector=Description,ItemSpecifics'.format(itemid)
-
-    #url = 'http://open.api.ebay.com/shopping?callname=GetSingleItem&responseencoding=JSON&appid=YourAppIDHere&siteid=0&version=515&ItemID={}'
-    #timeleft = item.xpath("//span[@id='bb_tlft']/span/text()")[0].strip()
-    #shipping = item.xpath("//span[@id='fshippingCost']/text()")[0].strip()
 
 
 def wikipedia_url(match):
@@ -198,7 +179,7 @@ def hentai_url(match, bot):
         username = userpass.split(':')[0]
         password = userpass.split(':')[1]
         if not username or not password:
-            return    #"error: no username/password set"
+            return  # "error: no username/password set"
 
     url = match
     loginurl = 'http://forums.e-hentai.org/index.php?act=Login&CODE=01'
@@ -206,8 +187,8 @@ def hentai_url(match, bot):
         username, password)
 
     req = urllib2.Request(loginurl)
-    resp = urllib2.urlopen(req, logindata)    #POST
-    coo = resp.info().getheader('Set-Cookie')    #  cookie
+    resp = urllib2.urlopen(req, logindata)  # POST
+    coo = resp.info().getheader('Set-Cookie')  # cookie
     cooid = re.findall('ipb_member_id=(.*?);', coo)[0]
     coopw = re.findall('ipb_pass_hash=(.*?);', coo)[0]
 
@@ -215,7 +196,7 @@ def hentai_url(match, bot):
         'Cookie':
         'ipb_member_id=' + cooid + ';ipb_pass_hash=' + coopw,
         'User-Agent':
-        "User-Agent':'Mozilla/5.2 (compatible; MSIE 8.0; Windows NT 6.2;)"
+        "User-Agent':'Mozilla/5.2 (compatible; MSIE 8.0; Windows NT 6.2;)"  # wow this code is ass
     }
 
     request = urllib2.Request(url, None, headers)
@@ -240,12 +221,8 @@ def hentai_url(match, bot):
         return u'{}'.format(soup.title.string)
 
 
-# amiami, hobby search and nippon yasan
-
 user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
-# cookies = dict(cookies_are='working')
-cookies = dict()
-headers = {'User-Agent': user_agent, 'Cookie': ''}
+headers = {'User-Agent': user_agent}
 
 
 def parse_html(stream):

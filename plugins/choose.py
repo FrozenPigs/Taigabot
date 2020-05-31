@@ -7,11 +7,6 @@ from util import hook
 def choose(inp):
     "choose <choice1>, [choice2], [choice3], ... --  Randomly picks one of the given choices."
 
-    try:  # ?????
-        inp = inp.group(1)
-    except:
-        inp = inp
-
     replacewords = {'should', 'could', '?', ' i ', ' you '}
 
     for word in replacewords:

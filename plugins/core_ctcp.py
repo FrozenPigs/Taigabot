@@ -6,7 +6,10 @@ from util import hook, database, user
 # used in pingip
 import subprocess
 import os
-ping_regex = re.compile(r"(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)")
+ping_regex = re.compile(r"(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)")  # TODO ipv6
+
+global ctcpcache
+ctcpcache = []
 
 
 # CTCP responses
@@ -18,21 +21,18 @@ def ctcp_version(inp, notice=None):
 @hook.regex(r'^\x01PING')
 def ctcp_ping(inp, notice=None):
     msg = ' '.join(inp.string.split()[1:])
-    notice('\x01PING {}'.format(msg))
+    notice(u'\x01PING {}'.format(msg))
 
 
 @hook.regex(r'^\x01TIME\x01$')
 def ctcp_time(inp, notice=None):
-    notice('\x01TIME The time is: %s\x01' % time.strftime("%r", time.localtime()))
+    now = time.strftime("%r", time.localtime())
+    notice('\x01TIME The time is: {}\x01'.format(now))
 
 
 @hook.regex(r'^\x01FINGER\x01$')
 def ctcp_finger(inp, notice=None):
     notice('\x01FINGER pls no\x01')
-
-
-global ctcpcache
-ctcpcache = []
 
 
 @hook.command(adminonly=True)
@@ -42,7 +42,7 @@ def ctcp(inp, conn=None, chan=None, notice=None):
     destination = inp[0]
     command = inp[1]
     command = command.upper()
-    conn.send('PRIVMSG {} :\x01{}\x01'.format(destination, command))
+    conn.send(u'PRIVMSG {} :\x01{}\x01'.format(destination, command))
 
 
 @hook.command('ver', autohelp=False)
@@ -72,8 +72,6 @@ def ping(inp, nick=None, chan=None, conn=None, notice=None, reply=None):
         user = inp[0]
         if not user:
             user = nick
-        #curtime = int((datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).total_seconds())
-        # print len(ctcpcache)
         curtime = time.time()
         ctcpcache.append(("PING", user, chan))
         # ctcpcache_timer
@@ -103,15 +101,21 @@ def pingip(inp, reply=None):
 
     host = re.sub(r'([^\s\w\.])+', '', host)
 
-    reply("Attempting to ping %s %s times..." % (host, count))
+    reply("Attempting to ping {} {} times...".format(host, count))
 
-    pingcmd = subprocess.check_output(["ping", "-c", count, host])
+    try:
+        pingcmd = subprocess.check_output(["ping", "-c", count, host])
+    except Exception as e:
+        print '[!] error while executing a system command'
+        print e
+        return 'error: ping command exited unexpectedly'
+
     if "request timed out" in pingcmd or "unknown host" in pingcmd:
         return "error: could not ping host"
     else:
         m = re.search(ping_regex, pingcmd)
-        return "min: %sms, max: %sms, average: %sms, range: %sms, count: %s" \
-        % (m.group(1), m.group(3), m.group(2), m.group(4), count)
+        return "min: {}ms, max: {}ms, average: {}ms, range: {}ms, count: {}".format(
+            m.group(1), m.group(3), m.group(2), m.group(4), count)
 
 
 @hook.singlethread
@@ -136,7 +140,7 @@ def ctcp_event(paraml, input=None, bot=None, conn=None):
                         if senttime:
                             diff = (curtime - float(senttime.group(0)))
                             if diff <= 1:
-                                conn.send(u"PRIVMSG {} :[{}] {}: {} ms".format(channel, kind, nick, diff*1000))
+                                conn.send(u"PRIVMSG {} :[{}] {}: {} ms".format(channel, kind, nick, diff * 1000))
                             else:
                                 conn.send(u"PRIVMSG {} :[{}] {}: {} seconds".format(channel, kind, nick, diff))
                             return
@@ -147,9 +151,8 @@ def ctcp_event(paraml, input=None, bot=None, conn=None):
 
 @hook.command
 def host(inp, nick=None, conn=None, db=None):
-    # return user.get_hostmask(inp, db)
     if not inp:
-        inp = nick
+        return 'Your host is ' + user.get_hostmask(nick, db)
     db_host = database.get(db, 'users', 'mask', 'nick', inp)
     if inp is db_host:
         db_host = database.get(db, 'seen', 'host', 'name', inp)
@@ -166,6 +169,6 @@ def fhost(inp, nick=None, conn=None, db=None):
 @hook.command
 def trolltest(inp, msg=None, nick=None):
     if nick == "Havixil":
-        msg('[=]quitchannels')
+        return '[=]quitchannels'
     else:
-        msg('why would i want to troll {}?'.format(nick))
+        return u'why would i want to troll {}?'.format(nick)
