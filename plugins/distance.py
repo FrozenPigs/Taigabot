@@ -17,10 +17,10 @@ def parse(html):
     distance = soup.find('h3', {'class': 'space'})
 
     if query:
-        query = query.get_text()
+        query = query.get_text().strip()
 
     if distance:
-        distance = distance.get_text()
+        distance = distance.get_text().strip()
 
     return query, distance
 
@@ -39,5 +39,5 @@ def distance(inp):
     if not distance:
         return "Could not calculate the distance from {} to {}.".format(start, dest)
 
-    result = "Distance: {} {}".format(query, distance)
+    result = u"Distance: {} {}".format(query, distance)
     return result

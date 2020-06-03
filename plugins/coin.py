@@ -22,6 +22,6 @@ def coin(inp, me=None):
     elif amount == 0:
         me("makes a coin flipping motion with its hands.")
     else:
-        heads = int(random.normalvariate(.5 * amount, (.75 * amount) ** .5))
+        heads = int(random.normalvariate(0.5 * amount, (0.75 * amount) ** 0.5))
         tails = amount - heads
         me("flips {} coins and gets {} heads and {} tails.".format(amount, heads, tails))

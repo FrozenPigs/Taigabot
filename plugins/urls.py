@@ -15,7 +15,6 @@ trimlength = 320
 IGNORED_HOSTS = [
     '.onion',
     'localhost',
-
     # these are handled by their respective plugin
     # more info on some other file
     'youtube.com',  # handled by youtube plugin
@@ -31,12 +30,14 @@ IGNORED_HOSTS = [
     'soundcloud.com',
     'spotify.com',
     'twitch.tv',
-    'twitter.com'
+    'twitter.com',
 ]
 
 
 # 'http' + s optional + ':// ' + anything + '.' + anything
 LINK_RE = (r'(https?://\S+\.\S*)', re.I)
+
+
 @hook.regex(*LINK_RE)
 def process_url(match, bot=None, chan=None, db=None):
     url = match.group(1)
@@ -91,12 +92,9 @@ def fourchanthread_url(match):
     soup = http.get_soup(match)
     title = soup.title.renderContents().strip()
     post = soup.find('div', {'class': 'opContainer'})
-    comment = post.find('blockquote', {
-        'class': 'postMessage'
-    }).renderContents().strip()
+    comment = post.find('blockquote', {'class': 'postMessage'}).renderContents().strip()
     author = post.find_all('span', {'class': 'nameBlock'})[1]
-    return http.process_text("\x02{}\x02 - posted by \x02{}\x02: {}".format(
-        title, author, comment[:trimlength]))
+    return http.process_text("\x02{}\x02 - posted by \x02{}\x02: {}".format(title, author, comment[:trimlength]))
 
 
 # fourchan_quote_re = (r'>>(\D\/\d+)', re.I)
@@ -107,25 +105,16 @@ def fourchanquote_url(match):
     soup = http.get_soup(match)
     title = soup.title.renderContents().strip()
     post = soup.find('div', {'id': postid})
-    comment = post.find('blockquote', {
-        'class': 'postMessage'
-    }).renderContents().strip()
-    author = post.find_all('span', {'class': 'nameBlock'})[1].renderContents(
-    ).strip()
-    return http.process_text("\x02{}\x02 - posted by \x02{}\x02: {}".format(
-        title, author, comment[:trimlength]))
+    comment = post.find('blockquote', {'class': 'postMessage'}).renderContents().strip()
+    author = post.find_all('span', {'class': 'nameBlock'})[1].renderContents().strip()
+    return http.process_text("\x02{}\x02 - posted by \x02{}\x02: {}".format(title, author, comment[:trimlength]))
 
 
 def craigslist_url(match):
     soup = http.get_soup(match)
-    title = soup.find('h2', {
-        'class': 'postingtitle'
-    }).renderContents().strip()
-    post = soup.find('section', {
-        'id': 'postingbody'
-    }).renderContents().strip()
-    return http.process_text("\x02Craigslist.org: {}\x02 - {}".format(
-        title, post[:trimlength]))
+    title = soup.find('h2', {'class': 'postingtitle'}).renderContents().strip()
+    post = soup.find('section', {'id': 'postingbody'}).renderContents().strip()
+    return http.process_text("\x02Craigslist.org: {}\x02 - {}".format(title, post[:trimlength]))
 
 
 # ebay_item_re = r'http:.+ebay.com/.+/(\d+).+'
@@ -156,17 +145,15 @@ def ebay_url(match, bot):
         feedback = '?'
 
     return http.process_text(
-        "\x02{}\x02 - \x02\x033{}\x03\x02 - Bids: {} - Feedback: {}".format(
-            title, price, bids, feedback))
+        "\x02{}\x02 - \x02\x033{}\x03\x02 - Bids: {} - Feedback: {}".format(title, price, bids, feedback)
+    )
 
 
 def wikipedia_url(match):
     soup = http.get_soup(match)
     title = soup.find('h1', {'id': 'firstHeading'}).renderContents().strip()
-    post = soup.find('p').renderContents().strip().replace('\n', '').replace(
-        '\r', '')
-    return http.process_text("\x02Wikipedia.org: {}\x02 - {}...".format(
-        title, post[:trimlength]))
+    post = soup.find('p').renderContents().strip().replace('\n', '').replace('\r', '')
+    return http.process_text("\x02Wikipedia.org: {}\x02 - {}...".format(title, post[:trimlength]))
 
 
 # hentai_re = (r'(http.+hentai.org/.+)', re.I)
@@ -184,7 +171,8 @@ def hentai_url(match, bot):
     url = match
     loginurl = 'http://forums.e-hentai.org/index.php?act=Login&CODE=01'
     logindata = 'referer=http://forums.e-hentai.org/index.php&UserName={}&PassWord={}&CookieDate=1'.format(
-        username, password)
+        username, password
+    )
 
     req = urllib2.Request(loginurl)
     resp = urllib2.urlopen(req, logindata)  # POST
@@ -193,10 +181,8 @@ def hentai_url(match, bot):
     coopw = re.findall('ipb_pass_hash=(.*?);', coo)[0]
 
     headers = {
-        'Cookie':
-        'ipb_member_id=' + cooid + ';ipb_pass_hash=' + coopw,
-        'User-Agent':
-        "User-Agent':'Mozilla/5.2 (compatible; MSIE 8.0; Windows NT 6.2;)"  # wow this code is ass
+        'Cookie': 'ipb_member_id=' + cooid + ';ipb_pass_hash=' + coopw,
+        'User-Agent': "User-Agent':'Mozilla/5.2 (compatible; MSIE 8.0; Windows NT 6.2;)",  # wow this code is ass
     }
 
     request = urllib2.Request(url, None, headers)
@@ -205,9 +191,7 @@ def hentai_url(match, bot):
     try:
         title = soup.find('h1', {'id': 'gn'}).string
         date = soup.find('td', {'class': 'gdt2'}).string
-        rating = soup.find('td', {
-            'id': 'rating_label'
-        }).string.replace('Average: ', '')
+        rating = soup.find('td', {'id': 'rating_label'}).string.replace('Average: ', '')
         star_count = round(float(rating), 0)
         stars = ""
         for x in xrange(0, int(star_count)):
@@ -215,8 +199,7 @@ def hentai_url(match, bot):
         for y in xrange(int(star_count), 5):
             stars = "{}{}".format(stars, ' ')
 
-        return '\x02{}\x02 - \x02\x034{}\x03\x02 - {}'.format(
-            title, stars, date).decode('utf-8')
+        return '\x02{}\x02 - \x02\x034{}\x03\x02 - {}'.format(title, stars, date).decode('utf-8')
     except:
         return u'{}'.format(soup.title.string)
 
