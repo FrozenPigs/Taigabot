@@ -111,9 +111,9 @@ these plugins need only the main dependencies (`lxml`, `bs4` and `requests`):
 - vimeo
 - wordoftheday
 
-†: no dependencies
+†: no external dependencies
 
-
+## specific dependencies
 these specific plugins need a huge disgusting mess of dependencies:
 - weather
   - urllib
@@ -123,13 +123,13 @@ these specific plugins need a huge disgusting mess of dependencies:
 - google
   - requests
   - depends on `plugins/util/web.py` which depends on `http`, `urlnorm`, `json`, `urllib`
-    - `http` depends on `cookielib`, `json`, `urllib`, `urllib2`, `urlparse`, `re``, `lxml`, `bs4`
+    - `http` depends on `cookielib`, `json`, `urllib`, `urllib2`, `urlparse`, `re`, `lxml`, `bs4`
   - i'm sorry
 - wolframalpha
-  - depends on `plugins/util/http.py` which depends on `cookielib`, `json`, `urllib`, `urllib2`, `urlparse`, `re``, `lxml`, `bs4`
+  - depends on `plugins/util/http.py` which depends on `cookielib`, `json`, `urllib`, `urllib2`, `urlparse`, `re`, `lxml`, `bs4`
 - urls
   - re, urllib2, urlparse, requests, lxml, bs4, util.http
-    - `util.http` = `cookielib`, `json`, `urllib`, `urllib2`, `urlparse`, `re``, `lxml`, `bs4`
+    - `util.http` = `cookielib`, `json`, `urllib`, `urllib2`, `urlparse`, `re`, `lxml`, `bs4`
 
 ### api keys
 these plugins need an api key on the `config` file
