@@ -129,3 +129,6 @@ these plugins need an api key on the `config` file
 | religion     | `"english_bible"`  | [here](https://api.esv.org/docs/) |
 | weather      | `"darksky"`        | not possible to get anymore |
 | wolframalpha | `"wolframalpha"`   | [here](https://products.wolframalpha.com/api/) |
+| google       | `"google"`         | - |
+| google       | `"google2"`        | - |
+| google       | `"googleimage"`    | - |
