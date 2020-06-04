@@ -1,88 +1,113 @@
-from util import hook, web
-from utilities import request, formatting
-import re
+# encyclopedia dramatica plugin by ine (2020)
+from util import hook
+from utilities import request
+from bs4 import BeautifulSoup
 
-imp_reg = (r'^\>(.*\.(gif|jpe?g|png|tiff|bmp))$', re.I)
-API_URL = 'https://www.googleapis.com/customsearch/v1'
+API_QUERYPARAMS = "action=opensearch&format=json&limit=2&search="
+OUTPUT_LIMIT = 240  # character limit
+INSTANCES = {
+    'encyclopediadramatica': {
+        'name': 'Encyclopedia Dramatica',
+        'search': 'https://encyclopediadramatica.wiki/api.php?' + API_QUERYPARAMS,
+        'regex': r'(https?://encyclopediadramatica\.wiki/index\.php/(.*))'
+    },
+    'wikipedia_en': {
+        'name': 'Wikipedia',
+        'search': 'https://en.wikipedia.org/w/api.php?' + API_QUERYPARAMS,
+        'regex': r'(https?://en\.wikipedia\.org/wiki/(.*))'
+    },
+}
 
 
-def api_get(kind, query):
-    """Use the RESTful Google Search API."""
-    if kind == 'image':
-        url = API_URL + u'?key={}&cx={}&searchType={}&num=1&safe=off&q={}'
-        return request.get_json(url.format(query[0], query[1], kind, query[2]))
-    elif kind == 'images':
-        url = API_URL + u'?key={}&cx={}&searchType={}&num=1&safe=off&q={}&fileType="{}"'
-        return request.get_json(url.format(query[0], query[1], 'image', query[2], query[3]))
+def search(instance, query):
+    if instance not in INSTANCES:
+        return
+
+    wiki = INSTANCES[instance]
+    search = request.get_json(wiki['search'] + request.urlencode(query))
+
+    titles = search[1]
+    descriptions = search[2]
+    urls = search[3]
+
+    return (titles, descriptions, urls)
+
+
+def scrape_text(url):
+    html = request.get(url)
+    soup = BeautifulSoup(html, 'lxml')
+    title = soup.find('h1', attrs={'id': 'firstHeading'})
+    body = soup.find('div', attrs={'id': 'mw-content-text'})
+
+    if title:
+        title = title.text.strip()
+
+    if body is None:
+        return "Error reading the article"
+
+    output = []
+    for paragraph in body.find_all('p'):
+        text = paragraph.text.strip()
+        if len(text) > 4:  # skip empty paragraphs
+            output.append(text)
+
+    output = ' '.join(output)
+
+    return output, title
+
+
+def command_wrapper(instance, inp):
+    titles, descriptions, urls = search(instance, inp)
+
+    if not titles:
+        return "No results found."
+
+    title = titles[0]
+    url = urls[0]
+
+    # `real_title` shows the article title after a
+    # redirect. its generally longer than `title`
+    output, real_title = scrape_text(url)
+
+    if len(output) > OUTPUT_LIMIT:
+        output = output[:OUTPUT_LIMIT] + '...'
+
+    if title == real_title:
+        return u'\x02{}\x02 :: {}'.format(title, output)
     else:
-        url = API_URL + u'?key={}&cx={}&num=1&safe=off&q={}'
-        return request.get_json(url.format(query[0], query[1], query[2].encode('utf-8')))
+        return u'\x02{}\x02 :: {} (redirected from {})'.format(real_title, output, title)
 
 
-@hook.command('search')
-@hook.command('g')
+def url_wrapper(instance, url):
+    output, title = scrape_text(url)
+
+    if len(output) > OUTPUT_LIMIT:
+        output = output[:OUTPUT_LIMIT] + '...'
+
+    return u'\x02{}\x02 :: {}'.format(title, output)
+
+
+@hook.regex(INSTANCES['encyclopediadramatica']['regex'])
+def drama_url(match):
+    url = match.group(1)
+    return url_wrapper('encyclopediadramatica', url)
+
+
+@hook.command('encyclopediadramatica')
 @hook.command
-def google(inp, bot=None):
-    """google <query> -- Returns first google search result for <query>."""
-    inp = request.urlencode(inp)
-
-    # what the fuck
-    try:
-        cx = bot.config['api_keys']['googleimage']
-        key = bot.config['api_keys']['google']
-        query = [key, cx, '+'.join(inp.split())]
-        result = api_get('None', query)['items'][0]
-    except:
-        cx = bot.config['api_keys']['googleimage']
-        key = bot.config['api_keys']['google2']
-        query = [key, cx, '+'.join(inp.split())]
-        result = api_get('None', query)['items'][0]
-
-    title = result['title']
-    content = formatting.remove_newlines(result['snippet'])
-    link = result['link']
-
-    try:
-        return u'{} -- \x02{}\x02: "{}"'.format(web.isgd(link), title, content)
-    except Exception:
-        return u'{} -- \x02{}\x02: "{}"'.format(link, title, content)
+def drama(inp):
+    "drama <article> -- search an Encyclopedia Dramatica article"
+    return command_wrapper('encyclopediadramatica', inp)
 
 
-@hook.command('gi')
-def image(inp, bot=None):
-    """image <query> -- Returns the first Google Image result for <query>."""
-    try:
-        cx = bot.config['api_keys']['googleimage']
-        key = bot.config['api_keys']['google']
-        query = [key, cx, '+'.join(inp.split())]
-        image = api_get('image', query)['items'][0]['link']
-    except Exception:
-        cx = bot.config['api_keys']['googleimage']
-        key = bot.config['api_keys']['google2']
-        query = [key, cx, '+'.join(inp.split())]
-        image = api_get('image', query)['items'][0]['link']
-
-    print image
-
-    try:
-        return web.isgd(image)
-    except Exception as e:
-        print '[!] Error while shortening:', e
-        return image
+@hook.regex(INSTANCES['wikipedia_en']['regex'])
+def wikipedia_url(match):
+    url = match.group(1)
+    return url_wrapper('wikipedia_en', url)
 
 
-@hook.regex(*imp_reg)
-def implying(inp, bot=None):
-    """><query>.jpg -- Returns the first Google Image result for <query>.jpg"""
-    inp = inp.string[1:].split('.')
-    filetype = inp[1]
-    cx = bot.config['api_keys']['googleimage']
-    key = bot.config['api_keys']['google']
-    query = [key, cx, '+'.join(inp[0].split()), filetype]
-    image = api_get('images', query)['items'][0]['link']
-
-    try:
-        return web.isgd(image)
-    except Exception as e:
-        print '[!] Error while shortening:', e
-        return image
+@hook.command('wiki')
+@hook.command
+def wikipedia(inp):
+    "wikipedia <article> -- search a wikipedia article"
+    return command_wrapper('wikipedia_en', inp)
