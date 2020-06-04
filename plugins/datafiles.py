@@ -11,6 +11,12 @@ color_codes = {
     "<y>": "\x02"
 }
 
+with open("plugins/data/smileys.txt") as f:
+    smileys = [line.strip() for line in f.readlines() if not line.startswith("//")]
+
+with open("plugins/data/potato.txt") as f:
+    potatoes = [line.strip() for line in f.readlines() if not line.startswith("//")]
+
 with open("plugins/data/8ball_responses.txt") as f:
     responses = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
@@ -62,6 +68,28 @@ def send_phrase(inp,attack,nick,conn,me,notice,chan):
     # act out the message
     me(phrase.format(**values).decode('utf-8', "ignore"))
     return
+
+@hook.command(autohelp=False)
+def smiley(inp):
+    return smileys[random.randint(0, len(smileys) - 1)].decode("utf-8", "ignore")
+
+
+@hook.command
+def potato(inp, me=None):
+    "potato <user> - Makes <user> a tasty little potato."
+
+    method = random.choice(['bakes', 'fries', 'boils', 'roasts'])
+    flavor = random.choice(['tasty', 'delectable', 'delicious', 'yummy', 'toothsome', 'scrumptious', 'luscious'])
+    size = random.choice(['small', 'little', 'mid-sized', 'medium-sized', 'large', 'gigantic'])
+    potato_type = random.choice(potatoes)
+    inp = inp.strip()
+    side_dish = random.choice(['side salad', 'dollop of sour cream', 'piece of chicken', 'bowl of shredded bacon'])
+
+    me(
+        u"{} a {} {} {} potato for {} and serves it with a small {}!".format(
+            method, flavor, size, potato_type, inp, side_dish
+        )
+    )
 
 
 @hook.command('8ball')
