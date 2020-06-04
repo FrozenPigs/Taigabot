@@ -1,21 +1,12 @@
-# import md5
 import re
-# import urllib
 import urllib2
-from urllib import FancyURLopener
 from urlparse import urlparse
 
 import requests
-# import ipaddress
 from lxml import html
 
-# import gelbooru
 from bs4 import BeautifulSoup
 from util import database, formatting, hook, http
-
-
-class urlopener(FancyURLopener):
-    version = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
 
 
 MAX_LENGTH = 200
@@ -24,7 +15,6 @@ trimlength = 320
 IGNORED_HOSTS = [
     '.onion',
     'localhost',
-
     # these are handled by their respective plugin
     # more info on some other file
     'youtube.com',  # handled by youtube plugin
@@ -34,20 +24,20 @@ IGNORED_HOSTS = [
     'player.vimeo.com',
     'newegg.com',
     'amazon.com',
-    #'reddit.com',
+    # 'reddit.com',
     'hulu.com',
     'imdb.com',
     'soundcloud.com',
     'spotify.com',
     'twitch.tv',
-    'twitter.com'
+    'twitter.com',
 ]
 
 
-opener = urlopener()
-
 # 'http' + s optional + ':// ' + anything + '.' + anything
 LINK_RE = (r'(https?://\S+\.\S*)', re.I)
+
+
 @hook.regex(*LINK_RE)
 def process_url(match, bot=None, chan=None, db=None):
     url = match.group(1)
@@ -89,74 +79,57 @@ def process_url(match, bot=None, chan=None, db=None):
         return unmatched_url(url, parsed, bot, chan, db)  # process other url
 
 
-#@hook.regex(*fourchan_re)
+# @hook.regex(*fourchan_re)
 def fourchanboard_url(match):
     soup = http.get_soup(match)
     title = soup.title.renderContents().strip()
     return http.process_text("\x02{}\x02".format(title[:trimlength]))
 
 
-#fourchan_re = (r'.*((boards\.)?4chan\.org/[a-z]/res/[^ ]+)', re.I)
-#@hook.regex(*fourchan_re)
+# fourchan_re = (r'.*((boards\.)?4chan\.org/[a-z]/res/[^ ]+)', re.I)
+# @hook.regex(*fourchan_re)
 def fourchanthread_url(match):
     soup = http.get_soup(match)
     title = soup.title.renderContents().strip()
     post = soup.find('div', {'class': 'opContainer'})
-    comment = post.find('blockquote', {
-        'class': 'postMessage'
-    }).renderContents().strip()
+    comment = post.find('blockquote', {'class': 'postMessage'}).renderContents().strip()
     author = post.find_all('span', {'class': 'nameBlock'})[1]
-    return http.process_text("\x02{}\x02 - posted by \x02{}\x02: {}".format(
-        title, author, comment[:trimlength]))
+    return http.process_text("\x02{}\x02 - posted by \x02{}\x02: {}".format(title, author, comment[:trimlength]))
 
 
-#fourchan_quote_re = (r'>>(\D\/\d+)', re.I)
-#fourchanquote_re = (r'.*((boards\.)?4chan\.org/[a-z]/res/(\d+)#p(\d+))', re.I)
-#@hook.regex(*fourchanquote_re)
+# fourchan_quote_re = (r'>>(\D\/\d+)', re.I)
+# fourchanquote_re = (r'.*((boards\.)?4chan\.org/[a-z]/res/(\d+)#p(\d+))', re.I)
+# @hook.regex(*fourchanquote_re)
 def fourchanquote_url(match):
     postid = match.split('#')[1]
     soup = http.get_soup(match)
     title = soup.title.renderContents().strip()
     post = soup.find('div', {'id': postid})
-    comment = post.find('blockquote', {
-        'class': 'postMessage'
-    }).renderContents().strip()
-    author = post.find_all('span', {'class': 'nameBlock'})[1].renderContents(
-    ).strip()
-    return http.process_text("\x02{}\x02 - posted by \x02{}\x02: {}".format(
-        title, author, comment[:trimlength]))
+    comment = post.find('blockquote', {'class': 'postMessage'}).renderContents().strip()
+    author = post.find_all('span', {'class': 'nameBlock'})[1].renderContents().strip()
+    return http.process_text("\x02{}\x02 - posted by \x02{}\x02: {}".format(title, author, comment[:trimlength]))
 
 
 def craigslist_url(match):
     soup = http.get_soup(match)
-    title = soup.find('h2', {
-        'class': 'postingtitle'
-    }).renderContents().strip()
-    post = soup.find('section', {
-        'id': 'postingbody'
-    }).renderContents().strip()
-    return http.process_text("\x02Craigslist.org: {}\x02 - {}".format(
-        title, post[:trimlength]))
+    title = soup.find('h2', {'class': 'postingtitle'}).renderContents().strip()
+    post = soup.find('section', {'id': 'postingbody'}).renderContents().strip()
+    return http.process_text("\x02Craigslist.org: {}\x02 - {}".format(title, post[:trimlength]))
 
 
 # ebay_item_re = r'http:.+ebay.com/.+/(\d+).+'
 def ebay_url(match, bot):
-    #apikey = bot.config.get("api_keys", {}).get("ebay")
-    # if apikey:
-    #     # ebay_item_re = (r'http:.+ebay.com/.+/(\d+).+', re.I)
-    #     itemid = re.match('http:.+ebay.com/.+/(\d+).+',match, re.I)
-    #     url = 'http://open.api.ebay.com/shopping?callname=GetSingleItem&responseencoding=JSON&appid={}&siteid=0&version=515&ItemID={}&IncludeSelector=Description,ItemSpecifics'.format(apikey,itemid.group(1))
-    #     print url
-
-    # else:
-    print "No eBay api key set."
     item = http.get_html(match)
     title = item.xpath("//h1[@id='itemTitle']/text()")[0].strip()
     price = item.xpath("//span[@id='prcIsum_bidPrice']/text()")
-    if not price: price = item.xpath("//span[@id='prcIsum']/text()")
-    if not price: price = item.xpath("//span[@id='mm-saleDscPrc']/text()")
-    if price: price = price[0].strip()
-    else: price = '?'
+    if not price:
+        price = item.xpath("//span[@id='prcIsum']/text()")
+    if not price:
+        price = item.xpath("//span[@id='mm-saleDscPrc']/text()")
+    if price:
+        price = price[0].strip()
+    else:
+        price = '?'
 
     try:
         bids = item.xpath("//span[@id='qty-test']/text()")[0].strip()
@@ -164,28 +137,23 @@ def ebay_url(match, bot):
         bids = "Buy It Now"
 
     feedback = item.xpath("//span[@class='w2b-head']/text()")
-    if not feedback: feedback = item.xpath("//div[@id='si-fb']/text()")
-    if feedback: feedback = feedback[0].strip()
-    else: feedback = '?'
+    if not feedback:
+        feedback = item.xpath("//div[@id='si-fb']/text()")
+    if feedback:
+        feedback = feedback[0].strip()
+    else:
+        feedback = '?'
 
     return http.process_text(
-        "\x02{}\x02 - \x02\x033{}\x03\x02 - Bids: {} - Feedback: {}".format(
-            title, price, bids, feedback))
-
-    # url = 'http://open.api.ebay.com/shopping?callname=GetSingleItem&responseencoding=JSON&appid=YourAppIDHere&siteid=0&version=515&ItemID={}&IncludeSelector=Description,ItemSpecifics'.format(itemid)
-
-    #url = 'http://open.api.ebay.com/shopping?callname=GetSingleItem&responseencoding=JSON&appid=YourAppIDHere&siteid=0&version=515&ItemID={}'
-    #timeleft = item.xpath("//span[@id='bb_tlft']/span/text()")[0].strip()
-    #shipping = item.xpath("//span[@id='fshippingCost']/text()")[0].strip()
+        "\x02{}\x02 - \x02\x033{}\x03\x02 - Bids: {} - Feedback: {}".format(title, price, bids, feedback)
+    )
 
 
 def wikipedia_url(match):
     soup = http.get_soup(match)
     title = soup.find('h1', {'id': 'firstHeading'}).renderContents().strip()
-    post = soup.find('p').renderContents().strip().replace('\n', '').replace(
-        '\r', '')
-    return http.process_text("\x02Wikipedia.org: {}\x02 - {}...".format(
-        title, post[:trimlength]))
+    post = soup.find('p').renderContents().strip().replace('\n', '').replace('\r', '')
+    return http.process_text("\x02Wikipedia.org: {}\x02 - {}...".format(title, post[:trimlength]))
 
 
 # hentai_re = (r'(http.+hentai.org/.+)', re.I)
@@ -198,24 +166,23 @@ def hentai_url(match, bot):
         username = userpass.split(':')[0]
         password = userpass.split(':')[1]
         if not username or not password:
-            return    #"error: no username/password set"
+            return  # "error: no username/password set"
 
     url = match
     loginurl = 'http://forums.e-hentai.org/index.php?act=Login&CODE=01'
     logindata = 'referer=http://forums.e-hentai.org/index.php&UserName={}&PassWord={}&CookieDate=1'.format(
-        username, password)
+        username, password
+    )
 
     req = urllib2.Request(loginurl)
-    resp = urllib2.urlopen(req, logindata)    #POST
-    coo = resp.info().getheader('Set-Cookie')    #  cookie
+    resp = urllib2.urlopen(req, logindata)  # POST
+    coo = resp.info().getheader('Set-Cookie')  # cookie
     cooid = re.findall('ipb_member_id=(.*?);', coo)[0]
     coopw = re.findall('ipb_pass_hash=(.*?);', coo)[0]
 
     headers = {
-        'Cookie':
-        'ipb_member_id=' + cooid + ';ipb_pass_hash=' + coopw,
-        'User-Agent':
-        "User-Agent':'Mozilla/5.2 (compatible; MSIE 8.0; Windows NT 6.2;)"
+        'Cookie': 'ipb_member_id=' + cooid + ';ipb_pass_hash=' + coopw,
+        'User-Agent': "User-Agent':'Mozilla/5.2 (compatible; MSIE 8.0; Windows NT 6.2;)",  # wow this code is ass
     }
 
     request = urllib2.Request(url, None, headers)
@@ -224,9 +191,7 @@ def hentai_url(match, bot):
     try:
         title = soup.find('h1', {'id': 'gn'}).string
         date = soup.find('td', {'class': 'gdt2'}).string
-        rating = soup.find('td', {
-            'id': 'rating_label'
-        }).string.replace('Average: ', '')
+        rating = soup.find('td', {'id': 'rating_label'}).string.replace('Average: ', '')
         star_count = round(float(rating), 0)
         stars = ""
         for x in xrange(0, int(star_count)):
@@ -234,18 +199,13 @@ def hentai_url(match, bot):
         for y in xrange(int(star_count), 5):
             stars = "{}{}".format(stars, ' ')
 
-        return '\x02{}\x02 - \x02\x034{}\x03\x02 - {}'.format(
-            title, stars, date).decode('utf-8')
+        return '\x02{}\x02 - \x02\x034{}\x03\x02 - {}'.format(title, stars, date).decode('utf-8')
     except:
         return u'{}'.format(soup.title.string)
 
 
-# amiami, hobby search and nippon yasan
-
 user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
-# cookies = dict(cookies_are='working')
-cookies = dict()
-headers = {'User-Agent': user_agent, 'Cookie': ''}
+headers = {'User-Agent': user_agent}
 
 
 def parse_html(stream):

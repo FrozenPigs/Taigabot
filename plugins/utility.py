@@ -8,17 +8,25 @@ from util import hook, http, text, web
 
 # variables
 
-colors = collections.OrderedDict([('red', '\x0304'), ('ornage', '\x0307'),
-                                  ('yellow', '\x0308'), ('green', '\x0309'),
-                                  ('cyan', '\x0303'), ('ltblue', '\x0310'),
-                                  ('rylblue', '\x0312'), ('blue', '\x0302'),
-                                  ('magenta', '\x0306'), ('pink', '\x0313'),
-                                  ('maroon', '\x0305')])
+colors = collections.OrderedDict(
+    [
+        ('red', '\x0304'),
+        ('ornage', '\x0307'),
+        ('yellow', '\x0308'),
+        ('green', '\x0309'),
+        ('cyan', '\x0303'),
+        ('ltblue', '\x0310'),
+        ('rylblue', '\x0312'),
+        ('blue', '\x0302'),
+        ('magenta', '\x0306'),
+        ('pink', '\x0313'),
+        ('maroon', '\x0305'),
+    ]
+)
 
 # helper functions
 
-strip_re = re.compile("(\x03|\x02|\x1f)(?:,?\d{1,2}(?:,\d{1,2})?)?",
-                      re.UNICODE)
+strip_re = re.compile("(\x03|\x02|\x1f)(?:,?\d{1,2}(?:,\d{1,2})?)?", re.UNICODE)
 
 
 def strip(text):
@@ -130,8 +138,7 @@ def reverse(inp):
 @hook.command
 def hash(inp):
     """hash <string> -- Returns hashes of <string>."""
-    return ', '.join(x + ": " + getattr(hashlib, x)(inp).hexdigest()
-                     for x in ['md5', 'sha1', 'sha256'])
+    return ', '.join(x + ": " + getattr(hashlib, x)(inp).hexdigest() for x in ['md5', 'sha1', 'sha256'])
 
 
 # novelty
@@ -180,8 +187,7 @@ def gaycow(inp, reply=None):
 @hook.command
 def gayfiglet(inp, reply=None):
     inp = inp.encode('utf-8')[:11]
-    for line in subprocess.check_output(['figlet',
-                                         '{0}'.format(inp)]).split('\n'):
+    for line in subprocess.check_output(['figlet', '{0}'.format(inp)]).split('\n'):
         if line != ' ' * (len(line)):
             reply(make_rainbow(line))
 

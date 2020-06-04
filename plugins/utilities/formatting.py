@@ -1,5 +1,6 @@
 import re
 
+
 # smush multiple spaces into one
 def compress_whitespace(text):
     whitespace = re.compile(r"\s+")
@@ -9,4 +10,4 @@ def compress_whitespace(text):
 # replaces newlines (unix or windows) with a space
 def remove_newlines(text, separator=' '):
     lines = re.compile(r"[\r\n]+")
-    return whitespace.sub(separator, text).strip()
+    return lines.sub(separator, text).strip()

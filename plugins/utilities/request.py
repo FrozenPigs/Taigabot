@@ -8,8 +8,8 @@ fake_ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, 
 
 
 def urlencode(inp):
-    def force_decode(string, codecs=['utf8', 'cp1252']):
-        for i in codecs:
+    def force_decode(string):
+        for i in ['utf8', 'cp1252']:
             try:
                 return string.decode(i)
             except UnicodeDecodeError:

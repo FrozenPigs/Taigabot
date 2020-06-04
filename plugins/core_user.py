@@ -81,11 +81,12 @@ def greeting(inp, nick=None, db=None, notice=None):
             database.set(db, 'users', 'greeting', '', 'nick', nick)
             notice("Deleted your greeting.")
         else:
+            # TODO clean this digusting mess it does nothing
             inp = inp.strip().replace("'", "").replace("ACTION", "").replace("PRIVMSG", "").replace("PING", "").replace("NOTICE", "").replace("\x01", "")
             database.set(db, 'users', 'greeting', '{} '.format(inp.encode('utf8')), 'nick', nick)
             notice("Saved your greeting.")
         return
-    except:
+    except Exception:
         return "Uwaaahh~~?"
 
 
@@ -276,13 +277,23 @@ def horoscope(inp, db=None, notice=None, nick=None):
                 save = True
             sign = inp.split()[0]
 
-    url = "http://my.horoscope.com/astrology/free-daily-horoscope-%s.html" % sign
+    url = "https://my.horoscope.com/astrology/free-daily-horoscope-{}.html".format(sign)
     try:
         result = http.get_soup(url)
-        title = result.find_all('h1', {'class': 'h1b'})[1].text
-        horoscopetxt = result.find('div', {'id': 'textline'}).text
-    except:
-        return "Could not get the horoscope for {}.".format(sign.encode('utf8'))
+        container = result.find('div', attrs={'class': 'main-horoscope'})
+        if not container:
+            return 'Could not parse the horoscope for {}.'.format(sign)
+
+        paragraph = container.find('p')
+
+        if paragraph:
+            return nick + ': ' + paragraph.text
+        else:
+            return 'Could not read the horoscope for {}.'.format(sign)
+
+    except Exception:
+        raise
+        return "Could not get the horoscope for {}.".format(sign)
 
     if sign and save:
         database.set(db, 'users', 'horoscope', sign, 'nick', nick)

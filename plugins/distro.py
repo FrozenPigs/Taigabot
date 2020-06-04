@@ -15,7 +15,7 @@ allowed_datasets = [
     'Last 12 months',  # popularity ranking
     'Last 1 month',
     'Trending past 12 months',  # trending list
-    'Trending past 1 month'
+    'Trending past 1 month',
 ]
 
 
@@ -70,7 +70,7 @@ def refresh_cache():
         if header not in allowed_datasets:
             continue
 
-        output = output + ' \x02Trending\02 (' + header.replace('Trending ', '') + '): '
+        output = output + ' \x02Trending\x02 (' + header.replace('Trending ', '') + '): '
         output = output + parse_table(data) + '.'
 
     global cache

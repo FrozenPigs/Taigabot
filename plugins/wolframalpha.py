@@ -25,11 +25,11 @@ __version__ = '1.1-devel'
 
 import urllib2
 from xml.dom import minidom
-#import simplejson as json
+
+# import simplejson as json
 
 
 class WolframAlphaEngine:
-
     def __init__(self, appid='', server=''):
         self.appid = appid
         self.server = server
@@ -59,7 +59,6 @@ class WolframAlphaEngine:
 
 
 class WolframAlphaQuery:
-
     def __init__(self, query='', appid=''):
         self.Query = query
         self.appid = appid
@@ -103,7 +102,6 @@ class WolframAlphaQuery:
 
 
 class WolframAlphaQueryResult:
-
     def __init__(self, result=''):
         self.XmlResult = result
         self.dom = minidom.parseString(result)
@@ -175,7 +173,6 @@ class WolframAlphaQueryResult:
 
 
 class Pod:
-
     def __init__(self, pod=''):
         self.pod = pod
         return
@@ -212,7 +209,6 @@ class Pod:
 
 
 class Subpod:
-
     def __init__(self, subpod=''):
         self.subpod = subpod
         return
@@ -228,7 +224,6 @@ class Subpod:
 
 
 class Assumption:
-
     def __init__(self, assumption=''):
         self.assumption = assumption
         return
@@ -303,6 +298,7 @@ def wolframalpha(inp, bot=None):
         return formatting.output('WolframAlpha', ['error: missing api key'])
 
     import time
+
     start = time.clock()
 
     scantimeout = '3.0'
@@ -331,17 +327,11 @@ def wolframalpha(inp, bot=None):
             plaintext = waesp.Plaintext()
             results.append(plaintext)
     try:
-        waquery = re.sub(' (?:\||) +', ' ', ' '.join(results[0][0].splitlines(
-        ))).strip().replace(u'\xc2 ', '')
+        waquery = re.sub(' (?:\||) +', ' ', ' '.join(results[0][0].splitlines())).strip().replace(u'\xc2 ', '')
         if results[1][0] == [] or u'irreducible' in results[1][0]:
-            waresult = ' '.join(results[2][0].splitlines()).replace(
-                u'\xc2 ', '')
+            waresult = ' '.join(results[2][0].splitlines()).replace(u'\xc2 ', '')
         else:
-            waresult = ' '.join(results[1][0].splitlines()).replace(
-                u'\xc2 ', '')
-        return formatting.output('WolframAlpha', [
-            waquery.encode('utf-8'),
-            waresult.encode('utf-8')
-        ])
+            waresult = ' '.join(results[1][0].splitlines()).replace(u'\xc2 ', '')
+        return formatting.output('WolframAlpha', [waquery.encode('utf-8'), waresult.encode('utf-8')])
     except:
         return formatting.output('WolframAlpha', [random.choice(errors)])

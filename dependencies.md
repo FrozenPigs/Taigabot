@@ -86,41 +86,50 @@ run the bot, finally:
 
 
 ## details
-if `bs4` and `requests` are installed, these plugins will work:
+these plugins need only the main dependencies (`lxml`, `bs4` and `requests`):
 - amazon
 - bash
+- choose †
+- coin †
+- countdown †
 - debt
+- dice †
 - dictionary
+- distance
 - distro
 - drama
 - fmylife
+- furry
+- heartbleed †
+- kernel
+- potato †
 - religion
+- smileys †
+- translate
+- urbandict
 - validate
+- vimeo
 - wordoftheday
 
-if `requests` is installed, these plugins will work:
-- furry
-- translate
-- kernel
-- urbandict
-- vimeo
+†: no external dependencies
 
-to get these plugins working, you need to install these specific dependencies:
+## specific dependencies
+these specific plugins need a huge disgusting mess of dependencies:
 - weather
   - urllib
   - requests
   - pytz
   - geopy
-
-### plugins with no external dependencies
-- choose
-- coin
-- countdown
-- dice
-- heartbleed
-- potato
-- smileys
+- google
+  - requests
+  - depends on `plugins/util/web.py` which depends on `http`, `urlnorm`, `json`, `urllib`
+    - `http` depends on `cookielib`, `json`, `urllib`, `urllib2`, `urlparse`, `re`, `lxml`, `bs4`
+  - i'm sorry
 - wolframalpha
+  - depends on `plugins/util/http.py` which depends on `cookielib`, `json`, `urllib`, `urllib2`, `urlparse`, `re`, `lxml`, `bs4`
+- urls
+  - re, urllib2, urlparse, requests, lxml, bs4, util.http
+    - `util.http` = `cookielib`, `json`, `urllib`, `urllib2`, `urlparse`, `re`, `lxml`, `bs4`
 
 ### api keys
 these plugins need an api key on the `config` file
@@ -129,3 +138,6 @@ these plugins need an api key on the `config` file
 | religion     | `"english_bible"`  | [here](https://api.esv.org/docs/) |
 | weather      | `"darksky"`        | not possible to get anymore |
 | wolframalpha | `"wolframalpha"`   | [here](https://products.wolframalpha.com/api/) |
+| google       | `"google"`         | - |
+| google       | `"google2"`        | - |
+| google       | `"googleimage"`    | - |

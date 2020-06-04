@@ -84,6 +84,8 @@ def amazon(inp):
 
 
 AMAZON_RE = (r"https?:\/\/(www\.)?amazon.com\/[^\s]*dp\/([A-Za-z0-9]+)[^\s]*", re.I)
+
+
 @hook.regex(*AMAZON_RE)
 def amazon_url(match):
     id = match.group(2).strip()

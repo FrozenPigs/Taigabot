@@ -8,7 +8,7 @@ cache = []
 
 def refresh_cache():
     print "[+] refreshing fmylife cache"
-    html = request.get('https://www.fmylife.com/random/')
+    html = request.get('https://www.fmylife.com/random')
     soup = BeautifulSoup(html, 'lxml')
     posts = soup.find_all('a', attrs={'class': 'article-link'})
 

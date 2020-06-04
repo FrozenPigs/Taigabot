@@ -1,18 +1,10 @@
 # dictionary and etymology plugin by ine (2020)
 from util import hook
-from utilities import request
+from utilities import request, formatting
 from bs4 import BeautifulSoup
 
 dict_url = 'http://ninjawords.com/'
 eth_url = 'https://www.etymonline.com/word/'
-
-
-# merges spaces into just one
-def condense_spaces(text):
-    while '  ' in text:
-        text = text.replace('  ', ' ')
-
-    return text
 
 
 @hook.command('dictionary')
@@ -35,14 +27,14 @@ def define(inp):
 
     for definition in definitions:
         if 'article' in definition['class']:
-            text = condense_spaces(definition.text.strip())
+            text = formatting.compress_whitespace(definition.text.strip())
             output = output + ' \x02' + text + '\x02'
             i = 1
 
         elif 'entry' in definition['class']:
             definition = definition.find('div', attrs={'class': 'definition'})
-            text = condense_spaces(definition.text.strip())
-            output = output + text.replace(u'\xb0', ' \x02%s.\x02 ' % i)
+            text = formatting.compress_whitespace(definition.text.strip())
+            output = output + text.replace(u'\xb0', ' \x02{}.\x02 '.format(i))
             i = i + 1
 
         # theres 'synonyms' and 'examples' too
@@ -67,12 +59,12 @@ def etymology(inp):
     if len(results) == 0:
         return 'No etymology found for ' + inp
 
-    output = 'Ethymology of "' + inp + '":'
+    output = u'Ethymology of "' + inp + '":'
     i = 1
 
     for result in results:
-        text = condense_spaces(result.text.strip())
-        output = output + ' \x02{}.\x02 {}'.format(i, text)
+        text = formatting.compress_whitespace(result.text.strip())
+        output = output + u' \x02{}.\x02 {}'.format(i, text)
         i = i + 1
 
     if len(output) > 400:

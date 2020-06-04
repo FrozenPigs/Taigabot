@@ -8,34 +8,25 @@ import urllib
 re_lineends = re.compile(r'[\r\n]*')
 
 # some simple "shortcodes" for formatting purposes
-shortcodes = {
-    '[b]': '\x02',
-    '[/b]': '\x02',
-    '[u]': '\x1F',
-    '[/u]': '\x1F',
-    '[i]': '\x16',
-    '[/i]': '\x16'
-}
+shortcodes = {'[b]': '\x02', '[/b]': '\x02', '[u]': '\x1F', '[/u]': '\x1F', '[i]': '\x16', '[/i]': '\x16'}
 
 
 def db_init(db):
-    db.execute("create table if not exists mem(word, data, nick,"
-               " primary key(word))")
+    db.execute("create table if not exists mem(word, data, nick," " primary key(word))")
     db.commit()
 
 
 def get_memory(db, word):
 
-    row = db.execute("select data from mem where word=lower(?)",
-                     [word]).fetchone()
+    row = db.execute("select data from mem where word=lower(?)", [word]).fetchone()
     if row:
         return row[0]
     else:
         return None
 
 
-#@hook.regex(r'(.*) is (.*)')
-#@hook.regex(r'(.*) are (.*)')
+# @hook.regex(r'(.*) is (.*)')
+# @hook.regex(r'(.*) are (.*)')
 @hook.command("learn", adminonly=False)
 @hook.command("r", adminonly=False)
 @hook.command(adminonly=False)
@@ -47,19 +38,19 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
 
     try:
         word, data = inp.split(None, 1)
-        #word = inp.group(1)
-        #data = inp.group(2)
+        # word = inp.group(1)
+        # data = inp.group(2)
     except ValueError:
         notice(remember.__doc__)
 
     old_data = get_memory(db, word)
 
-    #if data.startswith('+') or data.find('also') and old_data:
+    # if data.startswith('+') or data.find('also') and old_data:
     if old_data:
         append = True
         # remove + symbol
         new_data = data.replace('+', '')
-        #new_data = data[1:]
+        # new_data = data[1:]
         # append new_data to the old_data
         print(new_data[0])
         if len(new_data) > 1 and new_data[0] in (string.punctuation + ' '):
@@ -70,20 +61,17 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
         else:
             data = old_data + ' and ' + new_data
 
-    db.execute("replace into mem(word, data, nick) values"
-               " (lower(?),?,?)", (word, data.replace('<py>', ''), nick))
+    db.execute("replace into mem(word, data, nick) values" " (lower(?),?,?)", (word, data.replace('<py>', ''), nick))
     db.commit()
 
     if old_data:
         if append:
             notice("Appending \x02%s\x02 to \x02%s\x02" % (new_data, old_data))
         else:
-            notice('Remembering \x02%s\x02 for \x02%s\x02. Type ?%s to see it.'
-                   % (data, word, word))
+            notice('Remembering \x02%s\x02 for \x02%s\x02. Type ?%s to see it.' % (data, word, word))
             notice('Previous data was \x02%s\x02' % old_data)
     else:
-        notice('Remembering \x02%s\x02 for \x02%s\x02. Type ?%s to see it.' %
-               (data, word, word))
+        notice('Remembering \x02%s\x02 for \x02%s\x02. Type ?%s to see it.' % (data, word, word))
 
 
 @hook.command("f", adminonly=True)
@@ -122,18 +110,9 @@ def info(inp, notice=None, db=None):
 # @hook.regex(r'^(\b\S+\b)\?$')
 @hook.regex(r'^\#(\b\S+\b)')
 @hook.regex(r'^\? ?(.+)')
-def hashtag(inp,
-            say=None,
-            db=None,
-            bot=None,
-            me=None,
-            conn=None,
-            input=None,
-            chan=None,
-            notice=None):
+def hashtag(inp, say=None, db=None, bot=None, me=None, conn=None, input=None, chan=None, notice=None):
     "<word>? -- Shows what data is associated with <word>."
-    disabledhashes = database.get(db, 'channels', 'disabledhashes', 'chan',
-                                  chan)
+    disabledhashes = database.get(db, 'channels', 'disabledhashes', 'chan', chan)
     split = inp.group(1).strip().split(" ")
 
     try:
@@ -170,8 +149,11 @@ def hashtag(inp,
         if data.startswith("<py>"):
             code = data[4:].strip()
             variables = 'input="""%s"""; nick="%s"; chan="%s"; bot_nick="%s";' % (
-                arguments.replace(
-                    '"', '\\"'), input.nick, input.chan, input.conn.nick)
+                arguments.replace('"', '\\"'),
+                input.nick,
+                input.chan,
+                input.conn.nick,
+            )
             result = execute.eval_py(variables + code)
         elif data.startswith("<url>"):
             url = data[5:].strip()
@@ -216,10 +198,9 @@ def hashes(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
             'api_paste_code': ("\n".join(output)).encode('utf-8'),
             'api_paste_name': 'search result',
             'api_paste_private': 1,
-            'api_paste_expire_date': '1W'
+            'api_paste_expire_date': '1W',
         }
-        response = urllib.urlopen('http://pastebin.com/api/api_post.php',
-                                  urllib.urlencode(pastebin_vars))
+        response = urllib.urlopen('http://pastebin.com/api/api_post.php', urllib.urlencode(pastebin_vars))
         url = response.read()
         return url
     else:
