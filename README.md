@@ -12,51 +12,31 @@
   * Little boilerplate
 
 ### Dependencies
-Taigabot requires Python 2.7 and its developed on Ubuntu 18.04.
+Taigabot runs only on Python 2.7.
 
-You can read more about the dependencies in [dependencies.md](dependencies.md)
+The biggest hurdle is `lxml` which needs a compiler and a bunch of libraries. You can read more about the dependencies in [dependencies.md](dependencies.md).
 
-The following system dependencies are needed (`apt install`):
-
-    python2.7 python-pip git python2.7-dev build-essential libxml2-dev libxslt1-dev
-
-and these python dependencies are required (__already in requirements.txt__: `pip2 install -r requirements.txt`):
-
-    httplib2==0.7.5 BeautifulSoup4==4.1.3 lxml==3.3.6 requests
-
-you can install the additional dependencies for more plugins:
-
-    pip2 install -r requirements_extra.txt
-
-It is strongly recommended to install dependencies in a virtual environment.
-
-With all of these, the bot will run and almost all plugins will work.
+### Installation
+See [dependencies.md](dependencies.md#instructions) for [ubuntu](dependencies.md#ubuntu) or [alpine](dependencies.md#alpine) instructions.
 
 #### Other dependencies
 
 Some plugins require other python packages, more information can be found on [dependencies.md § details](dependencies.md#details).
 
+Some commands also require API keys, 
+
 The system packages `daemon` or `screen` are recomended for the launcher to run optimally.
 
-### Installation
-On Ubuntu:
 
-    sudo apt-get install python2.7 python-pip git
-    sudo apt-get install python2.7-dev build-essential libxml2-dev libxslt1-dev
-    git clone https://github.com/inexist3nce/Taigabot.git
-    cd Taigabot
-    pip2 install virtualenv
-    python2 -m virtualenv venv
-    source venv/bin/activate
-    pip2 install -r requirements.txt
-    pip2 install -r requirements_extra.txt
+### Run
+
+Once you have installed the required dependencies, you need to create a config file:
+
     cp config.default config
     vim config
     python2 bot.py
 
-### Run
-
-Once you have installed the required dependencies, there are two ways you can run the bot:
+There are two ways you can run the bot:
 
 #### Launcher
 
