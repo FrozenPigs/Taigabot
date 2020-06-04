@@ -48,13 +48,6 @@ def google(inp, bot=None):
         return u'{} -- \x02{}\x02: "{}"'.format(link, title, content)
 
 
-@hook.command('wiki')
-def fake_wikipedia(inp, bot=None):
-    """wiki <query> -- search wikipedia"""
-    inp = u'site:wikipedia.org {}'.format(inp)
-    return google(inp, bot)
-
-
 @hook.command('gi')
 def image(inp, bot=None):
     """image <query> -- Returns the first Google Image result for <query>."""
