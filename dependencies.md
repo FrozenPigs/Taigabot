@@ -100,6 +100,7 @@ these plugins need only the main dependencies (`lxml`, `bs4` and `requests`):
 - drama
 - fmylife
 - furry
+- geoip
 - heartbleed †
 - kernel
 - potato †

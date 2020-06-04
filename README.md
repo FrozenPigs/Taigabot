@@ -32,13 +32,9 @@ It is strongly recommended to install dependencies in a virtual environment.
 
 With all of these, the bot will run and almost all plugins will work.
 
-#### Others
+#### Other dependencies
 
-Some plugins require other python packages, more information can be found on [dependencies.md § details](dependencies.md#details)
-
-    GitPython==0.3.2.RC1 Nominatim pygeoip pydns pywhois mygengo pytz timezones pycrypto
-
-Enchant is needed on the system for the spellcheck plugin (`libenchant-dev libenchant1c2a`).
+Some plugins require other python packages, more information can be found on [dependencies.md § details](dependencies.md#details).
 
 The system packages `daemon` or `screen` are recomended for the launcher to run optimally.
 
@@ -53,6 +49,7 @@ On Ubuntu:
     python2 -m virtualenv venv
     source venv/bin/activate
     pip2 install -r requirements.txt
+    pip2 install -r requirements_extra.txt
     cp config.default config
     vim config
     python2 bot.py
