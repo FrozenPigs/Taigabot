@@ -11,17 +11,13 @@
   * Automatic reloading
   * Little boilerplate
 
-### Dependencies
-Taigabot runs only on Python 2.7.
-
-The biggest hurdle is `lxml` which needs a compiler and a bunch of libraries. You can read more about the dependencies in [dependencies.md](dependencies.md).
-
 ### Installation
-See [dependencies.md](dependencies.md#instructions) for [ubuntu](dependencies.md#ubuntu) or [alpine](dependencies.md#alpine) instructions.
+Taigabot runs only on Python 2.7. See [install.md](install.md#instructions) for [ubuntu](install.md#ubuntu) or [alpine](install.md#alpine) instructions.
+
+The biggest hurdle is `lxml` which needs a compiler and a bunch of libraries.
 
 #### Other dependencies
-
-Some plugins require other python packages, more information can be found on [dependencies.md § details](dependencies.md#details).
+Some commands require extra python packages, more information can be found on [install.md § specific dependencies](install.md#specific-dependencies).
 
 Some commands also require API keys, 
 
@@ -29,7 +25,6 @@ The system packages `daemon` or `screen` are recomended for the launcher to run 
 
 
 ### Run
-
 Once you have installed the required dependencies, you need to create a config file:
 
     cp config.default config

@@ -57,7 +57,7 @@ tldr:
 
 
 ## python dependencies
-you __need__ these to run the bot.
+you __need__ these to run plugins.
 
     pip install -r requirements.txt
 
@@ -70,12 +70,6 @@ you __need__ these to run the bot.
   - 2.23.0 works fine
 - beautifulsoup4
   - 4.9.0 works fine
-
-## plugins
-plugins need some dependencies. they're technically optional, but the bot is useless without plugins.
-
-    pip2 install -r requirements.txt
-    pip2 install -r requirements_extra.txt
 
 ## details
 these plugins need only the main dependencies (`lxml`, `bs4` and `requests`):
