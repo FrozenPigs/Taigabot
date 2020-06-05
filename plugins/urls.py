@@ -214,11 +214,20 @@ headers = {'User-Agent': user_agent}
 
 def parse_html(stream):
     data = ''
-    for chunk in stream.iter_content(chunk_size=1024):
+    for chunk in stream.iter_content(chunk_size=256):
         data = data + chunk
 
-        if len(data) > (1024 * 8):  # use only first 8 KiB
+        if len(data) > (1024 * 4):  # use only first 4 KiB
             break
+
+    # try to quickly grab the content between <title> and </title>
+    # should match most cases, if not just fall back to lxml
+    if '<title>' in data and '</title>' in data:
+        try:
+            quick_title = data[data.find('<title>') + 7 : data.find('</title>')]
+            return quick_title.strip()
+        except Exception as e:
+            pass
 
     parser = html.fromstring(data)
 
@@ -299,10 +308,10 @@ def unmatched_url(url, parsed, bot, chan, db):
         output = output[:MAX_LENGTH] + '...'
 
     # add domain to the end
-    output = output + ' (' + domain + ')'
+    output = "{} ({})".format(output, domain)
 
     # show error codes if they appear
     if req.status_code >= 400 and req.status_code < 600:
-        output = output + ' (error {})'.format(req.status_code)
+        output = '{} (error {})'.format(output, req.status_code)
 
     return output
