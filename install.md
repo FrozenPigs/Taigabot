@@ -1,89 +1,75 @@
 # taigabot dependencies
-taigabot is ancient software that runs on an unmantained python version. the existing uguubot instructions no longer work.
+taigabot is ancient software that runs only on python 2.7. it depends mostly on requests, beautifulsoup4 and lxml.
 
 the main piece of software, the irc bot, is more than 12 years old and some dependencies can't be found on repositories (ubuntu, pip or even github), so they've been bundled with the bot in this repository.
 
-taiga runs only on python 2.7.
+## instructions
+see below for copypaste-friendly ubuntu/alpine instructions.
 
-this is an attempt to get taiga properly documented for running on ubuntu 18.04, and eventually other distros.
+1. install python 2.7, pip and a compiler
+2. clone (or download) this repo
+3. make and activate a virtual environment
+4. install and compile the dependencies
 
-## system dependencies (ubuntu)
-- python2.7
-- python-pip
-- build-essential
-  - everything needed to compile lxml
-- python2.7-dev libxml2-dev libxslt1-dev
-  - headers/libraries needed to compile lxml
+    pip2 install -r requirements.txt
+    pip2 install -r requirements_extra.txt
 
-optionally `git` to clone this repo, but you can download it however you want.
+last step is to configure the bot:
+
+    cp config.default config
+    vi config
+
+you can now run taigabot!
+
+    python2 bot.py
+
+
+### ubuntu
+- python2.7 python-pip git
+- build-essential python2.7-dev libxml2-dev libxslt1-dev
+
+tldr:
+
+    sudo apt-get install python2.7 python-pip git
+    sudo apt-get install python2.7-dev build-essential libxml2-dev libxslt1-dev
+    git clone https://github.com/inexist3nce/Taigabot.git
+    cd Taigabot
+    pip2 install virtualenv
+    python2 -m virtualenv venv
+    source venv/bin/activate
+    pip2 install -r requirements.txt
+    pip2 install -r requirements_extra.txt
+
+### alpine
+- python2 py2-pip git
+- gcc g++ libxml2 libxml2-dev libxslt-dev
+
+tldr:
+
+    apk add python2 py2-pip git gcc g++ python2-dev libxml2 libxml2-dev libxslt-dev
+    python2 -m pip install virtualenv
+    git clone https://github.com/inexist3nce/Taigabot.git
+    cd Taigabot
+    python2 -m virtualenv venv
+    source venv/bin/activate
+    export CFLAGS='-I/usr/include/python2.7/'
+    python2 -m pip install -r requirements.txt
+
 
 ## python dependencies
-you __need__ these to run the bot.
+you __need__ these to run plugins.
 
     pip install -r requirements.txt
 
 - virtualenv
   - helps keep the trash contained. please use this.
 - lxml
-  - works on 3.3.6
-  - used to parse html and xml
-  - https://pypi.org/project/lxml/3.3.6/
-  - __required__
+  - uses **3.3.6**
+  - fastest way to parse html and xml
 - requests
   - 2.23.0 works fine
-  - __required__
 - beautifulsoup4
   - 4.9.0 works fine
-  - __required__
-
-with the aforementioned requirements, taigabot is guaranteed to run and these core plugins will work:
-- core_admin_channel.py
-- core_admin_global.py
-- core_ctcp.py
-- core_misc.py
-- core_sieve.py
-- core_user.py
-- log.py
-- all internal `util` plugins
-
-## plugins
-plugins need some dependencies. they're "optional" but the bot is __useless without plugins__.
-
-    pip2 install -r requirements_extra.txt
-
-you can find details below.
-
-## instructions
-basic system requirements:
-
-    apt-get install python2.7 python-pip git
-
-for compiling:
-
-    apt-get install python2.7-dev build-essential libxml2-dev libxslt1-dev
-
-get the bot and make a virtual env
-
-    git clone https://github.com/inexist3nce/Taigabot.git
-    cd Taigabot
-    pip2 install virtualenv
-    python2 -m virtualenv venv
-    source venv/bin/activate
-
-install dependencies:
-
-    pip2 install -r requirements.txt
-    pip2 install -r requirements_extra.txt
-
-make your own configuration:
-
-    cp config.default config
-    vi config
-
-run the bot, finally:
-
-    python2 bot.py
-
 
 ## details
 these plugins need only the main dependencies (`lxml`, `bs4` and `requests`):
@@ -100,6 +86,7 @@ these plugins need only the main dependencies (`lxml`, `bs4` and `requests`):
 - drama
 - fmylife
 - furry
+- geoip
 - heartbleed †
 - kernel
 - potato †
@@ -131,7 +118,7 @@ these specific plugins need a huge disgusting mess of dependencies:
   - re, urllib2, urlparse, requests, lxml, bs4, util.http
     - `util.http` = `cookielib`, `json`, `urllib`, `urllib2`, `urlparse`, `re`, `lxml`, `bs4`
 
-### api keys
+## api keys
 these plugins need an api key on the `config` file
 | plugin       | key name           | where to find |
 |--------------|--------------------|---------------|

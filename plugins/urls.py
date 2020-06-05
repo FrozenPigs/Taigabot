@@ -31,6 +31,10 @@ IGNORED_HOSTS = [
     'spotify.com',
     'twitch.tv',
     'twitter.com',
+
+    # handled on mediawiki.py
+    'en.wikipedia.org',
+    'encyclopediadramatica.wiki',
 ]
 
 

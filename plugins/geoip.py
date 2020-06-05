@@ -1,38 +1,29 @@
-from util import hook, formatting
-import os.path
-import pygeoip
-import json
-
-# initalise geolocation database
-geo = pygeoip.GeoIP(os.path.abspath("./plugins/data/geoip.dat"))
-
-
-# load region database
-with open("./plugins/data/geoip_regions.json", "rb") as f:
-    regions = json.loads(f.read())
+# geoip plugin by ine (2020)
+from util import hook
+from utilities import request
 
 
 @hook.command
 def geoip(inp):
     "geoip <host/ip> -- Gets the location of <host/ip>"
-    try:
-        record = geo.record_by_name(inp)
-    except:
-        return "Sorry, I can't locate that in my database."
 
-    data = {}
+    inp = request.urlencode(inp)
+    data = request.get_json('https://ipinfo.io/' + inp, headers={'Accept': 'application/json'})
 
-    if "region_name" in record:
-        # we try catching an exception here because the region DB is missing a few areas
-        # it's a lazy patch, but it should do the job
-        try:
-            data["region"] = ", " + regions[record["country_code"]][record["region_name"]]
-        except:
-            data["region"] = ""
-    else:
-        data["region"] = ""
+    if data.get('error') is not None:
+        if data['error'].get('title') == 'Wrong ip':
+            return '[IP] That IP is not valid'
+        else:
+            return '[IP] Some error ocurred'
 
-    data["cc"] = record["country_code"] or "N/A"
-    data["country"] = record["country_name"] or "Unknown"
-    data["city"] = record["city"] or "Unknown"
-    return formatting.output('GeoIP', ['\x02Country:\x02 {country} ({cc}) \x02City:\x02 {city}{region}'.format(**data)])
+    # example for 8.8.8.8
+    loc = data.get('loc')  # 37.40, -122.07
+    city = data.get('city')  # Mountain View
+    country = data.get('country')  # US
+    region = data.get('region')  # California
+    hostname = data.get('hostname')  # dns.google
+    timezone = data.get('timezone')  # unreliable
+    ip = data.get('ip')  # 8.8.8.8
+    org = data.get('org')  # Google LLC
+
+    return u"[IP] {} - {}, {}, {}".format(org, city, region, country)
