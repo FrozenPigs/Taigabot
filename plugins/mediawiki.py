@@ -84,7 +84,7 @@ def url_wrapper(instance, url):
     if len(output) > OUTPUT_LIMIT:
         output = output[:OUTPUT_LIMIT] + '...'
 
-    return u'\x02{}\x02 :: {}'.format(title, output)
+    return u'\x02{} -\x02 {}'.format(title, output)
 
 
 @hook.regex(INSTANCES['encyclopediadramatica']['regex'])
