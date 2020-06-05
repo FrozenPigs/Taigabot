@@ -9,12 +9,12 @@ INSTANCES = {
     'encyclopediadramatica': {
         'name': 'Encyclopedia Dramatica',
         'search': 'https://encyclopediadramatica.wiki/api.php?' + API_QUERYPARAMS,
-        'regex': r'(https?://encyclopediadramatica\.wiki/index\.php/(.*))'
+        'regex': r'(https?://encyclopediadramatica\.wiki/index\.php/[^ ]+)'
     },
     'wikipedia_en': {
         'name': 'Wikipedia',
         'search': 'https://en.wikipedia.org/w/api.php?' + API_QUERYPARAMS,
-        'regex': r'(https?://en\.wikipedia\.org/wiki/(.*))'
+        'regex': r'(https?://en\.wikipedia\.org/wiki/[^ ]+)'
     },
 }
 
