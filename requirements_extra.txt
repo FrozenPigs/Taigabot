@@ -3,3 +3,4 @@ pytz==2020.1
 tweepy==3.5.0
 mygengo
 pyparsing==2.4.7
+pyenchant==1.6.11
