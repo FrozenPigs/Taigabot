@@ -73,9 +73,9 @@ def command_wrapper(instance, inp):
         output = output[:OUTPUT_LIMIT] + '...'
 
     if title == real_title:
-        return u'\x02{}\x02 :: {}'.format(title, output)
+        return u'\x02{} -\x02 {} \x02-\x02 {}'.format(title, output, url)
     else:
-        return u'\x02{}\x02 :: {} (redirected from {})'.format(real_title, output, title)
+        return u'\x02{} -\x02 {} \x02-\x02 {} (redirected from {})'.format(real_title, output, url, title)
 
 
 def url_wrapper(instance, url):
@@ -84,7 +84,7 @@ def url_wrapper(instance, url):
     if len(output) > OUTPUT_LIMIT:
         output = output[:OUTPUT_LIMIT] + '...'
 
-    return u'\x02{}\x02 :: {}'.format(title, output)
+    return u'\x02{} -\x02 {}'.format(title, output)
 
 
 @hook.regex(INSTANCES['encyclopediadramatica']['regex'])
