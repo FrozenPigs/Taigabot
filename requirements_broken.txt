@@ -1,4 +1,1 @@
-tweepy==3.5.0
 BeautifulSoup==3.2.1
-mygengo
-pytz>=2013b
