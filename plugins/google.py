@@ -38,7 +38,7 @@ def image(inp, bot=None):
     else:
         inp, filetype = inp.string[1:].split('.')
 
-        cx = bot.config['api_keys']['googleimage']
+    cx = bot.config['api_keys']['googleimage']
     search = '+'.join(inp.split())
     key = bot.config['api_keys']['google']
 
@@ -47,6 +47,7 @@ def image(inp, bot=None):
         result = request.get_json(url.format(key, cx, search.encode('utf-8'),
                                              filetype))['items'][0]['link']
     else:
+        url = API_URL + u'?key={}&cx={}&searchType=image&num=1&safe=off&q={}'
         result = request.get_json(url.format(key, cx, search.encode('utf-8')))['items'][0]['link']
 
     try:
