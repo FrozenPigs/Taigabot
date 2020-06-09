@@ -6,6 +6,8 @@ import re
 import time
 import math
 import subprocess
+from utilities import request, formatting
+from bs4 import BeautifulSoup
 
 # HONK HONK
 actions = {
@@ -142,7 +144,7 @@ def bet(inp, nick=None, db=None, chan=None):
                     return u"\x01ACTION You win the bet and win \x02${}\x02. You have \x0309${}\x02\x01".format(strinp[1:], strmoney[1:])
                 else:
                     return u"\x01ACTION You win the bet and win \x02${}\x02. You owe \x0304${}\x02\x01".format(strinp[1:], strmoney)
- 		
+
 
 @hook.command('sell', autohelp=False)
 @hook.command('shill', autohelp=False)
@@ -472,9 +474,6 @@ def pantsumap(inp, chan=None, notice=None):
     return
 
 @hook.command('tits', autohelp=False)
-@hook.command('vagina', autohelp=False)
-@hook.command('anus', autohelp=False)
-@hook.command(autohelp=False)
 def penis(inp, nick=None, paraml=None):
     "penis <nicks> -- Analyzes Penis's"
     command = paraml[-1].split(' ')[0][1:].lower().strip()
@@ -482,6 +481,64 @@ def penis(inp, nick=None, paraml=None):
     if 'penis' in command: url = 'http://en.inkei.net/{}'.format('!'.join(inp.split(' ')))
     else: url = 'http://en.inkei.net/{}/{}'.format(command,'!'.join(inp.split(' ')))
     return url
+
+# TODO cache
+@hook.command('penis', autohelp=False)
+def penis_real(inp, nick=None):
+    if not inp:
+        inp = nick
+
+    inp = request.urlencode(inp)
+    html = request.get('http://en.inkei.net/penis/' + inp)
+    soup = BeautifulSoup(html, 'lxml')
+
+    details = soup.find(id='elmDescCmmn')
+    if details is None:
+        return 'Penis: http://en.inkei.net/penis/' + inp
+
+    details = formatting.compress_whitespace(details.text)
+
+    details = re.sub('Penis of [a-z0-9]+ ', 'Penis: ', details)
+    return u'{} - http://en.inkei.net/penis/{}'.format(details, inp)
+
+
+@hook.command('vagina', autohelp=False)
+def vagina_real(inp, nick=None):
+    if not inp:
+        inp = nick
+
+    inp = request.urlencode(inp)
+    html = request.get('http://en.inkei.net/vagina/' + inp)
+    soup = BeautifulSoup(html, 'lxml')
+
+    details = soup.find(id='elmDescCmmn')
+    if details is None:
+        return 'Vagina: http://en.inkei.net/vagina/' + inp
+
+    details = formatting.compress_whitespace(details.text)
+
+    details = re.sub('Vagina of [a-z0-9]+ ', 'Vagina: ', details)
+    return u'{} - http://en.inkei.net/vagina/{}'.format(details, inp)
+
+
+@hook.command('anus', autohelp=False)
+def anus_real(inp, nick=None):
+    if not inp:
+        inp = nick
+
+    inp = request.urlencode(inp)
+    html = request.get('http://en.inkei.net/anus/' + inp)
+    soup = BeautifulSoup(html, 'lxml')
+
+    details = soup.find(id='elmDescCmmn')
+    if details is None:
+        return 'Anus: http://en.inkei.net/anus/' + inp
+
+    details = formatting.compress_whitespace(details.text)
+
+    details = re.sub('Anus of [a-z0-9]+ ', 'Anus: ', details)
+    return u'{} - http://en.inkei.net/anus/{}'.format(details, inp)
+
 
 
 @hook.command("harakiri", autohelp=False)
@@ -528,7 +585,7 @@ def cowsay(inp, reply=None):
     reply('          (__)\\       )\\/\\')
     reply('              ||----w |')
     reply('              ||     ||')
-    
+
 @hook.command
 def figlet(inp, reply=None):
     inp = inp.encode('utf-8')[:11]
