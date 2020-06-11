@@ -217,7 +217,7 @@ def parse_html(stream):
     for chunk in stream.iter_content(chunk_size=256):
         data = data + chunk
 
-        if len(data) > (1024 * 4):  # use only first 4 KiB
+        if len(data) > (1024 * 12):  # use only first 12 KiB
             break
 
     # try to quickly grab the content between <title> and </title>
