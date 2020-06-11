@@ -266,6 +266,7 @@ def unmatched_url(url, parsed, bot, chan, db):
     # parsing
     domain = parsed.netloc
     content_type = req.headers.get('Content-Type', '')
+    size = req.headers.get('Content-Length', 0)
     output = ['[URL]']
 
     if 'html' in content_type:
@@ -275,21 +276,46 @@ def unmatched_url(url, parsed, bot, chan, db):
             print '[!] WARNING the url caused a parser error'
             title = 'Untitled'
 
+        # TODO handle titles with html entities
+        if '&' in title and ';' in title:
+            # pls fix
+            title = title.replace('&quot;', '"')
+
+        # fucking cloudflare
+        if 'Attention Required! | Cloudflare' in title:
+            return
+
         output.append(title)
 
     else:
         if 'filesize' in disabled_commands:
             return
 
-        if 'image' in content_type:
+        # very common mime types
+        if 'image/' in content_type:
             output.append(content_type.replace('image/', '') + ' image,')
+        elif 'video/' in content_type:
+            output.append(content_type.replace('video/', '') + ' video,')
+        elif 'text/' in content_type:
+            output.append('text file,')
+        elif 'application/octet-stream' == content_type:
+            output.append('binary file,')
+        elif 'audio/' in content_type:
+            output.append('audio file,')
+
+        # other mime types
+        elif 'application/vnd.' in content_type:
+            output.append('unknown binary file,')
+        elif 'font/' in content_type:
+            output.append('font,')
+
+        # i dunno
         else:
             output.append(content_type + ' file,')
 
-        size = req.headers.get('Content-Length', 0)
         try:
             size = int(size)
-        except:
+        except TypeError:
             size = 0
 
         # some pages send exactly 503 or 513 bytes of empty padding as an
