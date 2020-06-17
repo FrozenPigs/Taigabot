@@ -7,7 +7,7 @@ from lxml import html
 
 from bs4 import BeautifulSoup
 from util import database, formatting, hook, http
-
+from util.title_parse import tokenize_title_chunk, parse_title_chunk
 
 MAX_LENGTH = 200
 trimlength = 320
@@ -214,38 +214,19 @@ headers = {'User-Agent': user_agent}
 
 def parse_html(stream):
     data = ''
-    for chunk in stream.iter_content(chunk_size=256):
+    for chunk in stream.iter_content(chunk_size=None, decode_unicode=True):
         data = data + chunk
 
         if len(data) > (1024 * 12):  # use only first 12 KiB
             break
 
-    # try to quickly grab the content between <title> and </title>
-    # should match most cases, if not just fall back to lxml
-    if '<title>' in data and '</title>' in data:
-        try:
-            quick_title = data[data.find('<title>') + 7 : data.find('</title>')]
-            return quick_title.strip()
-        except Exception as e:
-            pass
+    tokens = tokenize_title_chunk(data)
+    title = parse_title_chunk(tokens)
 
-    parser = html.fromstring(data)
+    if title == '':
+        return 'Untitled'
 
-    # try to use the <title> tag first
-    title = parser.xpath('//title/text()')
-    if not title:
-        # fall back to <h1> elements
-        title = parser.xpath('//h1/text()')
-
-    if title:
-        if type(title) is list and len(title) > 0:
-            return title[0].strip()
-
-        elif type(title) is str:
-            return title.strip()
-
-    # page definitely has no title
-    return 'Untitled'
+    return title
 
 
 def unmatched_url(url, parsed, bot, chan, db):
