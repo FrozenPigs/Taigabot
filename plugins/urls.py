@@ -315,8 +315,7 @@ def unmatched_url(url, parsed, bot, chan, db):
         output = output[:MAX_LENGTH] + '...'
 
     # add domain to the end
-    output = "{} ({})".format(output, domain)
-
+    output = "{} ({})".format(output.encode('utf-8', 'ignore'), domain)
     # show error codes if they appear
     if req.status_code >= 400 and req.status_code < 600:
         output = '{} (error {})'.format(output, req.status_code)
