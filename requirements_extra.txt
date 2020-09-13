@@ -3,4 +3,7 @@ pytz==2020.1
 tweepy==3.5.0
 mygengo
 pyparsing==2.4.7
+# this doesn't work on the dockerfile, comment out
 pyenchant==1.6.11
+httplib2
+psutil
