@@ -53,11 +53,28 @@ def search(input):
 def urban(inp):
     "urban <phrase> -- Looks up <phrase> on urbandictionary.com."
 
-    inp = inp.strip()
-    results = search(inp)
+    inp_val = inp.strip()
+    inp_count = 1
+
+    try:
+        inp_rev = inp_val[::-1]
+        inp_count, rest = inp_rev.split(' ', 1)
+
+        inp_val = rest[::-1]
+        inp_count = int(inp_count[::-1])
+    except:
+        inp_val = inp.strip()
+        inp_count = 1
+
+    if (inp_count - 1) < 0:
+        return '[ud] Indexing of results starts at 1'
+
+    results = search(inp_val)
 
     # always return just the first one
-    for result in results:
-        return "[ud] " + result
-
-    return "[ud] Not found"
+    try:
+        return '[ud %s/%s] %s' % (
+            inp_count, len(results), results[inp_count-1]
+        )
+    except IndexError:
+        return '[ud] Not found'
