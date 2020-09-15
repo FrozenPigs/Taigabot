@@ -138,10 +138,27 @@ def weather(inp, bot=None, reply=None, db=None, nick=None, notice=None, paraml=N
         # precip intencity, precip probabilyty, precip type, precip intencity max
         output = "\x02{place}\x02: {summary}, {forecast}".format(
             **weather_data)
+
+        for temp_type in ['temp', 'feel', 'high', 'low']:
+            if (temp_type + '_f') in weather_data:
+                try:
+                    if int(weather_data[temp_type + '_f']) > 80:
+                        weather_data[temp_type + '_f'] = '\x0304%s°F\x03' % weather_data[temp_type + '_f']
+                        weather_data[temp_type + '_c'] = '\x0304%s°C\x03' % weather_data[temp_type + '_c']
+                    elif int(weather_data[temp_type + '_f']) > 50:
+                        weather_data[temp_type + '_f'] = '\x0303%s°F\x03' % weather_data[temp_type + '_f']
+                        weather_data[temp_type + '_c'] = '\x0303%s°C\x03' % weather_data[temp_type + '_c']
+                    else:
+                        weather_data[temp_type + '_f'] = '\x0311%s°F\x03' % weather_data[temp_type + '_f']
+                        weather_data[temp_type + '_c'] = '\x0311%s°C\x03' % weather_data[temp_type + '_c']
+                except ValueError:
+                    weather_data[temp_type + '_f'] = '%s°F' % weather_data[temp_type + '_f']
+                    weather_data[temp_type + '_c'] = '%s°C' % weather_data[temp_type + '_c']
+
         if 'temp_f' in weather_data:
-            output += ', \x02Currently:\x02 {temp_c}°C ({temp_f}°F), \x02Feels Like:\x02 {feel_c}°C ({feel_f}°F)'.format(
+            output += ', \x02Currently:\x02 {temp_c} ({temp_f}), \x02Feels Like:\x02 {feel_c} ({feel_f})'.format(
                 **weather_data)
-        output += ", \x02High:\x02 {high_c}°C ({high_f}°F), \x02Low:\x02 {low_c}°C ({low_f}°F), \x02Humidity:\x02 {humidity}%, \x02Wind:\x02 {wind_text} ({wind_mph} mph/{wind_kph} kph {wind_direction}), \x02Pressure:\x02 {pressure} mb, \x02Sunrise/Sunset:\02 {sunrise}/{sunset}".format(
+        output += ", \x02High:\x02 {high_c} ({high_f}), \x02Low:\x02 {low_c} ({low_f}), \x02Humidity:\x02 {humidity}%, \x02Wind:\x02 {wind_text} ({wind_mph} mph/{wind_kph} kph {wind_direction}), \x02Pressure:\x02 {pressure} mb, \x02Sunrise/Sunset:\02 {sunrise}/{sunset}".format(
             **weather_data)
         if weather_data['uv_index']:
             output += ', \x02UV:\x02 {uv_index}'.format(
