@@ -1,5 +1,6 @@
-from util import http, hook
 import re
+
+from util import hook, http
 
 ## CONSTANTS
 
@@ -32,11 +33,12 @@ exchanges = {
 
 ## HOOK FUNCTIONS
 
+
 @hook.command("btc", autohelp=False)
 @hook.command(autohelp=False)
 def bitcoin(inp):
     """bitcoin <exchange | list> -- Gets current exchange rate for bitcoins from several exchanges, default is MtGox. Supports MtGox, Blockchain, Bitpay, Coinbase and BitStamp."""
-    
+
     inp = inp.lower()
 
     if inp:
@@ -59,7 +61,8 @@ def litecoin(inp, say=None):
     data = http.get_json("https://btc-e.com/api/2/ltc_usd/ticker")
     ticker = data['ticker']
     say("Current: \x0307${:,.2f}\x0f - High: \x0307${:,.2f}\x0f"
-        " - Low: \x0307${:,.2f}\x0f - Volume: {:,.2f} LTC".format(ticker['buy'], ticker['high'], ticker['low'], ticker['vol_cur']))
+        " - Low: \x0307${:,.2f}\x0f - Volume: {:,.2f} LTC".format(ticker['buy'], ticker['high'],
+                                                                  ticker['low'], ticker['vol_cur']))
 
 
 @hook.command(autohelp=False)
@@ -68,7 +71,7 @@ def doge(inp, say=None):
     ".doge -- Returns the value of a dogecoin."
     try:
         # get btc price
-        bitcoin_price = re.search(r'\d+\.\d+',bitcoin('coinbase')).group(0)
+        bitcoin_price = re.search(r'\d+\.\d+', bitcoin('coinbase')).group(0)
         # get doge->btc price
         url = "https://www.coins-e.com/api/v2/markets/data/"
         data = http.get_json(url)
@@ -83,14 +86,17 @@ def doge(inp, say=None):
             'high': data['h'],
             'avg': data['avg_rate'],
             'low': data['l'],
-    }
+        }
     except:
         return 'Error: Doge is worthless.'
-        
+
     result = float(bitcoin_price) * float(current['buy'])
     dollar_result = 1 / float(result)
     lotsadoge = 10000 * result
 
-    result = ("Price: \x0307$%s\x0f - $1=\x0307%s\x0f Doge - 10,000 DOGE=\x0307$%s\x0f - BTC: \x0307%s\x0f" % (result,dollar_result,lotsadoge,current['buy']))
-    result2 = ("Average: \x0307%(avg)s\x0f - High: \x0307%(high)s\x0f - Low: \x0307%(low)s\x0f" % average)
+    result = (
+        "Price: \x0307$%s\x0f - $1=\x0307%s\x0f Doge - 10,000 DOGE=\x0307$%s\x0f - BTC: \x0307%s\x0f"
+        % (result, dollar_result, lotsadoge, current['buy']))
+    result2 = (
+        "Average: \x0307%(avg)s\x0f - High: \x0307%(high)s\x0f - Low: \x0307%(low)s\x0f" % average)
     say("{} - {}".format(result, result2))
