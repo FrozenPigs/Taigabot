@@ -42,9 +42,7 @@ LINK_RE = (r'(https?://\S+\.\S*)', re.I)
 
 @hook.regex(*LINK_RE)
 def process_url(match, bot=None, chan=None, db=None):
-    print(match)
     url = match.group(0)
-    print(url)
     parsed = urlparse(url)
     # parsed contains scheme, netloc, path, params, query, fragment
 
