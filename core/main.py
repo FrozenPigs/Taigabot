@@ -210,7 +210,7 @@ def main(conn, out):
 
         # REGEXES
         for func, args in bot.plugs['regex']:
-            match = args['re'].match(inp.lastparam)
+            match = args['re'].search(inp.lastparam)
             if match:
                 input = Input(conn, *out)
                 input.inp = match
