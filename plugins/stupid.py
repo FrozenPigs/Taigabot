@@ -1,26 +1,29 @@
-from util import hook,http, database
 import locale
-import random
-import urllib
-import re
-import time
 import math
+import random
+import re
 import subprocess
-from utilities import request, formatting
+import time
+import urllib
+
 from bs4 import BeautifulSoup
+
+from util import database, hook, http
+from utilities import formatting, request
 
 # HONK HONK
 actions = {
-    "honk":["honked at", "honking"],
-    "pet":["pet", "petting"],
-    "diddle":["diddled", "diddling"],
-    "spank":["spanked", "spanking"],
+    "honk": ["honked at", "honking"],
+    "pet": ["pet", "petting"],
+    "diddle": ["diddled", "diddling"],
+    "spank": ["spanked", "spanking"],
     "rape": ["raped", "raping"],
     "sex": ["sexed", "sexing"],
     "lick": ["licked", "licking"]
 }
 
-def citation(db,chan,nick,reason):
+
+def citation(db, chan, nick, reason):
     fine = float(random.randint(1, 1500))
     floatfine = float(str(random.random())[0:4])
     if reason.split()[1] == 'raping':
@@ -34,61 +37,83 @@ def citation(db,chan,nick,reason):
     if 'buy' in reason:
         thing = nick
         nick = reason.split(' ')[1]
-        try: totalfines = float(database.get(db,'users','fines','nick',nick)) + fine
-        except: totalfines = 0.0 + fine
-        database.set(db,'users','fines',totalfines,'nick',nick)
+        try:
+            totalfines = float(database.get(db, 'users', 'fines', 'nick', nick)) + fine
+        except:
+            totalfines = 0.0 + fine
+        database.set(db, 'users', 'fines', totalfines, 'nick', nick)
         strfines = "{:,}".format(totalfines)
         strfine = "{:,}".format(fine)
         if '-' in strfines[0]:
-            return u"PRIVMSG {} :\x01ACTION buys {} for \x02${}\x02 {} has \x0309${}\x01".format(chan, thing, strfine, nick, strfines[1:])
+            return u"PRIVMSG {} :\x01ACTION buys {} for \x02${}\x02 {} has \x0309${}\x01".format(
+                chan, thing, strfine, nick, strfines[1:])
         if totalfines <= 0:
-            return u"PRIVMSG {} :\x01ACTION buys {} for \x02${}\x02 {} owes \x0309${}\x01".format(chan, thing, strfine, nick, strfines)
+            return u"PRIVMSG {} :\x01ACTION buys {} for \x02${}\x02 {} owes \x0309${}\x01".format(
+                chan, thing, strfine, nick, strfines)
         else:
-            return u"PRIVMSG {} :\x01ACTION buys {} for \x02${}\x02. {} owes \x0304${}\x02\x01".format(chan, thing, strfine, nick, strfines)
+            return u"PRIVMSG {} :\x01ACTION buys {} for \x02${}\x02. {} owes \x0304${}\x02\x01".format(
+                chan, thing, strfine, nick, strfines)
     if 'sell' in reason:
         thing = nick
         nick = reason.split(' ')[1]
-        try: totalfines = float(database.get(db,'users','fines','nick',nick)) - fine
-        except: totalfines = 0.0 - fine
-        database.set(db,'users','fines',totalfines,'nick',nick)
+        try:
+            totalfines = float(database.get(db, 'users', 'fines', 'nick', nick)) - fine
+        except:
+            totalfines = 0.0 - fine
+        database.set(db, 'users', 'fines', totalfines, 'nick', nick)
         strfines = "{:,}".format(totalfines)
         strfine = "{:,}".format(fine)
         if '-' in strfines[0]:
-            return u"PRIVMSG {} :\x01ACTION sells {} for \x02${}\x02 {} has \x0309${}\x01".format(chan, thing, strfine, nick, strfines[1:])
+            return u"PRIVMSG {} :\x01ACTION sells {} for \x02${}\x02 {} has \x0309${}\x01".format(
+                chan, thing, strfine, nick, strfines[1:])
         if totalfines <= 0:
-            return u"PRIVMSG {} :\x01ACTION sells {} for \x02${}\x02 {} owes \x0309${}\x01".format(chan, thing, strfine, nick, strfines)
+            return u"PRIVMSG {} :\x01ACTION sells {} for \x02${}\x02 {} owes \x0309${}\x01".format(
+                chan, thing, strfine, nick, strfines)
         else:
-            return u"PRIVMSG {} :\x01ACTION sells {} for \x02${}\x02. {} owes \x0304${}\x02\x01".format(chan, thing, strfine, nick, strfines)
+            return u"PRIVMSG {} :\x01ACTION sells {} for \x02${}\x02. {} owes \x0304${}\x02\x01".format(
+                chan, thing, strfine, nick, strfines)
     if 'shill' in reason:
         thing = nick
         nick = reason.split(' ')[1]
-        try: totalfines = float(database.get(db,'users','fines','nick',nick)) - fine
-        except: totalfines = 0.0 - fine
-        database.set(db,'users','fines',totalfines,'nick',nick)
+        try:
+            totalfines = float(database.get(db, 'users', 'fines', 'nick', nick)) - fine
+        except:
+            totalfines = 0.0 - fine
+        database.set(db, 'users', 'fines', totalfines, 'nick', nick)
         strfines = "{:,}".format(totalfines)
         strfine = "{:,}".format(fine)
         if '-' in strfines[0]:
-            return u"PRIVMSG {} :\x01ACTION shills {} for \x02${}\x02 {} has \x0309${}\x01".format(chan, thing, strfine, nick, strfines[1:])
+            return u"PRIVMSG {} :\x01ACTION shills {} for \x02${}\x02 {} has \x0309${}\x01".format(
+                chan, thing, strfine, nick, strfines[1:])
         if totalfines <= 0:
-            return u"PRIVMSG {} :\x01ACTION shills {} for \x02${}\x02 {} owes \x0309${}\x01".format(chan, thing, strfine, nick, strfines)
+            return u"PRIVMSG {} :\x01ACTION shills {} for \x02${}\x02 {} owes \x0309${}\x01".format(
+                chan, thing, strfine, nick, strfines)
         else:
-            return u"PRIVMSG {} :\x01ACTION shills {} for \x02${}\x02. {} owes \x0304${}\x02\x01".format(chan, thing, strfine, nick, strfines)
+            return u"PRIVMSG {} :\x01ACTION shills {} for \x02${}\x02. {} owes \x0304${}\x02\x01".format(
+                chan, thing, strfine, nick, strfines)
     else:
-        try: totalfines = float(database.get(db,'users','fines','nick',nick)) + fine
-        except: totalfines = 0.0 + fine
-        database.set(db,'users','fines',totalfines,'nick',nick)
+        try:
+            totalfines = float(database.get(db, 'users', 'fines', 'nick', nick)) + fine
+        except:
+            totalfines = 0.0 + fine
+        database.set(db, 'users', 'fines', totalfines, 'nick', nick)
         strfines = "{:,}".format(totalfines)
         strfine = "{:,}".format(fine)
         if '-' in strfines[0]:
-            return u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 {}. You have: \x0309${}\x02\x01".format(chan, nick, strfine, reason, strfines[1:])
+            return u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 {}. You have: \x0309${}\x02\x01".format(
+                chan, nick, strfine, reason, strfines[1:])
         if totalfines <= 0:
-            return u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 {}. You owe: \x0304${}\x02\x01".format(chan, nick, strfine, reason, strfines)
+            return u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 {}. You owe: \x0304${}\x02\x01".format(
+                chan, nick, strfine, reason, strfines)
         else:
-            return u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 {}. You owe: \x0304${}\x02\x01".format(chan, nick, strfine, reason, strfines)
+            return u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 {}. You owe: \x0304${}\x02\x01".format(
+                chan, nick, strfine, reason, strfines)
+
 
 @hook.command(autohelp=False)
 def guts(inp):
     return 'Fuck jumi.'
+
 
 @hook.command()
 def plez(inp, chan=None, conn=None):
@@ -103,47 +128,55 @@ def bet(inp, nick=None, db=None, chan=None):
     "bet <ammount> -- bets <ammount>"
     inp = inp.replace(',', '').replace('$', '')
     try:
-        money = float(database.get(db,'users','fines','nick',nick))
+        money = float(database.get(db, 'users', 'fines', 'nick', nick))
     except:
         money = 0.0
     if inp == "":
         inp = "100"
     if inp != "0":
         inp = float('-' + inp)
-	if math.isnan(inp):
-		return
+        if math.isnan(inp):
+            return
         strinp = "{:,}".format(inp)
         strmoney = "{:,}".format(money)
-        if  inp < money or money == 0:
+        if inp < money or money == 0:
             if '-' in strmoney[0]:
-                return u"\x01ACTION You don't have enough money to bet \x02${}\x02. You have \x0309${}\x02\x01".format(strinp[1:], strmoney[1:])
+                return u"\x01ACTION You don't have enough money to bet \x02${}\x02. You have \x0309${}\x02\x01".format(
+                    strinp[1:], strmoney[1:])
             else:
- 		return u"\x01ACTION You don't have enough money to bet \x02${}\x02. You owe \x0304${}\x02\x01".format(strinp[1:], strmoney)
+                return u"\x01ACTION You don't have enough money to bet \x02${}\x02. You owe \x0304${}\x02\x01".format(
+                    strinp[1:], strmoney)
             if inp == 0:
                 if '-' in strmoney[0]:
-                    return u"\x01ACTION You have to bet more than \x02${}\x02. You have \x0309${}\x02\x01".format(strinp[1:], strmoney[1:])
+                    return u"\x01ACTION You have to bet more than \x02${}\x02. You have \x0309${}\x02\x01".format(
+                        strinp[1:], strmoney[1:])
                 else:
-                    return u"\x01ACTION You have to bet more than \x02${}\x02. You owe \x0304${}\x02\x01".format(strinp[1:], strmoney)
+                    return u"\x01ACTION You have to bet more than \x02${}\x02. You owe \x0304${}\x02\x01".format(
+                        strinp[1:], strmoney)
         else:
             print(inp)
-            if random.randint(1,100) <= 50:
+            if random.randint(1, 100) <= 50:
                 money = money - inp
                 strinp = "{:,}".format(inp)
                 strmoney = "{:,}".format(money)
-                database.set(db,'users','fines',money,'nick',nick)
+                database.set(db, 'users', 'fines', money, 'nick', nick)
                 if '-' in strmoney[0]:
-                    return u"\x01ACTION You lose the bet and lost \x02${}\x02. You have \x0309${}\x02\x01".format(strinp[1:], strmoney[1:])
+                    return u"\x01ACTION You lose the bet and lost \x02${}\x02. You have \x0309${}\x02\x01".format(
+                        strinp[1:], strmoney[1:])
                 else:
-                    return u"\x01ACTION You lose the bet and lost \x02${}\x02. You owe \x0304${}\x02\x01".format(strinp[1:], strmoney)
+                    return u"\x01ACTION You lose the bet and lost \x02${}\x02. You owe \x0304${}\x02\x01".format(
+                        strinp[1:], strmoney)
             else:
                 money = money + inp
                 strinp = "{:,}".format(inp)
                 strmoney = "{:,}".format(money)
-                database.set(db,'users','fines',money,'nick',nick)
+                database.set(db, 'users', 'fines', money, 'nick', nick)
                 if '-' in strmoney[0]:
-                    return u"\x01ACTION You win the bet and win \x02${}\x02. You have \x0309${}\x02\x01".format(strinp[1:], strmoney[1:])
+                    return u"\x01ACTION You win the bet and win \x02${}\x02. You have \x0309${}\x02\x01".format(
+                        strinp[1:], strmoney[1:])
                 else:
-                    return u"\x01ACTION You win the bet and win \x02${}\x02. You owe \x0304${}\x02\x01".format(strinp[1:], strmoney)
+                    return u"\x01ACTION You win the bet and win \x02${}\x02. You owe \x0304${}\x02\x01".format(
+                        strinp[1:], strmoney)
 
 
 @hook.command('sell', autohelp=False)
@@ -156,7 +189,7 @@ def bet(inp, nick=None, db=None, chan=None):
 @hook.command('pet', autohelp=False)
 @hook.command('lick', autohelp=False)
 @hook.command(autohelp=False)
-def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None, input=None):
+def honk(inp, nick=None, conn=None, chan=None, db=None, paraml=None, input=None):
     "honk <nick> -- Honks at someone."
     # if pm
     if input.raw.split(' ')[2] == conn.nick:
@@ -167,7 +200,7 @@ def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None, input=None):
     paraml[-1] = regex.sub('', paraml[-1])
     target = inp.strip()
     command = paraml[-1].split(' ')[0][1:].lower()
-    thing =  paraml[-1].split(' ')[1:]
+    thing = paraml[-1].split(' ')[1:]
     thing = '|'.join(thing).replace('|', ' ')
     try:
         if thing[-1] == ' ':
@@ -197,13 +230,16 @@ def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None, input=None):
                 out = citation(db, chan, thing, 'shill {}'.format(nick))
             else:
                 fine = float(random.randint(1500, 3000))
-		nick = input.nick
-		try: totalfines = float(database.get(db,'users','fines','nick',nick)) + fine
-		except: totalfines = 0.0 + fine
-		database.set(db,'users','fines',totalfines,'nick',nick)
-		fine = "{:,}".format(fine)
-		totalfines = "{:,}".format(totalfines)
-                out =  u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 for breaking the NDA. You have: \x0309${}\x02\x01".format(chan, nick, fine, totalfines[1:])
+                nick = input.nick
+                try:
+                    totalfines = float(database.get(db, 'users', 'fines', 'nick', nick)) + fine
+                except:
+                    totalfines = 0.0 + fine
+                database.set(db, 'users', 'fines', totalfines, 'nick', nick)
+                fine = "{:,}".format(fine)
+                totalfines = "{:,}".format(totalfines)
+                out = u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 for breaking the NDA. You have: \x0309${}\x02\x01".format(
+                    chan, nick, fine, totalfines[1:])
         else:
             if randnum == 1:
                 out = citation(db, chan, thing, 'shill {}'.format(nick))
@@ -213,16 +249,20 @@ def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None, input=None):
                 out = citation(db, chan, thing, 'shill {}'.format(nick))
             else:
                 fine = float(random.randint(1500, 3000))
-		nick = input.nick
-		try: totalfines = float(database.get(db,'users','fines','nick',nick)) + fine
-		except: totalfines = 0.0 + fine
-		database.set(db,'users','fines',totalfines,'nick',nick)
-		fine = "{:,}".format(fine)
-		totalfines = "{:,}".format(totalfines)
+                nick = input.nick
+                try:
+                    totalfines = float(database.get(db, 'users', 'fines', 'nick', nick)) + fine
+                except:
+                    totalfines = 0.0 + fine
+                database.set(db, 'users', 'fines', totalfines, 'nick', nick)
+                fine = "{:,}".format(fine)
+                totalfines = "{:,}".format(totalfines)
                 if totalfines[0] == "-":
-                    out =  u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 for breaking the NDA. You have: \x0309${}\x02\x01".format(chan, nick, fine, totalfines[1:])
+                    out = u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 for breaking the NDA. You have: \x0309${}\x02\x01".format(
+                        chan, nick, fine, totalfines[1:])
                 else:
-                    out = u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 for breaking the NDA. You owe: \x0304${}\x02\x01".format(chan, nick, fine, totalfines)
+                    out = u"PRIVMSG {} :\x01ACTION fines {} \x02${}\x02 for breaking the NDA. You owe: \x0304${}\x02\x01".format(
+                        chan, nick, fine, totalfines)
     elif command == 'buy':
         randnum = random.randint(1, 4)
         if len(inp) == 0:
@@ -242,15 +282,16 @@ def honk(inp, nick=None, conn=None, chan=None,db=None, paraml=None, input=None):
     else:
         if len(inp) == 0:
             if random.randint(1, 3) == 2:
-                out = citation(db,chan,nick,"for {}".format(actions[command][1]))
+                out = citation(db, chan, nick, "for {}".format(actions[command][1]))
             else:
                 out = u"PRIVMSG {} :\x01ACTION {}s {}\x01".format(chan, command, nick)
         else:
             randnum = random.randint(1, 4)
             if randnum == 1:
-                out = citation(db,chan,nick,"for {}".format(actions[command][1]))
+                out = citation(db, chan, nick, "for {}".format(actions[command][1]))
             elif randnum == 2:
-                out = citation(db,chan,target,"for being too lewd and getting {}".format(actions[command][0]))
+                out = citation(db, chan, target,
+                               "for being too lewd and getting {}".format(actions[command][0]))
             else:
                 out = u"PRIVMSG {} :\x01ACTION {}s {}\x01".format(chan, command, target)
     conn.send(out)
@@ -278,11 +319,11 @@ def donate(inp, db=None, nick=None, chan=None, conn=None, notice=None):
     if user.lower() == nick.lower():
         user = 'wednesday'
     try:
-        giver = float(database.get(db,'users','fines','nick',nick))
+        giver = float(database.get(db, 'users', 'fines', 'nick', nick))
     except:
         giver = 0.0
     try:
-        taker = float(database.get(db,'users','fines','nick',user))
+        taker = float(database.get(db, 'users', 'fines', 'nick', user))
     except:
         taker = 0.0
     if donation > giver or donation < 0:
@@ -291,17 +332,20 @@ def donate(inp, db=None, nick=None, chan=None, conn=None, notice=None):
         giver = giver + donation
     else:
         giver = giver - donation
-    database.set(db,'users','fines',giver,'nick',nick)
+    database.set(db, 'users', 'fines', giver, 'nick', nick)
     wednesdaywins = random.randint(1, 80)
     if wednesdaywins == 80:
-        wednesday = float(database.get(db,'users','fines','nick','wednesday'))
-        database.set(db,'users','fines',wednesday - donation,'nick','wednesday')
-        conn.send(u"PRIVMSG {} :\x01ACTION gives \x02${}\x02 to wednesday.\x01".format(chan, donation))
+        wednesday = float(database.get(db, 'users', 'fines', 'nick', 'wednesday'))
+        database.set(db, 'users', 'fines', wednesday - donation, 'nick', 'wednesday')
+        conn.send(u"PRIVMSG {} :\x01ACTION gives \x02${}\x02 to wednesday.\x01".format(
+            chan, donation))
     else:
         if giver != taker:
-            database.set(db,'users','fines',taker - donation,'nick', user)
-            database.set(db,'users','fines', giver,'nick', nick)
-        conn.send(u"PRIVMSG {} :\x01ACTION gives \x02${}\x02 to {}.\x01".format(chan, donation, user))
+            database.set(db, 'users', 'fines', taker - donation, 'nick', user)
+            database.set(db, 'users', 'fines', giver, 'nick', nick)
+        conn.send(u"PRIVMSG {} :\x01ACTION gives \x02${}\x02 to {}.\x01".format(
+            chan, donation, user))
+
 
 @hook.command('steal')
 @hook.command('rob')
@@ -313,85 +357,75 @@ def mug(inp, db=None, nick=None, chan=None, conn=None, notice=None):
     money = float(random.randint(20, 1500))
     try:
         money = inp[-1].split('.')[0] + '.' + inp[-1].split('.')[1][0:2]
-	money = float(money)
+        money = float(money)
     except:
         pass
     try:
-        robber = float(database.get(db,'users','fines','nick',nick))
+        robber = float(database.get(db, 'users', 'fines', 'nick', nick))
     except:
         robber = 0.0
     try:
-        victim = float(database.get(db,'users','fines','nick',user))
+        victim = float(database.get(db, 'users', 'fines', 'nick', user))
     except:
         victim = 0.0
     robbingfails = random.randint(1, 3)
     if robbingfails == 2:
         if victim != robber:
-            database.set(db,'users','fines',robber + money,'nick', nick)
-            database.set(db,'users','fines',victim - money,'nick',user)
-        conn.send(u"PRIVMSG {} :\x01ACTION {} shoots you in the foot and takes \x02${}\x02.\x01".format(chan, user, money))
+            database.set(db, 'users', 'fines', robber + money, 'nick', nick)
+            database.set(db, 'users', 'fines', victim - money, 'nick', user)
+        conn.send(u"PRIVMSG {} :\x01ACTION {} shoots you in the foot and takes \x02${}\x02.\x01".
+                  format(chan, user, money))
     else:
         if robber != victim:
-            database.set(db,'users','fines',victim + money,'nick', user)
-            database.set(db,'users','fines',robber - money,'nick', nick)
-        conn.send(u"PRIVMSG {} :\x01ACTION {} shanks {} in a dark alley and takes \x02${}\x02\x01".format(chan, nick, user, money))
+            database.set(db, 'users', 'fines', victim + money, 'nick', user)
+            database.set(db, 'users', 'fines', robber - money, 'nick', nick)
+        conn.send(u"PRIVMSG {} :\x01ACTION {} shanks {} in a dark alley and takes \x02${}\x02\x01".
+                  format(chan, nick, user, money))
+
 
 @hook.command(autohelp=False)
-def owed(inp, nick=None, conn=None, chan=None,db=None):
+def owed(inp, nick=None, conn=None, chan=None, db=None):
     """owe -- shows your total fines"""
     if '@' in inp: nick = inp.split('@')[1].strip()
-    fines = database.get(db,'users','fines','nick',nick)
+    fines = database.get(db, 'users', 'fines', 'nick', nick)
     if not fines: fines = 0
     strfines = "{:,}".format(float(fines))
     if '-' in strfines[0]:
-        return u'\x02{} has:\x02 \x0309${}'.format(nick,strfines[1:])
+        return u'\x02{} has:\x02 \x0309${}'.format(nick, strfines[1:])
     if fines <= 0:
-        return u'\x02{} owes:\x02 \x0309${}'.format(nick,strfines)
+        return u'\x02{} owes:\x02 \x0309${}'.format(nick, strfines)
     else:
-        return u'\x02{} owes:\x02 \x0304${}'.format(nick,strfines)
+        return u'\x02{} owes:\x02 \x0304${}'.format(nick, strfines)
+
 
 @hook.command(autohelp=False)
-def pay(inp, nick=None, conn=None, chan=None,db=None):
+def pay(inp, nick=None, conn=None, chan=None, db=None):
     """pay -- pay your fines"""
     return u'\x02Donate to infinitys paypal to pay the fees! \x02'
 
 
 # VENDINGMACHINE
-colors = ([
-    ('red',         '\x0304'),
-    ('orange',      '\x0307'),
-    ('yellow',      '\x0308'),
-    ('green',       '\x0309'),
-    ('cyan',        '\x0303'),
-    ('light blue',  '\x0310'),
-    ('royal blue',  '\x0312'),
-    ('blue',        '\x0302'),
-    ('magenta',     '\x0306'),
-    ('pink',        '\x0313'),
-    ('maroon',      '\x0305'),
-    ('super shiny', '\x03')
-])
+colors = ([('red', '\x0304'), ('orange', '\x0307'), ('yellow', '\x0308'), ('green', '\x0309'),
+           ('cyan', '\x0303'), ('light blue', '\x0310'), ('royal blue', '\x0312'),
+           ('blue', '\x0302'), ('magenta', '\x0306'), ('pink', '\x0313'), ('maroon', '\x0305'),
+           ('super shiny', '\x03')])
 
-items = ([
-    ('pantsu','used pair of'),
-    ('dragon dildo', 'slightly used'),
-    ('tfwnogf tears direct from ledzeps feels', 'vial of'),
-    ('fursuit','cum stained'),
-    ('girlfriend', 'self-inflatable'),
-    ('otter suit', 'lube covered slippery'),
-    ('dogecoin to call someone that cares', 'worthless'),
-    ('condom that doesnt fit and will never be used', 'magnum XXL'),
-    ('loli', 'miniature'),
-    ("LeDZeP to follow you around and >tfwnogf",'emotionally unstable'),
-    ('rimu job that feels like trying to start a fire with sandpaper','rough and tough')
-])
+items = ([('pantsu', 'used pair of'), ('dragon dildo', 'slightly used'),
+          ('tfwnogf tears direct from ledzeps feels', 'vial of'), ('fursuit', 'cum stained'),
+          ('girlfriend', 'self-inflatable'), ('otter suit', 'lube covered slippery'),
+          ('dogecoin to call someone that cares', 'worthless'),
+          ('condom that doesnt fit and will never be used', 'magnum XXL'), ('loli', 'miniature'),
+          ("LeDZeP to follow you around and >tfwnogf", 'emotionally unstable'),
+          ('rimu job that feels like trying to start a fire with sandpaper', 'rough and tough')])
+
 
 @hook.command(autohelp=False)
 def vendingmachine(inp, nick=None, me=None):
     if inp: nick = inp
     colornum = random.randint(0, len(colors) - 1)
     itemnum = random.randint(0, len(items) - 1)
-    me("dispenses one {} {}{} {}\x03 for {}".format(items[itemnum][1], colors[colornum][1],colors[colornum][0],items[itemnum][0], nick))
+    me("dispenses one {} {}{} {}\x03 for {}".format(items[itemnum][1], colors[colornum][1],
+                                                    colors[colornum][0], items[itemnum][0], nick))
     return
 
 
@@ -419,6 +453,7 @@ def poke(inp, nick=None, me=None):
     if not inp: inp = nick
     me('pokes {}'.format(inp))
 
+
 @hook.command(autohelp=False)
 def nigger(inp, nick=None):
     "nigger <nick> -- niggers someone"
@@ -437,8 +472,10 @@ def kiss(inp, nick=None):
 @hook.command(autohelp=False)
 def intensify(inp):
     "intensify <word> -- [EXCITEMENT INTENSIFIES]"
-    try: word = inp.upper()
-    except: word = inp.group(1).upper()
+    try:
+        word = inp.upper()
+    except:
+        word = inp.group(1).upper()
     return u'\x02[{} INTENSIFIES]\x02'.format(word)
 
 
@@ -453,24 +490,31 @@ def decrease(inp):
     "decrease"
     return '\x02[QUALITY OF CHANNEL SIGNIFICANTLY DECREASED]\x02'
 
+
 @hook.command(autohelp=False)
 def shekels(inp, conn=None, chan=None):
     "shekles"
-    conn.send(u"PRIVMSG {} :\x01ACTION lays some shekels on the ground to lure the jews.\x01".format(chan))
+    conn.send(u"PRIVMSG {} :\x01ACTION lays some shekels on the ground to lure the jews.\x01".
+              format(chan))
+
 
 @hook.command(autohelp=False)
 def hump(inp, conn=None, chan=None):
     "humps"
     conn.send(u"PRIVMSG {} :\x01ACTION humps {}.\x01".format(chan, inp))
 
+
 @hook.command(autohelp=False)
 def marry(inp, conn=None, chan=None, nick=None):
     "marrys person"
-    conn.send(u"PRIVMSG {} :\x01ACTION pronounces {} and {} husbando and waifu.\x01".format(chan, nick, inp))
+    conn.send(u"PRIVMSG {} :\x01ACTION pronounces {} and {} husbando and waifu.\x01".format(
+        chan, nick, inp))
+
 
 @hook.command(autohelp=False)
 def pantsumap(inp, chan=None, notice=None):
-    if chan == "#pantsumen": notice(("Pantsumen Map: http://tinyurl.com/clx2qeg\r\n").encode('utf-8', 'ignore'))
+    if chan == "#pantsumen":
+        notice(("Pantsumen Map: http://tinyurl.com/clx2qeg\r\n").encode('utf-8', 'ignore'))
     return
 
 
@@ -509,7 +553,7 @@ def tits_real(inp, nick=None):
 
     details = formatting.compress_whitespace(details.text)
 
-    details = re.sub('Penis of [a-zA-Z0-9]+ ', 'Tits: ', details)
+    details = re.sub('Tits of [a-zA-Z0-9]+ ', 'Tits: ', details)
     return u'{} - http://en.inkei.net/tits/{}'.format(details, inp)
 
 
@@ -574,16 +618,18 @@ def akbar(inp, conn=None, chan=None, nick=None, say=None, bot=None):
     conn.send(u"JOIN {}".format(chan))
     return
 
+
 @hook.command("storyofrincewindscat", autohelp=False)
 @hook.command(channeladminonly=True, autohelp=False)
 def storyofpomfface(inp, reply=None):
-   reply(':O C==3')
-   reply(':OC==3')
-   reply(':C==3')
-   reply(':C=3')
-   reply(':C3')
-   reply(':3')
-   return
+    reply(':O C==3')
+    reply(':OC==3')
+    reply(':C==3')
+    reply(':C=3')
+    reply(':C3')
+    reply(':3')
+    return
+
 
 @hook.command
 def cowsay(inp, reply=None):
@@ -595,6 +641,7 @@ def cowsay(inp, reply=None):
     reply('          (__)\\       )\\/\\')
     reply('              ||----w |')
     reply('              ||     ||')
+
 
 @hook.command
 def figlet(inp, reply=None):
@@ -628,18 +675,14 @@ def tetete(inp, nick=None):
 # def agree(inp):
 #     return "^"
 
+woahs = ([('woah'), ('woah indeed'), ('woah woah woah!'), ('keep your woahs to yourself')])
 
-woahs = ([
-    ('woah'),
-    ('woah indeed'),
-    ('woah woah woah!'),
-    ('keep your woahs to yourself')
-])
+
 @hook.regex(r'.*([W|w]+[H|h]+[O|o]+[A|a]+).*')
 @hook.regex(r'.*([W|w]+[O|o]+[A|a]+[H|h]+).*')
 def woah(inp, nick=None):
     if random.randint(0, 4) == 0:
-        return woahs[random.randint(0, len(woahs) - 1)].replace('woah',inp.group(1))
+        return woahs[random.randint(0, len(woahs) - 1)].replace('woah', inp.group(1))
 
 
 @hook.regex(r'.*([L|l]+[I|i]+[N|n]+[U|u]+[X|x]).*')
@@ -655,9 +698,11 @@ def interject(inp, nick=None):
 def hack(inp):
     return 'hacking...'
 
+
 @hook.command
 def pdawg(inp):
     return '<PDawg> i suck cocks...'
+
 
 @hook.command
 def leet(text):
@@ -674,7 +719,7 @@ def leet(text):
         (('s', 'S'), '5'),
         (('a', 'A'), '4'),
         (('t', 'T'), '7'),
-        )
+    )
     for symbols, replaceStr in leet:
         for symbol in symbols:
             text = text.replace(symbol, replaceStr)
@@ -684,51 +729,35 @@ def leet(text):
 # 'is trying to steal your girl','or else Im going to fuck her in the ass tonight lil bitch!'
 
 exercises = [
-    "pushups",
-    "handstand pushups",
-    "squats",
-    "curls",
-    "dips",
-    "crunches",
-    "minutes of planking",
-    "burpees",
-    "jumping jacks",
-    "minutes of vigorous fapping"
-    ]
+    "pushups", "handstand pushups", "squats", "curls", "dips", "crunches", "minutes of planking",
+    "burpees", "jumping jacks", "minutes of vigorous fapping"
+]
 
-fitnesslevels = [
-    "swole",
-    "fit",
-    "cut",
-    "ripped",
-    "infinity'd",
-    "jacked"
-    ]
+fitnesslevels = ["swole", "fit", "cut", "ripped", "infinity'd", "jacked"]
 
 motivators = [
-    "bitch",
-    "you hungry skeleton",
-    "you puny mortal",
-    "you weak pathetic fool",
-    "you wat wannabe"
-    ]
+    "bitch", "you hungry skeleton", "you puny mortal", "you weak pathetic fool", "you wat wannabe"
+]
+
 
 @hook.command
-def workout(inp,autohelp=False,me=None,paraml=None):
+def workout(inp, autohelp=False, me=None, paraml=None):
     if not inp: inp = 'you'
-    else: inp = inp.replace('@','').strip()
-    me('wants {} to get {} as fuck, do {} {} now {}!'.format(inp,random.choice(fitnesslevels),random.randint(1, 50),random.choice(exercises),random.choice(motivators)))
+    else: inp = inp.replace('@', '').strip()
+    me('wants {} to get {} as fuck, do {} {} now {}!'.format(inp, random.choice(fitnesslevels),
+                                                             random.randint(1, 50),
+                                                             random.choice(exercises),
+                                                             random.choice(motivators)))
 
-@hook.command('squats',autohelp=False)
+
+@hook.command('squats', autohelp=False)
 @hook.command
-def pushups(inp,autohelp=False,me=None,paraml=None):
+def pushups(inp, autohelp=False, me=None, paraml=None):
     activity = paraml[-1].split(' ')[0][1:].lower()
     if not inp: inp = 'you'
-    else: inp = inp.replace('@','').strip()
-    me('wants {} to get swole as fuck, do {} {} now bitch!'.format(inp,random.randint(1, 50),activity))
-
-
-
+    else: inp = inp.replace('@', '').strip()
+    me('wants {} to get swole as fuck, do {} {} now bitch!'.format(inp, random.randint(1, 50),
+                                                                   activity))
 
 
 # @hook.command
@@ -750,8 +779,9 @@ def pushups(inp,autohelp=False,me=None,paraml=None):
 def madoka(inp):
     return 'Madoka_Miku has looked at infinitys abs {} times today.'.format(random.randint(1, 500))
 
+
 @hook.command(autohelp=False)
-def drink(inp,me=None):
+def drink(inp, me=None):
     me('Drinks {}, and it was delicious. mmmmmmmmmmmmmmmm'.format(inp))
 
 
@@ -759,15 +789,17 @@ def drink(inp,me=None):
 def fap(inp, me=None, nick=None):
     me('Jerks off and cums on {}'.format(inp))
 
+
 # var replies = ['faggot','i ought to fuk u up m8','1v1 me','do u evn lift','ur mom','consider urself trolld','ur mom iz gay','stfu fagget','omg nub','u hax i repert u','my dad works for this site so I would be nice if I were you','ill rek u','get rekt scrub','u r gay'];
 
-
 # .sue
+
 
 @hook.command(autohelp=False)
 def cayoot(inp, nick=None):
     if not inp: inp = nick
     return '{} is cayoot!'.format(inp)
+
 
 @hook.command(autohelp=False)
 def spit(inp, nick=None, me=None):
@@ -779,7 +811,6 @@ def spit(inp, nick=None, me=None):
 def sniff(inp, nick=None, me=None):
     if not inp: inp = nick
     me('huffs {}s hair while sat behind them on the bus.'.format(inp))
-
 
 
 # @hook.command('siid')
@@ -810,215 +841,43 @@ def sniff(inp, nick=None, me=None):
 def lok(inp, reply=None):
     reply('lol')
 
-foods = ['ackee',
-	'almojabana',
-	'aloo paratha',
-	'arepa',
-	'aacon',
-	'bacon, egg, and cheese sandwich',
-	'bagel',
-	'baked beans',
-	'banana',
-	'banana pancakes',
-	'barley honey',
-	'bear claw',
-	'bhakri',
-	'bhatoora',
-	'bialy',
-	'bing',
-	'biscuits and gravy',
-	'black pudding',
-	'blintzes',
-	'boiled egg',
-	'breadfruit',
-	'breakfast burrito',
-	'breakfast cereal',
-	'breakfast roll',
-	'breakfast sandwich',
-	'breakfast sausage',
-	'breakfast taco',
-	'Brown Bobby',
-	'bublik',
-	'bubur kacang hijau',
-	'calas',
-	'cereal bar',
-	'cereal germ',
-	'changua',
-	'cheese toast',
-	'chicken curry',
-	'chilaquiles',
-	'chocolate sandwich',
-	'chorizo',
-	'chwee kueh',
-	'cinnamon roll',
-	'collops',
-	'congee',
-	'cream pie',
-	'creamed eggs on toast',
-	'crepe',
-	'cretons',
-	'croissant',
-	'crumpets',
-	'cum',
-	'David Eyres pancake',
-	'devilled kidneys',
-	'Diyabath',
-	'djevrek',
-	'dosa',
-	'doubles',
-	'doughnut',
-	'Dutch baby pancake',
-	'egg',
-	'egg in the basket',
-	'egg sandwich',
-	'egg and brains',
-	'eggs benedict',
-	'eggs neptune',
-	'energy bar',
-	'English muffin',
-	'French toast',
-	'fried bread',
-	'fried cheese',
-	'fried egg',
-	'fruit',
-	'fruit pudding',
-	'full breakfast',
-	'goetta',
-	'gogli',
-	'griddle scone',
-	'grillades',
-	'grits',
-	'halwa poori',
-	'ham',
-	'ham and eggs',
-	'hash',
-	'hash browns',
-	'home fries',
-	'honey',
-	'hoppers',
-	'hot dry noodles',
-	'huevos a la mexicana',
-	'huevos divorciados',
-	'huevos motuleños',
-	'huevos rancheros',
-	'idli',
-	'indian omelette',
-	'instant breakfast',
-	'johnnycake',
-	'kedgeree',
-	'khabees',
-	'khaman',
-	'kiribath',
-	'kolache',
-	'kulcha',
-	'kulich',
-	'leben',
-	'lox',
-	'mandoca',
-	'mango',
-	'mango juice',
-	'mango peel',
-	'mango pudding',
-	'maple syrup',
-	'mas huni',
-	'matzah brei',
-	'McMuffin',
-	'mekitsa',
-	'menemen',
-	'mie goreng',
-	'migas',
-	'milk toast',
-	'mohinga',
-	'monkey bread',
-	'msemen',
-	'muesli',
-	'muffin',
-	'nasi goreng',
-	'nasi lemak',
-	'nihari',
-	'oatmeal',
-	'omelette',
-	'orange juice',
-	'ox-tongue pastry',
-	'pain au chocolat',
-	'pain aux raisins',
-	'palm syrup',
-	'palmier',
-	'pan de yuca',
-	'pancake',
-	'pandebono',
-	'pandesal',
-	'pastry',
-	'peanut butter',
-	'perico',
-	'pesarattu',
-	'phitti',
-	'pisca andina',
-	'poached egg',
-	'Pop-Tarts',
-	'popcorn cereal',
-	'popover',
-	'pork roll',
-	'porridge',
-	'Portuguese sweet bread',
-	'potato cake',
-	'potato scone',
-	'protein bar',
-	'puttu',
-	'pudding',
-	'pulihora',
-	'quark',
-	'quesedilla',
-	'quiche',
-	'raisin bread',
-	'rashers',
-	'roti canai',
-	'roti john',
-	'roti prata',
-	'run down',
-	'sabaayad',
-	'salmon',
-	'salt cod',
-	'Samiya upma',
-	'sausage',
-	'sausage gravy',
-	'scone',
-	'scrambled eggs',
-	'scrapple',
-	'shrimp',
-	'shuangbaotai',
-	'simit',
-	'siri paya',
-	'sizzlean',
-	'slinger',
-	'soy milk',
-	'Stamp and Go',
-	'sticky bun',
-	'strata',
-	'string hoppers',
-	'strudel',
-	'syrniki',
-	'tamago kake gohan',
-	'Texas toast',
-	'throdkin',
-	'tian mo',
-	'toast',
-	'tomato omelette',
-	'tongue',
-	'tongue toast',
-	'touton',
-	'upma',
-	'viennoiserie',
-	'waffle',
-	'water biscuit',
-	'weisswurst',
-	'wrap roti',
-	'yogurt',
-	'youtiao']
+
+foods = [
+    'ackee', 'almojabana', 'aloo paratha', 'arepa', 'aacon', 'bacon, egg, and cheese sandwich',
+    'bagel', 'baked beans', 'banana', 'banana pancakes', 'barley honey', 'bear claw', 'bhakri',
+    'bhatoora', 'bialy', 'bing', 'biscuits and gravy', 'black pudding', 'blintzes', 'boiled egg',
+    'breadfruit', 'breakfast burrito', 'breakfast cereal', 'breakfast roll', 'breakfast sandwich',
+    'breakfast sausage', 'breakfast taco', 'Brown Bobby', 'bublik', 'bubur kacang hijau', 'calas',
+    'cereal bar', 'cereal germ', 'changua', 'cheese toast', 'chicken curry', 'chilaquiles',
+    'chocolate sandwich', 'chorizo', 'chwee kueh', 'cinnamon roll', 'collops', 'congee', 'cream pie',
+    'creamed eggs on toast', 'crepe', 'cretons', 'croissant', 'crumpets', 'cum', 'David Eyres pancake',
+    'devilled kidneys', 'Diyabath', 'djevrek', 'dosa', 'doubles', 'doughnut', 'Dutch baby pancake',
+    'egg', 'egg in the basket', 'egg sandwich', 'egg and brains', 'eggs benedict', 'eggs neptune',
+    'energy bar', 'English muffin', 'French toast', 'fried bread', 'fried cheese', 'fried egg',
+    'fruit', 'fruit pudding', 'full breakfast', 'goetta', 'gogli', 'griddle scone', 'grillades',
+    'grits', 'halwa poori', 'ham', 'ham and eggs', 'hash', 'hash browns', 'home fries', 'honey',
+    'hoppers', 'hot dry noodles', 'huevos a la mexicana', 'huevos divorciados', 'huevos motuleños',
+    'huevos rancheros', 'idli', 'indian omelette', 'instant breakfast', 'johnnycake', 'kedgeree',
+    'khabees', 'khaman', 'kiribath', 'kolache', 'kulcha', 'kulich', 'leben', 'lox', 'mandoca',
+    'mango', 'mango juice', 'mango peel', 'mango pudding', 'maple syrup', 'mas huni', 'matzah brei',
+    'McMuffin', 'mekitsa', 'menemen', 'mie goreng', 'migas', 'milk toast', 'mohinga', 'monkey bread',
+    'msemen', 'muesli', 'muffin', 'nasi goreng', 'nasi lemak', 'nihari', 'oatmeal', 'omelette',
+    'orange juice', 'ox-tongue pastry', 'pain au chocolat', 'pain aux raisins', 'palm syrup',
+    'palmier', 'pan de yuca', 'pancake', 'pandebono', 'pandesal', 'pastry', 'peanut butter',
+    'perico', 'pesarattu', 'phitti', 'pisca andina', 'poached egg', 'Pop-Tarts', 'popcorn cereal',
+    'popover', 'pork roll', 'porridge', 'Portuguese sweet bread', 'potato cake', 'potato scone',
+    'protein bar', 'puttu', 'pudding', 'pulihora', 'quark', 'quesedilla', 'quiche', 'raisin bread',
+    'rashers', 'roti canai', 'roti john', 'roti prata', 'run down', 'sabaayad', 'salmon', 'salt cod',
+    'Samiya upma', 'sausage', 'sausage gravy', 'scone', 'scrambled eggs', 'scrapple', 'shrimp',
+    'shuangbaotai', 'simit', 'siri paya', 'sizzlean', 'slinger', 'soy milk', 'Stamp and Go',
+    'sticky bun', 'strata', 'string hoppers', 'strudel', 'syrniki', 'tamago kake gohan', 'Texas toast',
+    'throdkin', 'tian mo', 'toast', 'tomato omelette', 'tongue', 'tongue toast', 'touton', 'upma',
+    'viennoiserie', 'waffle', 'water biscuit', 'weisswurst', 'wrap roti', 'yogurt', 'youtiao'
+]
 
 
 @hook.command(autohelp=False)
 def breakfast(inp, nick=None, me=None, conn=None, chan=None):
     if not inp: inp = nick
-    food = foods[random.randint(0, len(foods)-1)]
+    food = foods[random.randint(0, len(foods) - 1)]
     me('gives {} some {}.'.format(inp, food))
