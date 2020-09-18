@@ -85,7 +85,7 @@ def search_quote(db, nick, search, bot):
             'api_paste_expire_date': '1W',
             'api_paste_code': '\n'.join(results).encode('utf-8')
         }
-        response = urllib.urlopen('http://pastebin.com/api/api_post.php',
+        response = urllib.urlopen('https://pastebin.com/api/api_post.php',
                                   urllib.urlencode(pastebin_vars))
         results = response.read()
         print results

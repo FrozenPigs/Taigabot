@@ -1,7 +1,9 @@
-import re
-
-from util import hook, http, formatting
 import random
+import re
+import urllib2
+from xml.dom import minidom
+
+from util import formatting, hook, http
 
 #
 # Copyright 2009 Derik Pereira. All Rights Reserved.
@@ -23,8 +25,6 @@ import random
 __author__ = 'derik66@gmail.com'
 __version__ = '1.1-devel'
 
-import urllib2
-from xml.dom import minidom
 
 # import simplejson as json
 

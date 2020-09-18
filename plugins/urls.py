@@ -3,11 +3,10 @@ import urllib2
 from urlparse import urlparse
 
 import requests
+from bs4 import BeautifulSoup
 from lxml import html
 
-from bs4 import BeautifulSoup
 from util import database, formatting, hook, http
-
 
 MAX_LENGTH = 200
 trimlength = 320
@@ -17,7 +16,7 @@ IGNORED_HOSTS = [
     'localhost',
     # these are handled by their respective plugin
     # more info on some other file
-    'youtube.com',  # handled by youtube plugin
+    'youtube.com',    # handled by youtube plugin
     'youtu.be',
     'music.youtube.com',
     'vimeo.com',
@@ -37,14 +36,13 @@ IGNORED_HOSTS = [
     'encyclopediadramatica.wiki',
 ]
 
-
 # 'http' + s optional + ':// ' + anything + '.' + anything
 LINK_RE = (r'(https?://\S+\.\S*)', re.I)
 
 
 @hook.regex(*LINK_RE)
 def process_url(match, bot=None, chan=None, db=None):
-    url = match.group(1)
+    url = match.group(0)
     parsed = urlparse(url)
     # parsed contains scheme, netloc, path, params, query, fragment
 
@@ -55,32 +53,32 @@ def process_url(match, bot=None, chan=None, db=None):
             return
 
     if 'simg.gelbooru.com' in url.lower():
-        return unmatched_url(url, parsed, bot, chan, db)  # handled by Gelbooru plugin: exiting
+        return unmatched_url(url, parsed, bot, chan, db)    # handled by Gelbooru plugin: exiting
     elif 'gelbooru.com' in url.lower():
-        return  # handled by Gelbooru plugin: exiting
+        return    # handled by Gelbooru plugin: exiting
     elif 'craigslist.org' in url.lower():
-        return craigslist_url(url)  # Craigslist
+        return craigslist_url(url)    # Craigslist
     elif 'ebay.com' in url.lower():
-        return ebay_url(url, bot)  # Ebay
+        return ebay_url(url, bot)    # Ebay
     elif 'wikipedia.org' in url.lower():
-        return wikipedia_url(url)  # Wikipedia
+        return wikipedia_url(url)    # Wikipedia
     elif 'hentai.org' in url.lower():
-        return hentai_url(url, bot)  # Hentai
-    elif 'boards.4chan.org' in url.lower():  # 4chan
+        return hentai_url(url, bot)    # Hentai
+    elif 'boards.4chan.org' in url.lower():    # 4chan
         if '4chan.org/b/' in url.lower():
             return '\x033>/b/\x03'
         if '#p' in url.lower():
-            return fourchanquote_url(url)  # 4chan Quoted Post
+            return fourchanquote_url(url)    # 4chan Quoted Post
         if '/thread/' in url.lower():
-            return fourchanthread_url(url)  # 4chan Post
+            return fourchanthread_url(url)    # 4chan Post
         if '/res/' in url.lower():
-            return fourchanthread_url(url)  # 4chan Post
+            return fourchanthread_url(url)    # 4chan Post
         if '/src/' in url.lower():
-            return unmatched_url(url, parsed, bot, chan, db)  # 4chan Image
+            return unmatched_url(url, parsed, bot, chan, db)    # 4chan Image
         else:
-            return fourchanboard_url(url)  # 4chan Board
+            return fourchanboard_url(url)    # 4chan Board
     else:
-        return unmatched_url(url, parsed, bot, chan, db)  # process other url
+        return unmatched_url(url, parsed, bot, chan, db)    # process other url
 
 
 # @hook.regex(*fourchan_re)
@@ -98,7 +96,8 @@ def fourchanthread_url(match):
     post = soup.find('div', {'class': 'opContainer'})
     comment = post.find('blockquote', {'class': 'postMessage'}).renderContents().strip()
     author = post.find_all('span', {'class': 'nameBlock'})[1]
-    return http.process_text("\x02{}\x02 - posted by \x02{}\x02: {}".format(title, author, comment[:trimlength]))
+    return http.process_text("\x02{}\x02 - posted by \x02{}\x02: {}".format(
+        title, author, comment[:trimlength]))
 
 
 # fourchan_quote_re = (r'>>(\D\/\d+)', re.I)
@@ -111,7 +110,8 @@ def fourchanquote_url(match):
     post = soup.find('div', {'id': postid})
     comment = post.find('blockquote', {'class': 'postMessage'}).renderContents().strip()
     author = post.find_all('span', {'class': 'nameBlock'})[1].renderContents().strip()
-    return http.process_text("\x02{}\x02 - posted by \x02{}\x02: {}".format(title, author, comment[:trimlength]))
+    return http.process_text("\x02{}\x02 - posted by \x02{}\x02: {}".format(
+        title, author, comment[:trimlength]))
 
 
 def craigslist_url(match):
@@ -148,9 +148,8 @@ def ebay_url(match, bot):
     else:
         feedback = '?'
 
-    return http.process_text(
-        "\x02{}\x02 - \x02\x033{}\x03\x02 - Bids: {} - Feedback: {}".format(title, price, bids, feedback)
-    )
+    return http.process_text("\x02{}\x02 - \x02\x033{}\x03\x02 - Bids: {} - Feedback: {}".format(
+        title, price, bids, feedback))
 
 
 def wikipedia_url(match):
@@ -170,23 +169,23 @@ def hentai_url(match, bot):
         username = userpass.split(':')[0]
         password = userpass.split(':')[1]
         if not username or not password:
-            return  # "error: no username/password set"
+            return    # "error: no username/password set"
 
     url = match
     loginurl = 'http://forums.e-hentai.org/index.php?act=Login&CODE=01'
     logindata = 'referer=http://forums.e-hentai.org/index.php&UserName={}&PassWord={}&CookieDate=1'.format(
-        username, password
-    )
+        username, password)
 
     req = urllib2.Request(loginurl)
-    resp = urllib2.urlopen(req, logindata)  # POST
-    coo = resp.info().getheader('Set-Cookie')  # cookie
+    resp = urllib2.urlopen(req, logindata)    # POST
+    coo = resp.info().getheader('Set-Cookie')    # cookie
     cooid = re.findall('ipb_member_id=(.*?);', coo)[0]
     coopw = re.findall('ipb_pass_hash=(.*?);', coo)[0]
 
     headers = {
         'Cookie': 'ipb_member_id=' + cooid + ';ipb_pass_hash=' + coopw,
-        'User-Agent': "User-Agent':'Mozilla/5.2 (compatible; MSIE 8.0; Windows NT 6.2;)",  # wow this code is ass
+        'User-Agent':
+        "User-Agent':'Mozilla/5.2 (compatible; MSIE 8.0; Windows NT 6.2;)",    # wow this code is ass
     }
 
     request = urllib2.Request(url, None, headers)
@@ -217,14 +216,14 @@ def parse_html(stream):
     for chunk in stream.iter_content(chunk_size=256):
         data = data + chunk
 
-        if len(data) > (1024 * 12):  # use only first 12 KiB
+        if len(data) > (1024 * 12):    # use only first 12 KiB
             break
 
     # try to quickly grab the content between <title> and </title>
     # should match most cases, if not just fall back to lxml
     if '<title>' in data and '</title>' in data:
         try:
-            quick_title = data[data.find('<title>') + 7 : data.find('</title>')]
+            quick_title = data[data.find('<title>') + 7:data.find('</title>')]
             return quick_title.strip()
         except Exception as e:
             pass

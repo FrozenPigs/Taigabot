@@ -1,16 +1,16 @@
+import re
 import thread
 import traceback
-import re
 
-thread.stack_size(1024 * 512)  # reduce vm size
+thread.stack_size(1024 * 512)    # reduce vm size
 
 
 class Input(dict):
-    def __init__(self, conn, raw, prefix, command, params,
-                    nick, user, host, mask, paraml, msg):
+
+    def __init__(self, conn, raw, prefix, command, params, nick, user, host, mask, paraml, msg):
 
         chan = paraml[0].lower()
-        if chan == conn.nick.lower():  # is a PM
+        if chan == conn.nick.lower():    # is a PM
             chan = nick
 
         def say(msg):
@@ -20,12 +20,14 @@ class Input(dict):
             conn.msg(nick, msg)
 
         def reply(msg):
-            if chan == nick:  # PMs don't need prefixes
+            if chan == nick:    # PMs don't need prefixes
                 conn.msg(chan, msg)
             else:
                 #conn.msg(chan, '(' + nick + ') ' + msg)
-                try: conn.msg(chan, re.match(r'\.*(\w+.*)',msg).group(1))
-                except: conn.msg(chan,msg)
+                try:
+                    conn.msg(chan, re.match(r'\.*(\w+.*)', msg).group(1))
+                except:
+                    conn.msg(chan, msg)
 
         def me(msg):
             conn.msg(chan, "\x01%s %s\x01" % ("ACTION", msg))
@@ -37,11 +39,28 @@ class Input(dict):
         def notice(msg):
             conn.cmd('NOTICE', [nick, msg])
 
-        dict.__init__(self, conn=conn, raw=raw, prefix=prefix, command=command,
-                    params=params, nick=nick, user=user, host=host, mask=mask,
-                    paraml=paraml, msg=msg, server=conn.server, chan=chan,
-                    notice=notice, say=say, reply=reply, pm=pm, bot=bot,
-                    me=me, lastparam=paraml[-1])
+        dict.__init__(
+            self,
+            conn=conn,
+            raw=raw,
+            prefix=prefix,
+            command=command,
+            params=params,
+            nick=nick,
+            user=user,
+            host=host,
+            mask=mask,
+            paraml=paraml,
+            msg=msg,
+            server=conn.server,
+            chan=chan,
+            notice=notice,
+            say=say,
+            reply=reply,
+            pm=pm,
+            bot=bot,
+            me=me,
+            lastparam=paraml[-1])
 
     # make dict keys accessible as attributes
     def __getattr__(self, key):
@@ -75,6 +94,7 @@ def run(func, input):
         except UnicodeEncodeError:
             input.reply(unicode(out))
 
+
 def do_sieve(sieve, bot, input, func, type, args):
     try:
         return sieve(bot, input, func, type, args)
@@ -86,6 +106,7 @@ def do_sieve(sieve, bot, input, func, type, args):
 
 class Handler(object):
     '''Runs plugins in their own threads (ensures order)'''
+
     def __init__(self, func):
         self.func = func
         self.input_queue = Queue.Queue()
@@ -160,7 +181,7 @@ def main(conn, out):
 
     if inp.command == 'PRIVMSG':
         # COMMANDS
-        if inp.chan == inp.nick:  # private message, no command prefix
+        if inp.chan == inp.nick:    # private message, no command prefix
             prefix = '^(?:[%s]?|' % command_prefix
         else:
             prefix = '^(?:[%s]|' % command_prefix
@@ -174,11 +195,10 @@ def main(conn, out):
             trigger = m.group(1).lower()
             command = match_command(trigger)
 
-            if isinstance(command, list):  # multiple potential matches
+            if isinstance(command, list):    # multiple potential matches
                 input = Input(conn, *out)
                 if trigger not in ('b', 'p', 'd', 'pa', 'uj'):
-                    input.notice("Did you mean %s or %s?" %
-                            (', '.join(command[:-1]), command[-1]))
+                    input.notice("Did you mean %s or %s?" % (', '.join(command[:-1]), command[-1]))
             elif command in bot.commands:
                 input = Input(conn, *out)
                 input.trigger = trigger
@@ -190,10 +210,9 @@ def main(conn, out):
 
         # REGEXES
         for func, args in bot.plugs['regex']:
-            m = args['re'].finditer(inp.lastparam)
-            if m:
-                for match in m:
-                    input = Input(conn, *out)
-                    input.inp = match
+            match = args['re'].search(inp.lastparam)
+            if match:
+                input = Input(conn, *out)
+                input.inp = match
 
-                    dispatch(input, "regex", func, args)
+                dispatch(input, "regex", func, args)
