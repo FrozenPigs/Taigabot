@@ -473,14 +473,6 @@ def pantsumap(inp, chan=None, notice=None):
     if chan == "#pantsumen": notice(("Pantsumen Map: http://tinyurl.com/clx2qeg\r\n").encode('utf-8', 'ignore'))
     return
 
-@hook.command('tits', autohelp=False)
-def penis(inp, nick=None, paraml=None):
-    "penis <nicks> -- Analyzes Penis's"
-    command = paraml[-1].split(' ')[0][1:].lower().strip()
-    if not inp: inp = nick
-    if 'penis' in command: url = 'http://en.inkei.net/{}'.format('!'.join(inp.split(' ')))
-    else: url = 'http://en.inkei.net/{}/{}'.format(command,'!'.join(inp.split(' ')))
-    return url
 
 # TODO cache
 @hook.command('penis', autohelp=False)
@@ -498,8 +490,27 @@ def penis_real(inp, nick=None):
 
     details = formatting.compress_whitespace(details.text)
 
-    details = re.sub('Penis of [a-z0-9]+ ', 'Penis: ', details)
+    details = re.sub('Penis of [a-zA-Z0-9]+ ', 'Penis: ', details)
     return u'{} - http://en.inkei.net/penis/{}'.format(details, inp)
+
+
+@hook.command('tits', autohelp=False)
+def tits_real(inp, nick=None):
+    if not inp:
+        inp = nick
+
+    inp = request.urlencode(inp)
+    html = request.get('http://en.inkei.net/tits/' + inp)
+    soup = BeautifulSoup(html, 'lxml')
+
+    details = soup.find(id='elmDescCmmn')
+    if details is None:
+        return 'Tits: http://en.inkei.net/tits/' + inp
+
+    details = formatting.compress_whitespace(details.text)
+
+    details = re.sub('Penis of [a-zA-Z0-9]+ ', 'Tits: ', details)
+    return u'{} - http://en.inkei.net/tits/{}'.format(details, inp)
 
 
 @hook.command('vagina', autohelp=False)
@@ -517,7 +528,7 @@ def vagina_real(inp, nick=None):
 
     details = formatting.compress_whitespace(details.text)
 
-    details = re.sub('Vagina of [a-z0-9]+ ', 'Vagina: ', details)
+    details = re.sub('Vagina of [a-zA-Z0-9]+ ', 'Vagina: ', details)
     return u'{} - http://en.inkei.net/vagina/{}'.format(details, inp)
 
 
@@ -536,9 +547,8 @@ def anus_real(inp, nick=None):
 
     details = formatting.compress_whitespace(details.text)
 
-    details = re.sub('Anus of [a-z0-9]+ ', 'Anus: ', details)
+    details = re.sub('Anus of [a-zA-Z0-9]+ ', 'Anus: ', details)
     return u'{} - http://en.inkei.net/anus/{}'.format(details, inp)
-
 
 
 @hook.command("harakiri", autohelp=False)
