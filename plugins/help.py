@@ -1,16 +1,11 @@
 import re
 import urllib
+
 from util import hook, user, web
 
 
 @hook.command(autohelp=False)
-def commands(inp,
-             say=None,
-             notice=None,
-             input=None,
-             conn=None,
-             bot=None,
-             db=None):
+def commands(inp, say=None, notice=None, input=None, conn=None, bot=None, db=None):
     "commands  -- Gives a list of commands/help for a command."
     funcs = {}
     disabled = bot.config.get('disabled_plugins', [])
@@ -48,8 +43,7 @@ def commands(inp,
 
         for command in well:
             if output == [] and line == []:
-                line.append("Commands you have access to ({}): {}".format(
-                    len(well), str(command)))
+                line.append("Commands you have access to ({}): {}".format(len(well), str(command)))
             else:
                 line.append(str(command))
             if len(", ".join(line)) > 405:
@@ -70,15 +64,13 @@ def commands(inp,
                 'api_option': 'paste',
                 'api_paste_code': output.encode('utf-8')
             }
-            response = urllib.urlopen('http://pastebin.com/api/api_post.php',
+            response = urllib.urlopen('https://pastebin.com/api/api_post.php',
                                       urllib.urlencode(pastebin_vars))
             url = response.read()
             #haste = web.haste("{}\n\n{}".format(output, help))
-            notice("Commands you have access to ({}): {}".format(
-                len(well), url))
+            notice("Commands you have access to ({}): {}".format(len(well), url))
     elif inp in commands:
-        notice("{}{}".format(conn.conf["command_prefix"],
-                             commands[inp].__doc__))
+        notice("{}{}".format(conn.conf["command_prefix"], commands[inp].__doc__))
     return
 
 
