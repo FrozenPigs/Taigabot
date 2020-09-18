@@ -70,7 +70,7 @@ def commands(inp,
                 'api_option': 'paste',
                 'api_paste_code': output.encode('utf-8')
             }
-            response = urllib.urlopen('http://pastebin.com/api/api_post.php',
+            response = urllib.urlopen('https://pastebin.com/api/api_post.php',
                                       urllib.urlencode(pastebin_vars))
             url = response.read()
             #haste = web.haste("{}\n\n{}".format(output, help))
