@@ -1,102 +1,100 @@
-import re
+# crypto coins plugin by ine
+import json
+from util import hook
+from utilities import request
 
-from util import hook, http
-
-## CONSTANTS
-
-exchanges = {
-    "blockchain": {
-        "api_url": "https://blockchain.info/ticker",
-        "func": lambda data: u"[Blockchain] Buy: \x0307${:,.2f}\x0f - Sell: \x0307${:,.2f}\x0f".format(data["USD"]["buy"], \
-                               data["USD"]["sell"])
-    },
-    "mtgox": {
-        "api_url": "https://mtgox.com/api/1/BTCUSD/ticker",
-        "func": lambda data: u"[MtGox] Current: \x0307{}\x0f - High: \x0307{}\x0f - Low: \x0307{}\x0f - Best Ask: \x0307{}\x0f - Volume: {}".format(data['return']['last']['display'], \
-                               data['return']['high']['display'], data['return']['low']['display'], data['return']['buy']['display'], \
-                               data['return']['vol']['display'])
-    },
-    "coinbase":{
-        "api_url": "https://coinbase.com/api/v1/prices/spot_rate",
-        "func": lambda data: u"[Coinbase] Current: \x0307${:,.2f}\x0f".format(float(data['amount']))
-    },
-    "bitpay": {
-        "api_url": "https://bitpay.com/api/rates",
-        "func": lambda data: u"[Bitpay] Current: \x0307${:,.2f}\x0f".format(data[0]['rate'])
-    },
-    "bitstamp": {
-        "api_url": "https://www.bitstamp.net/api/ticker/",
-        "func": lambda data: u"[BitStamp] Current: \x0307${:,.2f}\x0f - High: \x0307${:,.2f}\x0f - Low: \x0307${:,.2f}\x0f - Volume: {:,.2f} BTC".format(float(data['last']), float(data['high']), float(data['low']), \
-                               float(data['volume']))
-    }
-}
-
-## HOOK FUNCTIONS
+# update this like once a month
+# https://api.coingecko.com/api/v3/coins/list
+json_data = open("plugins/data/coingecko-coins.json", "r")
+supported_coins = json.loads(json_data.read())
+json_data.close()
 
 
-@hook.command("btc", autohelp=False)
+base_url = 'https://api.coingecko.com/api/v3/coins/'
+query_string = 'localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false'
+
+
+def consume_api(id):
+    json = request.get_json(base_url + id + '?' + query_string)
+    return json
+
+
+def find_coin_id(inp):
+    for coin in supported_coins:
+        # it could be "if inp in coin:" but i want to search name (Bitcoin)
+        # or code (BTC) only, because coingecko ids are nasty
+        coin_id = coin[0]
+        coin_symbol = coin[1]
+        coin_name = coin[2]
+
+        # dumb api sometimes returns nothing
+        if "" in coin:
+            continue
+
+        # match name/symbol only
+        if inp.lower() == coin_name.lower() or inp.lower() == coin_symbol:
+            return coin
+
+    return False
+
+
+@hook.command('cg', autohelp=False)
 @hook.command(autohelp=False)
-def bitcoin(inp):
-    """bitcoin <exchange | list> -- Gets current exchange rate for bitcoins from several exchanges, default is MtGox. Supports MtGox, Blockchain, Bitpay, Coinbase and BitStamp."""
+def cryptocoin(inp):
+    if inp == "":
+        return "[coin] Search a coin with .cryptocoin <name> (or .cg eth)"
 
-    inp = inp.lower()
+    coin = find_coin_id(inp)
 
-    if inp:
-        if inp in exchanges:
-            exchange = exchanges[inp]
-        else:
-            return "Available exchanges: {}".format(", ".join(exchanges.keys()))
+    if coin is False:
+        return "[coin] cryptocoin " + inp + " not found"
+
+    data = consume_api(coin[0])
+
+    # change this to support other (real) coins like eur, jpy, gbp, nok
+    real_coin = 'usd'
+    current = data['market_data']['current_price'][real_coin]
+    high = data['market_data']['high_24h'][real_coin]
+    low = data['market_data']['low_24h'][real_coin]
+    volume = data['market_data']['total_volume'][real_coin]
+    cap = data['market_data']['market_cap'][real_coin]
+    change_24h = data['market_data']['price_change_percentage_24h']
+    change_7d = data['market_data']['price_change_percentage_7d']
+    # change_14d = data['market_data']['price_change_percentage_14d']
+    change_30d = data['market_data']['price_change_percentage_30d']
+    #change_60d = data['market_data']['price_change_percentage_60d']
+    #change_200d = data['market_data']['price_change_percentage_200d']
+
+    output = "[coin] {} ({}) Current: ${:,}, High: ${:,}, Low: ${:,}, Vol: ${:,}, Cap: ${:,}".format(coin[2], coin[1].upper(), current, high, low, volume, cap)
+
+    if change_24h < 0:
+        output = output + ", 24h: \x0304{}%\x03".format(change_24h)
     else:
-        exchange = exchanges["bitstamp"]
+        output = output + ", 24h: \x0303+{}%\x03".format(change_24h)
 
-    data = http.get_json(exchange["api_url"])
-    func = exchange["func"]
-    return func(data)
+    if change_7d < 0:
+        output = output + ", 7d: \x0304{}%\x03".format(change_7d)
+    else:
+        output = output + ", 7d: \x0303+{}%\x03".format(change_7d)
+
+    if change_30d < 0:
+        output = output + ", 30d: \x0304{}%\x03".format(change_30d)
+    else:
+        output = output + ", 30d: \x0303+{}%\x03".format(change_30d)
+
+    return output
 
 
-@hook.command("ltc", autohelp=False)
+@hook.command('bitcoin', autohelp=False)
 @hook.command(autohelp=False)
-def litecoin(inp, say=None):
-    """litecoin -- gets current exchange rate for litecoins from BTC-E"""
-    data = http.get_json("https://btc-e.com/api/2/ltc_usd/ticker")
-    ticker = data['ticker']
-    say("Current: \x0307${:,.2f}\x0f - High: \x0307${:,.2f}\x0f"
-        " - Low: \x0307${:,.2f}\x0f - Volume: {:,.2f} LTC".format(ticker['buy'], ticker['high'],
-                                                                  ticker['low'], ticker['vol_cur']))
+def btc(inp):
+    return cryptocoin('bitcoin')
 
 
+# <wednesday> .doge
+# <Taigabot> Error: Doge is worthless.
+# <wednesday> inex: keep .doge
+# <wednesday> I like that
 @hook.command(autohelp=False)
-@hook.command("dogecoin", autohelp=False)
-def doge(inp, say=None):
-    ".doge -- Returns the value of a dogecoin."
-    try:
-        # get btc price
-        bitcoin_price = re.search(r'\d+\.\d+', bitcoin('coinbase')).group(0)
-        # get doge->btc price
-        url = "https://www.coins-e.com/api/v2/markets/data/"
-        data = http.get_json(url)
-        data = data['markets']
-        data = data['DOGE_BTC']
-        data = data['marketstat']
-        current = {'buy': data['ltp']}
-
-        data = data['24h']
-        average = {
-            'volume': data['volume'],
-            'high': data['h'],
-            'avg': data['avg_rate'],
-            'low': data['l'],
-        }
-    except:
-        return 'Error: Doge is worthless.'
-
-    result = float(bitcoin_price) * float(current['buy'])
-    dollar_result = 1 / float(result)
-    lotsadoge = 10000 * result
-
-    result = (
-        "Price: \x0307$%s\x0f - $1=\x0307%s\x0f Doge - 10,000 DOGE=\x0307$%s\x0f - BTC: \x0307%s\x0f"
-        % (result, dollar_result, lotsadoge, current['buy']))
-    result2 = (
-        "Average: \x0307%(avg)s\x0f - High: \x0307%(high)s\x0f - Low: \x0307%(low)s\x0f" % average)
-    say("{} - {}".format(result, result2))
+def doge(inp):
+    return "Error: Doge is worthless."
