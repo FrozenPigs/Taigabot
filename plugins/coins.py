@@ -65,22 +65,22 @@ def cryptocoin(inp):
     #change_60d = data['market_data']['price_change_percentage_60d']
     #change_200d = data['market_data']['price_change_percentage_200d']
 
-    output = "[coin] {} ({}) Current: ${:,}, High: ${:,}, Low: ${:,}, Vol: ${:,}, Cap: ${:,}".format(coin[2], coin[1].upper(), current, high, low, volume, cap)
+    output = "[coin] {} ({}) Current: \x0307${:,}\x03, High: \x0307${:,}\x03, Low: \x0307${:,}\x03, Vol: ${:,}, Cap: ${:,}".format(coin[2], coin[1].upper(), current, high, low, volume, cap)
 
     if change_24h < 0:
-        output = output + ", 24h: \x0304{}%\x03".format(change_24h)
+        output = output + ", 24h: \x0304{:.2f}%\x03".format(change_24h)
     else:
-        output = output + ", 24h: \x0303+{}%\x03".format(change_24h)
+        output = output + ", 24h: \x0303+{:.2f}%\x03".format(change_24h)
 
     if change_7d < 0:
-        output = output + ", 7d: \x0304{}%\x03".format(change_7d)
+        output = output + ", 7d: \x0304{:.2f}%\x03".format(change_7d)
     else:
-        output = output + ", 7d: \x0303+{}%\x03".format(change_7d)
+        output = output + ", 7d: \x0303+{:.2f}%\x03".format(change_7d)
 
     if change_30d < 0:
-        output = output + ", 30d: \x0304{}%\x03".format(change_30d)
+        output = output + ", 30d: \x0304{:.2f}%\x03".format(change_30d)
     else:
-        output = output + ", 30d: \x0303+{}%\x03".format(change_30d)
+        output = output + ", 30d: \x0303+{:.2f}%\x03".format(change_30d)
 
     return output
 
