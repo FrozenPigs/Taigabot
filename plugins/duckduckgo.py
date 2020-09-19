@@ -1,10 +1,8 @@
-from util import hook, http
-import urllib
-import urllib2
-import json as j
-import sys
+from util import hook
+from json import loads as json_loads
+from utilities import request
 
-__version__ = 0.242
+__version__ = 0.243
 
 
 def query(query,
@@ -46,15 +44,9 @@ def query(query,
         'd': meanings,
     }
     params.update(kwargs)
-    encparams = urllib.urlencode(params)
-    url = 'http://api.duckduckgo.com/?' + encparams
 
-    request = urllib2.Request(url, headers={'User-Agent': useragent})
-    response = urllib2.urlopen(request)
-    json = j.loads(response.read())
-    # print json
-    response.close()
-
+    response = request.get('https://api.duckduckgo.com/', params=params, headers={'User-Agent': useragent})
+    json = json_loads(response)
     return Results(json)
 
 
@@ -152,10 +144,10 @@ def get_zci(q,
     '''A helper method to get a single (and hopefully the best) ZCI result.
     priority=list can be used to set the order in which fields will be checked for answers.
     Use web_fallback=True to fall back to grabbing the first web result.
-    passed to query. This method will fall back to 'Sorry, no results.' 
+    passed to query. This method will fall back to 'Sorry, no results.'
     if it cannot find anything.'''
 
-    ddg = query('\\' + q, **kwargs)
+    ddg = query(q, **kwargs)
     response = ''
 
     for p in priority:
@@ -189,26 +181,7 @@ def get_zci(q,
 
 @hook.command
 def ddg(inp):
-    inp = inp.replace('my ip', '').replace('ip address', '').replace(
-        'addr', '')
-    if inp == 'ip':
-        return
+    if len(inp) < 2:
+        return 'Usage: .ddg <query>'
+
     return get_zci(inp)
-    # print r.type
-    # print r.results
-    # print r.related[0].text
-    # print r.related[0].url
-    # if len(inp) > 1:
-    #     q = query(' '.join(inp[0:]))
-    #     print q
-    #     keys = q.json.keys()
-    #     keys.sort()
-    #     for key in keys:
-    #         print key
-    #         # sys.stdout.write(key)
-    #         if type(q.json[key]) in [str,unicode]: print(':', q.json[key])
-    #         else:
-    #             sys.stdout.write('\n')
-    #             for i in q.json[key]: print('\t',i)
-    # else:
-    #     print('Usage: %s [query]' % sys.argv[0])
