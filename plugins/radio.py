@@ -30,6 +30,12 @@ radios = {
         'api': 'https://chiru.no:8080/status-json.xsl',
         'homepage': 'https://chiru.no/',
         'source': 'stream.mp3',
+    },
+    'flippy': {
+        'name': 'flippy radio',
+        'api': 'https://radio.wolowolo.com:8443/status-json.xsl',
+        'homepage': 'https://radio.wolowolo.com/flippy',
+        'source': 'flippy'
     }
 }
 
