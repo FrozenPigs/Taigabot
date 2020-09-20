@@ -3,7 +3,7 @@
 from util import hook, text, database
 import string
 import re
-import urllib
+from utilities import request
 
 re_lineends = re.compile(r'[\r\n]*')
 
@@ -181,18 +181,17 @@ def hashes(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
         search = "SELECT word FROM mem ORDER BY word"
         rows = db.execute(search).fetchall()
 
-    if rows:
-        output = [x[0] for x in rows]
-        pastebin_vars = {
-            'api_dev_key': bot.config.get('api_keys', {}).get('pastebin'),
-            'api_option': 'paste',
-            'api_paste_code': ("\n".join(output)).encode('utf-8'),
-            'api_paste_name': 'search result',
-            'api_paste_private': 1,
-            'api_paste_expire_date': '1W',
-        }
-        response = urllib.urlopen('http://pastebin.com/api/api_post.php', urllib.urlencode(pastebin_vars))
-        url = response.read()
-        return url
+    if len(rows) == 0:
+        return "No results"
+
+    output = [x[0] for x in rows]
+
+    if len(rows) < 8:
+        output = ", ".join(output)
+        return "Hashes: " + output
     else:
-        return "No results."
+        output = "\n".join(output)
+        output = output.encode('utf-8')
+        # it needs to pass bot.config cuz api keys
+        url = request.upload_paste(output, 'hash search result', bot.config)
+        return "Hashes: " + url
