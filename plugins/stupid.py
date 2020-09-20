@@ -1,14 +1,12 @@
-import locale
 import math
 import random
 import re
-import subprocess
+# import subprocess
 import time
-import urllib
 
 from bs4 import BeautifulSoup
 
-from util import database, hook, http
+from util import database, hook
 from utilities import formatting, request
 
 # HONK HONK
@@ -643,12 +641,12 @@ def cowsay(inp, reply=None):
     reply('              ||     ||')
 
 
-@hook.command
-def figlet(inp, reply=None):
-    inp = inp.encode('utf-8')[:11]
-    for line in subprocess.check_output(['figlet', '{0}'.format(inp)]).split('\n'):
-        if line != ' ' * (len(line)):
-            reply(line)
+# @hook.command
+# def figlet(inp, reply=None):
+#     inp = inp.encode('utf-8')[:11]
+#     for line in subprocess.check_output(['figlet', '{0}'.format(inp)]).split('\n'):
+#         if line != ' ' * (len(line)):
+#             reply(line)
 
 
 @hook.regex(r'^(same)$')
