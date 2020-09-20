@@ -4,9 +4,6 @@ from json import loads as json_load
 from urllib import quote  # python 2
 # from urllib.parse import quote  # python 3
 
-from urllib import urlencode as querystring  # python 2
-# from urllib.parse import urlencode as querystring  # python 3
-
 # update this like once every few months
 fake_ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36'
 
