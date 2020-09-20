@@ -1,4 +1,4 @@
-# UguuBot
+# Taigabot
 
 * Easy to use wrapper
 * Intuitive configuration
@@ -19,7 +19,7 @@ The biggest hurdle is `lxml` which needs a compiler and a bunch of libraries.
 #### Other dependencies
 Some commands require extra python packages, more information can be found on [install.md § specific dependencies](install.md#specific-dependencies).
 
-Some commands also require API keys, 
+Some commands also require API keys,
 
 The system packages `daemon` or `screen` are recomended for the launcher to run optimally.
 
