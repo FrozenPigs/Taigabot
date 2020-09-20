@@ -13,10 +13,10 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 from util import hook
-from utilities.request import get_json
+from utilities.request import get_json, get
 from time import strftime
+from bs4 import BeautifulSoup
 
 MLB_DEPRECATED_API = 'http://gd2.mlb.com/components/game/mlb'
 API_DATEFMT = "year_%Y/month_%m/day_%d"
@@ -24,7 +24,7 @@ OUTGAME_STRING = '\x02{}\x02 {} ({}{}) \x02{}\x02 {}'
 
 
 @hook.command('mlb', autohelp=False)
-def mlb(inp):
+def mlb(inp, say=None):
     api_base = '{}/{}'.format(MLB_DEPRECATED_API,
                               strftime(API_DATEFMT))
     api_string = '{}/grid.json'.format(api_base)
@@ -84,6 +84,7 @@ def mlb(inp):
                 details = get_more_detail(api_base, game.get('id', 'null'))
                 
                 if isinstance(details, Exception):
+                    print 'WARNING: API may be broken: {}'.format(details)
                     return outstring
                 
                 outstring += ' Count: {}-{}'.format(details['balls'],
@@ -92,6 +93,13 @@ def mlb(inp):
                 outstring += ' OnBase: {}'.format(details['onbase'])
                 outstring += ' Pitcher: {}'.format(details['pitcher'])
                 outstring += ' Batter: {}'.format(details['batter'])
+
+                if isinstance(details['latest'], Exception):
+                    print 'WARNING: API For latest events is broken: {}'.format(details['latest'])
+                elif details['latest'] != "":
+                    say(outstring)
+                    say('Latest: {}'.format(details['latest']))
+                    return
             return outstring
         else:
             output.append(outstring)
@@ -103,15 +111,23 @@ def mlb(inp):
 
 
 def get_more_detail(api_path, gid):
-    api_gid = gid.replace('/', '_').replace('-', '_')
-    detail_api_base = '{}/{}'.format(api_path, api_gid)
-    detail_linescore = '{}/linescore.json'.format(detail_api_base)
+    api_gid = 'gid_{}'.format(gid.replace('/', '_').replace('-', '_'))
+    detail_linescore = '{}/{}/linescore.json'.format(api_path, api_gid)
+    detail_eventlog = '{}/{}/eventLog.xml'.format(api_path, api_gid)
 
     try:
         linescore = get_json(detail_linescore)
     except Exception as e:
         return e
 
+    if not isinstance(linescore, dict):
+        return Exception('linescore is not an object')
+
+    try:
+        linescore = linescore['data']['game']
+    except KeyError:
+        return Exception('linescore structure is unexpected')
+    
     # count
     balls = linescore.get('balls', 'unkn')
     strikes = linescore.get('strikes', 'unkn')
@@ -122,11 +138,25 @@ def get_more_detail(api_path, gid):
     pitcher = linescore.get('current_pitcher', dict()).get('last_name', 'unkn')
     batter = linescore.get('current_batter', dict()).get('last_name', 'unkn')
 
-    # TODO: events (requires XML parser
+    # bonus
+    latest_event = ''
+
+    try:
+        events_xml = BeautifulSoup(get(detail_eventlog))
+        events = events_xml.find_all('event')
+
+        maxval = -999
+        for event in events:
+            if int(event['number']) > maxval:
+                maxval = int(event['number'])
+                latest_event = event['description']
+    except Exception as e:
+        latest_event = e
 
     return {'balls':balls,
             'strikes':strikes,
             'outs':outs,
             'onbase':runners_onbase,
             'pitcher':pitcher,
-            'batter':batter}
+            'batter':batter,
+            'latest':latest_event}
