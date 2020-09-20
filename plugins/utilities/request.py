@@ -4,9 +4,6 @@ from json import loads as json_load
 from urllib import quote  # python 2
 # from urllib.parse import quote  # python 3
 
-from urllib import urlencode as querystring  # python 2
-# from urllib.parse import urlencode as querystring  # python 3
-
 # update this like once every few months
 fake_ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36'
 
@@ -62,5 +59,27 @@ def get(url, **kwargs):
     else:
         headers = {'User-Agent': fake_ua}
 
-    r = requests.get(url, headers=headers, timeout=10, **kwargs)
+    r = requests.get(url, headers=headers, timeout=8, **kwargs)
     return r.text
+
+
+# upload any text to pastebin
+# please use this function so you don't have to modify 40 plugins when the api changes
+def upload_paste(text, title='Paste', config={}):
+    # sadly we need to pass bot.config because of the api keys
+    api_key = config.get('api_keys', {}).get('pastebin', False)
+
+    if api_key is False:
+        return "no api key found, pls fix config"
+
+    data = {
+        'api_dev_key': api_key,
+        'api_option': 'paste',
+        'api_paste_code': text,
+        'api_paste_name': title,
+        'api_paste_private': 1,
+        'api_paste_expire_date': '1D',
+    }
+
+    response = requests.post('https://pastebin.com/api/api_post.php', headers={'User-Agent': fake_ua}, data=data, timeout=12, allow_redirects=True)
+    return response.text

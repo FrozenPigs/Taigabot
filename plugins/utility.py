@@ -4,7 +4,7 @@ import re
 import subprocess
 import time
 
-from util import hook, http, text, web
+from util import hook, text
 
 # variables
 
@@ -214,13 +214,3 @@ def usa(inp):
     for i, t in enumerate(inp):
         out += c[i % l] + t
     return out
-
-
-@hook.command
-def shorten(inp):
-    "shorten <url> - Makes an is.gd shortlink to the url provided."
-
-    try:
-        return web.isgd(inp)
-    except (web.ShortenError, http.HTTPError) as error:
-        return error
