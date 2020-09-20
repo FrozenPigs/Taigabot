@@ -1,7 +1,7 @@
 # Written by Scaevolus 2010
-from util import hook, http, text, execute, database
+# ^ this guy eval()s user input, what a mad lad
+from util import hook, text, database
 import string
-import sqlite3
 import re
 import urllib
 
@@ -147,20 +147,11 @@ def hashtag(inp, say=None, db=None, bot=None, me=None, conn=None, input=None, ch
     if data:
         # factoid preprocessors
         if data.startswith("<py>"):
-            code = data[4:].strip()
-            variables = 'input="""%s"""; nick="%s"; chan="%s"; bot_nick="%s";' % (
-                arguments.replace('"', '\\"'),
-                input.nick,
-                input.chan,
-                input.conn.nick,
-            )
-            result = execute.eval_py(variables + code)
+            # don't execute code
+            result = data[4:].strip()
         elif data.startswith("<url>"):
-            url = data[5:].strip()
-            try:
-                result = http.get(url)
-            except http.HttpError:
-                result = "Could not fetch URL."
+            # don't download pages
+            result = data[5:].strip()
         else:
             result = data
 
