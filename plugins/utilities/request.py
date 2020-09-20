@@ -1,10 +1,14 @@
 import requests
 from json import loads as json_load
-from urllib import quote
-# TODO python 3: from urllib.parse import quote
 
-# this needs to be kept updated (a few times a year is fine)
-fake_ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138'
+from urllib import quote  # python 2
+# from urllib.parse import quote  # python 3
+
+from urllib import urlencode as querystring  # python 2
+# from urllib.parse import urlencode as querystring  # python 3
+
+# update this like once every few months
+fake_ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36'
 
 
 def urlencode(inp):
@@ -33,6 +37,21 @@ def get_text(url, **kwargs):
     return get(url, **kwargs)
 
 
+# HTTP GET
+# this is probably the function that's used the most in internet-enabled plugins
+# it sends an http GET via the "requests" library.
+#
+# future plugin writers: please use this method so you can easily swap the "backend"
+# without replacing hundreds of lines of code all over the codebase
+#
+# it supports passing an object as the query string
+# - example:  get('https://google.com/search', params={'q': 'hello world'})
+# - result:   https://google.com/search?q=hello%20world
+#
+# u can also pass custom headers:
+#    get('http://example.org', headers={'X-secret-key': 'hunter2'})
+# a fake user-agent of a popular browser will be used if none is provided
+#
 def get(url, **kwargs):
     # accept custom headers
     if 'headers' in kwargs:
