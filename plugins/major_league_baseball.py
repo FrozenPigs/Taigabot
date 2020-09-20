@@ -61,7 +61,7 @@ def mlb(inp):
         if inning == 'Y':
             inning = '\x0303^\x03'
         elif inning == 'N':
-            inning = '\x0302v\x03'
+            inning = '\x0304v\x03'
         else:
             inning = '-'
         
@@ -82,6 +82,10 @@ def mlb(inp):
         if inp.lower() == away_team.lower() or inp.lower() == home_team.lower():
             if inning != '':
                 details = get_more_detail(api_base, game.get('id', 'null'))
+                
+                if isinstance(details, Exception):
+                    return outstring
+                
                 outstring += ' Count: {}-{}'.format(details['balls'],
                                                     details['strikes'])
                 outstring += ' Outs: {}'.format(details['outs'])
@@ -105,13 +109,8 @@ def get_more_detail(api_path, gid):
 
     try:
         linescore = get_json(detail_linescore)
-    except Exception:
-        return {'balls':'unkn',
-                'strikes':'unkn',
-                'outs':'unkn',
-                'onbase':'unkn',
-                'pitcher':'unkn',
-                'batter':'unkn'}
+    except Exception as e:
+        return e
 
     # count
     balls = linescore.get('balls', 'unkn')
