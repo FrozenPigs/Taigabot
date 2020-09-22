@@ -20,7 +20,7 @@ from bs4 import BeautifulSoup
 
 MLB_DEPRECATED_API = 'http://gd2.mlb.com/components/game/mlb'
 API_DATEFMT = "year_%Y/month_%m/day_%d"
-OUTGAME_STRING = '\x02{}\x02 {} ({}{}) \x02{}\x02 {}'
+OUTGAME_STRING = '{} {} ({}{}) {} {}'
 
 
 @hook.command('mlb', autohelp=False)
@@ -36,7 +36,7 @@ def mlb(inp, say=None):
 
     if not isinstance(games_today, dict):
         return 'Failed to get games today: grid.json is not an object.'
-    
+
     try:
         games = games_today['data']['games']['game']
     except KeyError:
@@ -56,15 +56,15 @@ def mlb(inp, say=None):
         home_score = game.get('home_score', '0')
         if home_score == '':
             home_score = 0
-        
+
         inning = game.get('top_inning', '-')
         if inning == 'Y':
-            inning = '\x0303^\x03'
+            inning = '^'
         elif inning == 'N':
-            inning = '\x0304v\x03'
+            inning = 'v'
         else:
             inning = '-'
-        
+
         game_status = game.get('status', '')
         if 'Pre' == game_status[0:3]:
             game_status = game.get('event_time', 'P')
@@ -82,11 +82,11 @@ def mlb(inp, say=None):
         if inp.lower() == away_team.lower() or inp.lower() == home_team.lower():
             if inning != '':
                 details = get_more_detail(api_base, game.get('id', 'null'))
-                
+
                 if isinstance(details, Exception):
                     print 'WARNING: API may be broken: {}'.format(details)
                     return outstring
-                
+
                 outstring += ' Count: {}-{}'.format(details['balls'],
                                                     details['strikes'])
                 outstring += ' Outs: {}'.format(details['outs'])
@@ -107,7 +107,7 @@ def mlb(inp, say=None):
     if len(output) == 0:
         return 'No Games Today.'
     else:
-        return 'Times in EST - ' + ' :: '.join(output)
+        return 'Time in EST: ' + ', '.join(output)
 
 
 def get_more_detail(api_path, gid):
@@ -127,7 +127,7 @@ def get_more_detail(api_path, gid):
         linescore = linescore['data']['game']
     except KeyError:
         return Exception('linescore structure is unexpected')
-    
+
     # count
     balls = linescore.get('balls', 'unkn')
     strikes = linescore.get('strikes', 'unkn')
