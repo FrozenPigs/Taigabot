@@ -60,7 +60,7 @@ try:
         print 'Connecting to server: %s' % conf['server']
         if conf.get('ssl'):
             bot.conns[name] = SSLIRC(name, conf['server'], conf['nick'], conf=conf,
-                    port=conf.get('port', 6667), channels=conf['channels'],
+                    port=conf.get('port', 6697), channels=conf['channels'],
                     ignore_certificate_errors=conf.get('ignore_cert', True))
         else:
             bot.conns[name] = IRC(name, conf['server'], conf['nick'], conf=conf,
