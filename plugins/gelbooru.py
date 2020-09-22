@@ -1,8 +1,7 @@
-from util import hook, http, web
+from utilities import request
+from util import hook, web
 import random
 import re
-import urllib
-import urllib2
 
 gelbooru_cache = []
 gb_lastsearch = ''
@@ -19,20 +18,10 @@ def gb_refresh_cache(inp):
         .replace('safe', 'rating:safe')
         .replace('sfw', 'rating:safe')
     )
-    # score:>100
-    # print 'http://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=20&tags={}'.format(search)
-    # try:
-    #     soup = http.get_soup(u'http://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=20&tags={}'.format(search), cookies=True)
-    #     posts = soup.find_all('post')
-    # except:
-    post_data = {'user': 'frozenpigs', 'pass': 'noscope90', 'submit': 'Log in'}
-    data = urllib.urlencode(post_data)
-    authurl = u'http://gelbooru.com/index.php?page=account&s=login&code=00'
-    http.get_soup(authurl, post_data=data, cookies=True)
-    soup = http.get_soup(
-        u'http://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=20&tags={}'.format(search), cookies=True
-    )
-    posts = soup.find_all('post')
+
+    posts = request.get_json(u'https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit=20&json=1', params={
+        'tags': search
+    })
 
     while num < len(posts):
         gelbooru_cache.append(
@@ -50,9 +39,7 @@ def gb_refresh_cache(inp):
     return
 
 
-# @hook.command('sb', autohelp=False)
-
-
+#@hook.command('sb', autohelp=False)
 @hook.command('gb', autohelp=False)
 @hook.command('loli', autohelp=False)
 @hook.command('shota', autohelp=False)
@@ -117,11 +104,11 @@ def gelbooru(inp, reply=None, input=None):
                 counter += 1
                 gb_refresh_cache(search)
 
-    if rating is 'e':
+    if rating == 'e':
         rating = "\x02\x034NSFW\x03\x02"
-    elif rating is 'q':
+    elif rating == 'q':
         rating = "\x02\x037Questionable\x03\x02"
-    elif rating is 's':
+    elif rating == 's':
         rating = "\x02\x033Safe\x03\x02"
 
     try:
@@ -131,22 +118,18 @@ def gelbooru(inp, reply=None, input=None):
     # return u'\x02[{}]\x02 Score: \x02{}\x02 - Rating: {} - {} - {}'.format(id, score, rating, url, tags[:75].strip())
 
 
-gelbooru_list_re = (r'(.+gelbooru.com/.+list&tags.+)', re.I)
-
-
-@hook.regex(*gelbooru_list_re)
-def gelbooru_list_url(match):
-    soup = http.get_soup(match.group(1))
-    return u'{}'.format(soup.find('title').text)
+# shows website title, just let urls.py handle it
+# gelbooru_list_re = (r'(.+gelbooru.com/.+list&tags.+)', re.I)
+# @hook.regex(*gelbooru_list_re)
+# def gelbooru_list_url(match):
+#     soup = http.get_soup(match.group(1))
+#     return u'{}'.format(soup.find('title').text)
 
 
 gelbooru_re = (r'(?:gelbooru.com.*?id=)([-_a-zA-Z0-9]+)', re.I)
-
-
 @hook.regex(*gelbooru_re)
 def gelbooru_url(match):
-    soup = http.get_soup('http://gelbooru.com/index.php?page=dapi&s=post&q=index&id={}'.format(match.group(1)))
-    posts = soup.find_all('post')
+    posts = request.get_json('https://gelbooru.me/index.php?page=dapi&s=post&q=index&limit=1&id={}&json=1'.format(match.group(1)))
 
     id, score, url, rating, tags = (
         posts[0].get('id'),
@@ -156,11 +139,11 @@ def gelbooru_url(match):
         posts[0].get('tags'),
     )
 
-    if rating is 'e':
+    if rating == 'e':
         rating = "\x02\x034NSFW\x03\x02"
-    elif rating is 'q':
+    elif rating == 'q':
         rating = "\x02\x037Questionable\x03\x02"
-    elif rating is 's':
+    elif rating == 's':
         rating = "\x02\x033Safe\x03\x02"
 
     return u'\x02[{}]\x02 Score: \x02{}\x02 - Rating: {} - {} - {}'.format(id, score, rating, url, tags[:75].strip())
@@ -183,7 +166,7 @@ def db_refresh_cache(inp):
         .replace('safe', 'rating:safe')
         .replace('sfw', 'rating:safe')
     )
-    posts = http.get_json('http://danbooru.donmai.us/posts.json?tags={}&limit=20'.format(search))
+    posts = request.get_json('http://danbooru.donmai.us/posts.json?limit=20', params={'tags': search})
 
     while num < len(posts):
         danbooru_cache.append(
@@ -201,9 +184,7 @@ def db_refresh_cache(inp):
     return
 
 
-# @hook.command('sb', autohelp=False)
-
-
+#@hook.command('sb', autohelp=False)
 @hook.command('dan', autohelp=False)
 @hook.command(autohelp=False)
 def danbooru(inp, reply=None, input=None):
