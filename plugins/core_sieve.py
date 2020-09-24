@@ -68,13 +68,13 @@ def sieve_suite(bot, input, func, kind, args):
     global sudos_counter
     # ignore any input from the bot
     if input.nick == input.conn.nick:
-        return None  # print "Ignoring {}".format(input.conn.nick)
+        return None    # print "Ignoring {}".format(input.conn.nick)
     if input.command == 'QUIT':
-        return None  # fix for db issue???
+        return None    # fix for db issue???
 
     # ignore bots if ignorebots = true
-    if input.command == 'PRIVMSG' and input.nick.lower().endswith(
-            'bot') and args.get('ignorebots', True):
+    if input.command == 'PRIVMSG' and input.nick.lower().endswith('bot') and args.get(
+            'ignorebots', True):
         if input.nick.lower() == 'natetherobot':
             pass
         elif input.nick.lower() == 'taigabot':
@@ -116,27 +116,22 @@ def sieve_suite(bot, input, func, kind, args):
     disabled_commands = database.get(db, 'channels', 'disabled', 'chan', chan)
     if disabled_commands and not fn.group(1).lower().strip() == 'log':
         # check for disabled modules
-        if fn and re.search(r"\b{}\b".format(fn.group(1).lower().strip()),
-                            disabled_commands):
+        if fn and re.search(r"\b{}\b".format(fn.group(1).lower().strip()), disabled_commands):
             if user.is_globaladmin(input.mask, chan, bot):
                 print("[{}]: {} is disabled.".format(input.chan, fn.group(1)))
             return None
         # check for disabled commands
-        if kind == "command" and re.search(
-                r"\b{}\b".format(input.trigger.lower().strip()),
-                disabled_commands):
+        if kind == "command" and re.search(r"\b{}\b".format(input.trigger.lower().strip()),
+                                           disabled_commands):
             if user.is_globaladmin(input.mask, chan, bot):
-                input.notice("[{}]: {} is disabled.".format(
-                    input.chan, input.trigger))
+                input.notice("[{}]: {} is disabled.".format(input.chan, input.trigger))
             print("[{}]: {} is disabled.".format(input.chan, input.trigger))
             return None
         # check for disabled regex
-        if kind == "regex" and re.search(
-                r"\b{}\b".format(func.__name__.lower().strip()),
-                disabled_commands):
+        if kind == "regex" and re.search(r"\b{}\b".format(func.__name__.lower().strip()),
+                                         disabled_commands):
             if user.is_globaladmin(input.mask, chan, bot):
-                print("[{}]: {} is disabled.".format(input.chan,
-                                                     func.__name__))
+                print("[{}]: {} is disabled.".format(input.chan, func.__name__))
             return None
 
     # print fn.group(1)
@@ -193,24 +188,20 @@ def sieve_suite(bot, input, func, kind, args):
         badwordlist = database.get(db, 'channels', 'badwords', 'chan', chan)
         if badwordlist:
             for badword in badwordlist.split(' '):
-                if len(badword) > 2 and badword.lower() is not chan.lower(
-                ) and badword.lower().strip() in input.msg.lower():
-                    input.conn.send(u"KICK {} {} :{}".format(
-                        input.chan, input.nick,
-                        'Used bad word: {}'.format(badword)))
+                if len(badword) > 2 and badword.lower() is not chan.lower() and badword.lower(
+                ).strip() in input.msg.lower():
+                    input.conn.send(u"KICK {} {} :{}".format(input.chan, input.nick,
+                                                             'Used bad word: {}'.format(badword)))
                     return
 
     #flood protection
     if not globaladmin and not channeladmin:
         if kind == "command":
-            cmdflood_protection = database.get(db, 'channels', 'cmdflood',
-                                               'chan', chan)
+            cmdflood_protection = database.get(db, 'channels', 'cmdflood', 'chan', chan)
             msg = input.msg
             if ' ' in msg:
                 msg = msg.split()[0]
-            if not cmdflood_protection and msg in [
-                    'cowsay', 'gaycow', 'figlet', 'gayfiglet'
-            ]:
+            if not cmdflood_protection and msg in ['cowsay', 'gaycow', 'figlet', 'gayfiglet']:
                 cmdflood_protection = '0 10'
             if cmdflood_protection:
                 cmdflood_num = cmdflood_protection.split(' ')[0]
@@ -229,21 +220,15 @@ def sieve_suite(bot, input, func, kind, args):
                     if now - x > int(cmdflood_duration):
                         cmdflood[input.nick].remove(x)
 
-                json.dump(
-                    cmdflood,
-                    open(cmdflood_filename, 'w'),
-                    sort_keys=True,
-                    indent=2)
+                json.dump(cmdflood, open(cmdflood_filename, 'w'), sort_keys=True, indent=2)
 
                 if len(cmdflood[input.nick]) > (int(cmdflood_num)):
-                    input.notice("Flood detected. Please wait {} seconds.".
-                                 format(cmdflood_duration))
+                    input.notice("Flood detected. Please wait {} seconds.".format(cmdflood_duration))
                     return None
 
         elif kind == "event":
             if input.command == 'PRIVMSG':
-                flood_protection = database.get(db, 'channels', 'flood',
-                                                'chan', chan)
+                flood_protection = database.get(db, 'channels', 'flood', 'chan', chan)
                 if flood_protection:
                     flood_num = (int(flood_protection.split(' ')[0]) * 1)
                     flood_duration = flood_protection.split(' ')[1]
@@ -264,20 +249,11 @@ def sieve_suite(bot, input, func, kind, args):
                     # print "%s / %s" % (flood_num,len(flood[input.nick]))
 
                     if len(flood[input.nick]) == (int(flood_num)):
-                        input.conn.send("KICK {} {} #rekt".format(
-                            input.chan, input.nick))
+                        input.conn.send("KICK {} {} #rekt".format(input.chan, input.nick))
                         flood[input.nick] = []
-                        json.dump(
-                            flood,
-                            open(flood_filename, 'w'),
-                            sort_keys=True,
-                            indent=2)
+                        json.dump(flood, open(flood_filename, 'w'), sort_keys=True, indent=2)
                         return None
                     else:
-                        json.dump(
-                            flood,
-                            open(flood_filename, 'w'),
-                            sort_keys=True,
-                            indent=2)
+                        json.dump(flood, open(flood_filename, 'w'), sort_keys=True, indent=2)
 
     return input
