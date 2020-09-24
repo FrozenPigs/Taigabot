@@ -1,16 +1,7 @@
 """ web.py - handy functions for web services """
 
-import http
 import urlnorm
-import json
-import urllib
-#import yql
-
-short_url = "http://is.gd/create.php"
-paste_url = "http://hastebin.com"
-#yql_env = "http://datatables.org/alltables.env"
-
-#YQL = yql.Public()
+import requests
 
 
 class ShortenError(Exception):
@@ -25,32 +16,40 @@ class ShortenError(Exception):
 def isgd(url):
     """ shortens a URL with the is.gd API """
     url = urlnorm.normalize(url.encode('utf-8'), assume_scheme='http')
-    params = urllib.urlencode({'format': 'json', 'url': url})
-    request = http.get_json("http://is.gd/create.php?%s" % params)
+    req = requests.get("http://is.gd/create.php", params={'format': 'json', 'url': url})
 
-    if "errorcode" in request:
-        raise ShortenError(request["errorcode"], request["errormessage"])
+    try:
+        json = req.json()
+    except ValueError:
+        print "[!] ERROR: is.gd returned broken json"
+        raise
+
+    if "errorcode" in json:
+        raise ShortenError(json["errorcode"], json["errormessage"])
     else:
-        return request["shorturl"]
+        return json["shorturl"]
 
 
 def try_isgd(url):
-    try:
-        out = isgd(url)
-    except (ShortenError, http.HTTPError):
-        out = url
-    return out
+    return isgd(url)
 
 
 def haste(text, ext='txt'):
     """ pastes text to a hastebin server """
-    page = http.get(paste_url + "/documents", post_data=text)
-    print page
-    data = json.loads(page)
-    return ("%s/raw/%s.%s" % (paste_url, data['key'], ext))
+    req = requests.post("https://hastebin.com/documents", data=text)
+
+    if req.status_code >= 500 and req.status_code < 600:
+        print "[!] ERROR: hastebin is down"
+        return "(error: hastebin is down)"
+
+    try:
+        data = req.json()
+        return "https://hastebin.com/raw/{}.{}".format(data['key'], ext)
+    except ValueError:
+        print "[!] ERROR: hastebin returned invalid json"
+        return "(error: hastebin is broken)"
 
 
 def query(query, params={}):
-    """ runs a YQL query and returns the results """
-    print "[!] deprecation warning: something is trying to use yql"
-    return None  # YQL.execute(query, params, env=yql_env)
+    print "[!] ERROR: yql is unavailable but being called"
+    return None
