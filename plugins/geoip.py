@@ -1,14 +1,33 @@
 # geoip plugin by ine (2020)
+import re
+from socket import gethostbyname
 from util import hook
 from utilities import request
+
+
+dumb_ip_re = r'(\d+\.\d+\.\d+\.\d+)'
+dumb_domain_re = r'([a-zA-Z0-9]+\.[a-zA-Z0-9]+)'
 
 
 @hook.command
 def geoip(inp):
     "geoip <host/ip> -- Gets the location of <host/ip>"
 
-    inp = request.urlencode(inp)
-    data = request.get_json('https://ipinfo.io/' + inp, headers={'Accept': 'application/json'})
+    if re.match(dumb_ip_re, inp):
+        return parse_ip(inp)
+    elif re.match(dumb_domain_re, inp):
+        try:
+            ip = gethostbyname(inp)
+            return parse_ip(ip)
+        except IOError:
+            return "[IP] cant resolve that domain to ipv4"
+    else:
+        return "[IP] doesnt look like a valid ip or domain"
+
+
+def parse_ip(ip):
+    ip = request.urlencode(ip)
+    data = request.get_json('https://ipinfo.io/' + ip, headers={'Accept': 'application/json'})
 
     if data.get('error') is not None:
         if data['error'].get('title') == 'Wrong ip':
