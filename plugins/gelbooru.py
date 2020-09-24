@@ -166,7 +166,7 @@ def db_refresh_cache(inp):
         .replace('safe', 'rating:safe')
         .replace('sfw', 'rating:safe')
     )
-    posts = request.get_json('http://danbooru.donmai.us/posts.json?limit=20', params={'tags': search})
+    posts = request.get_json('https://danbooru.donmai.us/posts.json?limit=20', params={'tags': search})
 
     while num < len(posts):
         danbooru_cache.append(
@@ -240,7 +240,9 @@ def danbooru(inp, reply=None, input=None):
         rating = "\x02\x037Questionable\x03\x02"
     elif rating == u's':
         rating = "\x02\x033Safe\x03\x02"
-    url = 'http://danbooru.donmai.us' + url
+
+    if not url.startswith('http'):
+        url = 'https://danbooru.donmai.us' + url
 
     try:
         return u'\x02[{}]\x02 Score: \x02{}\x02 - Rating: {} - {}'.format(id, score, rating, web.isgd(url))
