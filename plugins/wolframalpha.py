@@ -285,7 +285,7 @@ errors = [
 
 
 # @hook.command('convert')
-@hook.command('convert')
+# @hook.command('convert')
 @hook.command('calc')
 @hook.command('wa')
 @hook.command
