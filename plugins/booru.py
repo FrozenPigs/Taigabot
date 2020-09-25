@@ -70,19 +70,23 @@ def get_post(booru_id, tags=''):
         json = request.get_json(api, params={'limit': 80})
 
     if len(json) == 0:
-        return False
+        return None
 
     images = []
 
     for item in json:
+        # skip pixiv, all direct links are "403 denied"
+        if 'pixiv_id' in item and 'file_url' not in item:
+            continue
+
         image = {
             'id': item['id'],
             'created': item['created_at'],
             'file_url': item['file_url'],
             'file_size': item['file_size'],
-            'rating': item['rating'],
-            'score': item['score'],
-            'tags': item['tags']
+            'rating': item.get('rating', 'e'),
+            'score': item.get('score', 0),
+            'tags': item.get('tags', item.get('tag_string', 'unknown'))
         }
 
         if not image['file_url'].startswith('http'):
@@ -90,13 +94,17 @@ def get_post(booru_id, tags=''):
 
         cache_append_item(cache_key, image)
 
-    return cache_get_item(cache_key)
+    # yes, check again if we added anything at all
+    if cache_key_exists(cache_key):
+        return cache_get_item(cache_key)
+    else:
+        return None
 
 
 @hook.command
 def yandere(inp):
     post = get_post('yandere', inp)
-    if post is False:
+    if post is None:
         return "nothing found"
 
     return message(post)
@@ -105,7 +113,7 @@ def yandere(inp):
 @hook.command
 def danbooru(inp):
     post = get_post('danbooru', inp)
-    if post is False:
+    if post is None:
         return "nothing found on those tags"
 
     return message(post)
@@ -127,6 +135,6 @@ def message(post):
     size = formatting.filesize(post['file_size'])
     tags = post['tags']
     if len(tags) > 80:
-        tags = tags[:80] + '...'
+        tags = '{}... (and {} more)'.format(tags[:80], tags.count(' '))  # this count() is wrong lol, close enough
 
     return "[{}] Score: {} - Rating: {} - {} ({}) - Tags: {}".format(id, score, rating, url, size, tags)
