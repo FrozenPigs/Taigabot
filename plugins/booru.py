@@ -46,10 +46,10 @@ def cache_append_item(key, value):
     CACHE[key].append(value)
 
 
-def cache_debug():
-    global CACHE
-    for key in CACHE:
-        print 'THE ENTRY {} HAS {} ITEMS'.format(key, len(CACHE[key]))
+# def cache_debug():
+#     global CACHE
+#     for key in CACHE:
+#         print 'THE ENTRY {} HAS {} ITEMS'.format(key, len(CACHE[key]))
 
 
 def get_post(booru_id, tags=''):
@@ -81,7 +81,7 @@ def get_post(booru_id, tags=''):
 
         image = {
             'id': item['id'],
-            'created': item['created_at'],
+            # 'created': item['created_at'],
             'file_url': item['file_url'],
             'file_size': item['file_size'],
             'rating': item.get('rating', 'e'),
