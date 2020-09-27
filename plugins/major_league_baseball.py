@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from util import hook
 from utilities.request import get_json, get
-from os import environ
 from datetime import datetime
 from pytz import timezone
 from bs4 import BeautifulSoup
