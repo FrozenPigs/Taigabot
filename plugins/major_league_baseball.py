@@ -15,18 +15,28 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from util import hook
 from utilities.request import get_json, get
-from time import strftime
+from datetime import datetime
+from pytz import timezone
 from bs4 import BeautifulSoup
 
 MLB_DEPRECATED_API = 'http://gd2.mlb.com/components/game/mlb'
 API_DATEFMT = "year_%Y/month_%m/day_%d"
+MLB_TIMEZONE = 'America/New_York'
 OUTGAME_STRING = '{} {} ({}{}) {} {}'
+
+
+def get_api_time_of_day():
+    '''This function makes a best effort to match the expected
+       timezone the MLB api server uses'''
+
+    now = datetime.now(timezone(MLB_TIMEZONE))
+    return now.strftime(API_DATEFMT)
 
 
 @hook.command('mlb', autohelp=False)
 def mlb(inp, say=None):
     api_base = '{}/{}'.format(MLB_DEPRECATED_API,
-                              strftime(API_DATEFMT))
+                              get_api_time_of_day())
     api_string = '{}/grid.json'.format(api_base)
 
     try:
@@ -147,7 +157,7 @@ def get_more_detail(api_path, gid):
 
         maxval = -999
         for event in events:
-            if int(event['number']) > maxval:
+            if int(event['number']) > maxval and event['description'] != '':
                 maxval = int(event['number'])
                 latest_event = event['description']
     except Exception as e:
