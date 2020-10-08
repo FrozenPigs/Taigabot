@@ -806,6 +806,12 @@ def spit(inp, nick=None, me=None):
 
 
 @hook.command(autohelp=False)
+def pee(inp, nick=None, me=None):
+    if not inp: inp = nick
+    me('pees on {}'.format(inp))
+
+
+@hook.command(autohelp=False)
 def sniff(inp, nick=None, me=None):
     if not inp: inp = nick
     me('huffs {}s hair while sat behind them on the bus.'.format(inp))
