@@ -43,7 +43,7 @@ def spotify(inp, bot=None):
     # Query track
     try:
         headers = {'Authorization': 'Bearer ' + access_token}
-        params = {'q': inp, 'type': 'track'}
+        params = {'q': inp, 'type': 'track', 'limit': 1}
         data = requests.get('https://api.spotify.com/v1/search',
                             headers=headers,
                             params=params)
@@ -85,7 +85,7 @@ def spalbum(inp, bot=None):
     # Query artist
     try:
         headers = {'Authorization': 'Bearer ' + access_token}
-        params = {'q': inp, 'type': 'album'}
+        params = {'q': inp, 'type': 'album', 'limit': 1}
         data = requests.get('https://api.spotify.com/v1/search',
                             headers=headers,
                             params=params)
@@ -127,7 +127,7 @@ def spartist(inp, bot=None):
     # Query artist
     try:
         headers = {'Authorization': 'Bearer ' + access_token}
-        params = {'q': inp, 'type': 'artist'}
+        params = {'q': inp, 'type': 'artist', 'limit': 1}
         data = requests.get('https://api.spotify.com/v1/search',
                             headers=headers,
                             params=params)
