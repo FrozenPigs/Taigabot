@@ -23,7 +23,7 @@ def get_match_info(home, away):
 
 @hook.command(autohelp=False)
 def nfl(inp):
-    """ Returns current week's NFL scores
+    """nfl | nfl <team abbreviation> -- Returns all matchups for current week, or only for a specified team's matchup
     """
 
     # Get real time data
