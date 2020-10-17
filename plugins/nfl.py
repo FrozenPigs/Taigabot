@@ -2,11 +2,12 @@ from util import formatting, hook, http, web
 import requests
 
 NFL_REALTIME_API = 'http://static.nfl.com/liveupdate/scores/scores.json'
-HOME = 'home' 
-AWAY = 'away' 
+HOME = 'home'
+AWAY = 'away'
 ABBR = 'abbr'   # e.g. NE, DAL
 SCORE = 'score'
 T = 'T'         # Current score
+
 
 def get_match_info(home, away):
     """ Returns teams and scores for a given match
@@ -18,6 +19,7 @@ def get_match_info(home, away):
     away_abbr = away[ABBR]
     away_score = away[SCORE][T] or 0
     return "{} {} {} {}".format(home_abbr, home_score, away_abbr, away_score)
+
 
 @hook.command(autohelp=False)
 def nfl(inp):
@@ -53,5 +55,5 @@ def nfl(inp):
         match_info = get_match_info(home, away)
         schedule.append(match_info)
 
-    # Return all matches occurring in current week 
+    # Return all matches occurring in current week
     return ', '.join(schedule)
