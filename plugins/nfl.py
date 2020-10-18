@@ -27,7 +27,10 @@ def nfl(inp):
     """
 
     # Get real time data
-    data = requests.get(NFL_REALTIME_API).json()
+    try:
+        data = requests.get(NFL_REALTIME_API).json()
+    except Exception as e:
+        return "Could not get NFL data"
 
     # Convert input to uppercase; NFL team abbreviations are in uppercase
     team_abbr = inp.upper()
