@@ -7,9 +7,22 @@ AWAY = 'away'
 ABBR = 'abbr'   # e.g. NE, DAL
 SCORE = 'score'
 T = 'T'         # Current score
+QTR = 'qtr'
+YL = 'yl'
+DOWN = 'down'
+TOGO = 'togo'
+CLOCK = 'clock'
+POSTEAM = 'posteam'  # Possessing team
 
 
-def get_match_info(home, away):
+def ordinaltg(n):
+    """ Add an ordinal (-st, -nd, -rd) to a number
+    """
+    return str(n) + {1: 'st', 2: 'nd', 3: 'rd'}.get(4 if 10 <=
+                                                    n % 100 < 20 else n % 10, "th")
+
+
+def get_match_info(home, away, match=None):
     """ Returns teams and scores for a given match
     """
 
@@ -18,7 +31,42 @@ def get_match_info(home, away):
     home_score = home[SCORE][T] or 0
     away_abbr = away[ABBR]
     away_score = away[SCORE][T] or 0
-    return "{} {} {} {}".format(home_abbr, home_score, away_abbr, away_score)
+
+    # Returning brief info for given match; used in getting all NFL games for
+    # current week
+    if not match:
+        return "{} {} {} {}".format(
+            home_abbr, home_score, away_abbr, away_score)
+
+    # Get detailed game stats for a specific match
+
+    # Game has not started or has ended
+    quarter = match[QTR]
+    if not quarter or quarter.lower() in ["final", "pregame"]:
+        return "{} {} {} {} - {}".format(home_abbr,
+                                         home_score,
+                                         away_abbr,
+                                         away_score,
+                                         quarter)
+
+    # Game is ongoing, fetch and return detailed info
+    yard_line = match[YL]
+    down = ordinaltg(match[DOWN])
+    to_go = match[TOGO]
+    clock = match[CLOCK]
+    pos_team = match[POSTEAM]
+    # Example: TB 14 GB 10 - 2Q 11:02 - [GB] 1st & 10 @ GB 25
+    return "{} {} {} {} - {}Q {} - [{}] {} & {} @ {}".format(
+        home_abbr,
+        home_score,
+        away_abbr,
+        away_score,
+        quarter,
+        clock,
+        pos_team,
+        down,
+        to_go,
+        yard_line)
 
 
 @hook.command(autohelp=False)
@@ -42,7 +90,7 @@ def nfl(inp):
             home = data[game_id][HOME]
             away = data[game_id][AWAY]
             if team_abbr in [home[ABBR], away[ABBR]]:
-                return get_match_info(home, away)
+                return get_match_info(home, away, match)
 
         # Non-existent football team or team is not playing this week
         return "{} not found".format(inp)
