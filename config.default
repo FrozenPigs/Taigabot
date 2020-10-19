@@ -14,6 +14,8 @@
     "mc_pass": "INSERT minecraft PASSWORD HERE", 
     "mc_user": "INSERT minecraft USERNAME HERE", 
     "rottentomatoes": "", 
+    "spotify_client_id": "INSERT CLIENT ID FROM https://developer.spotify.com/dashboard/ HERE",
+    "spotify_client_secret": "INSERT CLIENT SECRET FROM https://developer.spotify.com/dashboard/ HERE",
     "tvdb": "", 
     "twitter_access_secret": "", 
     "twitter_access_token": "", 
