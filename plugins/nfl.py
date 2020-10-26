@@ -42,7 +42,7 @@ def get_match_info(home, away, match=None):
 
     # Game has not started or has ended
     quarter = match[QTR]
-    if not quarter or quarter.lower() in ["final", "pregame"]:
+    if not quarter or quarter.lower() in ["final", "pregame", "final overtime"]:
         return "{} {} {} {} - {}".format(home_abbr,
                                          home_score,
                                          away_abbr,
