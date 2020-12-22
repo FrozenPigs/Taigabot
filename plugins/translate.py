@@ -138,7 +138,7 @@ def google_translate(to_translate, to_language="auto", from_language="auto"):
 
     page = request.get_text(url)
     # this will break super badly if google changes their html
-    before_trans = 'class="t0">'
+    before_trans = 'class="result-container">'
     result = page[page.find(before_trans) + len(before_trans) :]
     result = result.split("<")[0]
     return '%s' % (result)
