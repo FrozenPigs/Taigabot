@@ -137,4 +137,4 @@ def message(post):
     if len(tags) > 80:
         tags = '{}... (and {} more)'.format(tags[:80], tags.count(' '))  # this count() is wrong lol, close enough
 
-    return "[{}] Score: {} - Rating: {} - {} ({}) - Tags: {}".format(id, score, rating, url, size, tags)
+    return "[{}] {} ({}) - Score: {} - Rating: {} - Tags: {}".format(id, url, size, score, rating, tags)
