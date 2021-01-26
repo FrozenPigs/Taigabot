@@ -120,7 +120,7 @@ def weather(inp, bot=None, reply=None, db=None, nick=None, notice=None, paraml=N
             'uv_index': current['uvIndex']
         }
         try:
-            weather_data['forecast'] = daily_current['summary'][:-1]
+            weather_data['forecast'] = daily_current['summary'][:-1].encode('utf-8')
             weather_data['sunrise'] = datetime.fromtimestamp(daily_current['sunriseTime'], tz).strftime('%I:%M:%S %p')
             weather_data['sunset'] = datetime.fromtimestamp(daily_current['sunsetTime'], tz).strftime('%I:%M:%S %p')
 
