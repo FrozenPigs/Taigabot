@@ -10,6 +10,7 @@
     "ebay": "", 
     "exhentai": "username:password", 
     "geoip": "INSERT API KEY FROM ipinfodb.com HERE", 
+    "iex": "INSERT API KEY FROM https://iexcloud.io/ HERE",
     "lastfm": "", 
     "mc_pass": "INSERT minecraft PASSWORD HERE", 
     "mc_user": "INSERT minecraft USERNAME HERE", 
