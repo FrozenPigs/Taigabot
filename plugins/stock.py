@@ -41,15 +41,12 @@ def stock(inp, bot=None):
         stats_data = data[symbols]["stats"]
         name = stats_data["companyName"]
 
-        ytd_change_percent = float(
-            "{:.2f}".format(stats_data["ytdChangePercent"] * 100)
+        year1_change_percent = float(
+            "{:.2f}".format(stats_data["year1ChangePercent"] * 100)
         )
-        ytd_change_percent = float(
-            "{:.2f}".format(stats_data["ytdChangePercent"] * 100)
-        )
-        ytd_change_color = color(float(ytd_change_percent))
-        ytd_change_percent = "\x03{}{}%\x03".format(
-            ytd_change_color, ytd_change_percent
+        year1_change_color = color(float(year1_change_percent))
+        year1_change_percent = "\x03{}{}%\x03".format(
+            year1_change_color, year1_change_percent
         )
 
         month_6_change_percent = float(
@@ -87,7 +84,7 @@ def stock(inp, bot=None):
                 day_5_change_percent,
                 day_30_change_percent,
                 month_6_change_percent,
-                ytd_change_percent,
+                year1_change_percent,
             )
         # Not in trading hours
         else:
@@ -99,10 +96,9 @@ def stock(inp, bot=None):
                 day_5_change_percent,
                 day_30_change_percent,
                 month_6_change_percent,
-                ytd_change_percent,
+                year1_change_percent,
             )
     except Exception as e:
         return "Could not get stock information for {}".format(symbols)
 
     return "[Stock] " + response
-
