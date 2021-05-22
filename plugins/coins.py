@@ -90,6 +90,11 @@ def cryptocoin(inp):
 def btc(inp):
     return cryptocoin('bitcoin')
 
+@hook.command('ethereum', autohelp=False)
+@hook.command(autohelp=False)
+def eth(inp):
+    return cryptocoin('ethereum')
+
 
 # <wednesday> .doge
 # <Taigabot> Error: Doge is worthless.
