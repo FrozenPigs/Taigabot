@@ -22,9 +22,9 @@ def refresh_cache(inp):
     lastsearch = search
 
     if inp == '':
-        postjson = request.get_json('http://e621.net/posts.json?limit=10')
+        postjson = request.get_json('http://e621.net/posts.json?_client=Taigabot%2f1.0&limit=10')
     else:
-        postjson = request.get_json('http://e621.net/posts.json?limit=10&tags={}'.format(request.urlencode(search)))
+        postjson = request.get_json('http://e621.net/posts.json?_client=Taigabot%2f1.0&limit=10&tags={}'.format(request.urlencode(search)))
     posts = postjson["posts"]
 
     for i in range(len(posts)):
